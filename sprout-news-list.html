@@ -31,14 +31,10 @@
             .date {
                 color: #999;
                 font-size: 12px;
-                -webkit-flex-basis: 15%;
-                    -ms-flex-preferred-size: 15%;
-                        flex-basis: 15%;
+                min-width: 110px;
             }
             .category {
-                -webkit-flex-basis: 15%;
-                    -ms-flex-preferred-size: 15%;
-                        flex-basis: 15%;
+                min-width: 130px;
                 background-color: #C2C2C2;
                 color: #FFF;
                 height: 25px;
@@ -67,6 +63,25 @@
             }
             :host ::content > a:hover {
                 color: #CCC;
+            }
+
+            @media screen and (max-width: 1130px) and (min-width: 765px) {
+
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    -webkit-flex-wrap: wrap;
+                        -ms-flex-wrap: wrap;
+                            flex-wrap: wrap;
+                    height: auto;
+                }
+                :host ::content > a {
+                    -webkit-box-ordinal-group: 3;
+                    -webkit-order: 2;
+                        -ms-flex-order: 2;
+                            order: 2;
+                }
             }
         </style>
 
