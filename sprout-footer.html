@@ -1,0 +1,201 @@
+<dom-module id="sprout-footer-logo">
+    <template>
+        <style>
+            :host {
+                position: absolute;
+                bottom: 40px;
+                right: 8%;
+                text-align: right;
+            }
+
+            ul {
+                align-self: flex-end;
+                padding: 0;
+                margin: 0;
+                margin-top: 15px;
+                list-style: none;
+                color: #999;
+            }
+
+            ul > li {
+                margin-top: 10px;
+            }
+
+            a {
+                text-decoration: none;
+                color: #999;
+                transition: color 0.2s ease-out;
+            }
+            a:hover {
+                text-decoration: none;
+                color: #FFF;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    position: relative;
+                    bottom: auto;
+                    right: auto;
+                    text-align: center;
+                }
+            }
+        </style>
+
+		<ul>
+			<li>
+                <img src="logo_oly_gray.png">
+				<a href="http://www.olympus.com.tw/zh/" target="_blank">Taiwan</a> |
+				<a href="http://www.olympus.co.jp/jp/" target="_blank">Japan</a> |
+				<a href="http://www.olympus-global.com/en/" target="_blank">Goobal</a>
+			</li>
+			<li>© 2015 YUANYU Group CO., LTD. All Rights Reserved.</li>
+		</ul>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-footer-logo'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-footer-split">
+    <template>
+        <style>
+            :host {
+                height: 100%;
+                width: 1px;
+                background-color: #FFF;
+                position: absolute;
+            }
+        </style>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-footer-split'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-footer-list">
+    <template>
+        <style>
+            :host {
+                display: flex;
+                flex-grow: 1;
+            }
+            ul {
+                display: flex;
+                list-style: none;
+                flex-direction: column;
+                padding: 0;
+                margin: 0;
+                position: relative;
+            }
+
+            .title {
+                color: #FFF;
+                text-decoration: none;
+                font-size: 1.1em;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            .title:hover {
+                text-decoration: none;
+            }
+
+            :host ::content ul > a, :host ::content ul > li {
+                color: #CCC;
+                text-decoration: none;
+                transition: color 0.2s ease-out;
+            }
+            :host ::content ul > a:hover, :host ::content ul > li:hover {
+                text-decoration: none;
+                color: #FFF;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host.desktop {
+                    display: none;
+                }
+
+
+                :host {
+                    flex-grow: 0;
+                }
+                ul {
+                    flex-direction: row;
+                }
+                :host ::content ul > a, :host ::content ul > li {
+                    margin: 0 10px;
+                }
+            }
+        </style>
+
+        <ul class$="{{class}}">
+            <template is="dom-if" if="{{title}}">
+                <a href$="{{href}}" class="title">{{title}}</a>
+            </template>
+            <content></content>
+        </ul>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-footer-list'
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-footer">
+    <template>
+        <style>
+            :host {
+                display: block;
+                width: 100%;
+                padding: 40px 8%;
+                box-sizing: border-box;
+                background-color: #444;
+                position: relative;
+            }
+
+            .footer-content {
+                display: flex;
+                width: 100%;
+                max-width: 900px;
+                font-size: 14px;
+                letter-spacing: 0.1em;
+                line-height: 1.6em;
+                justify-content: space-around;
+                align-items: stretch;
+                position: relative;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    display: flex;
+                    flex-direction: column;
+                    padding: 40px 20px;
+                }
+                .footer-content {
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
+        </style>
+
+        <div class="footer-content">
+            <content></content>
+        </div>
+        <sprout-footer-logo></sprout-footer-logo>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-footer'
+        });
+    </script>
+</dom-module>

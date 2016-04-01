@@ -14,10 +14,15 @@
     <link rel="import" href="./sprout-header.html">
     <link rel="import" href="./sprout-form.html">
     <link rel="import" href="./sprout-more-info.html">
+    <link rel="import" href="./sprout-footer.html">
 
     <style>
         html {
             font-size: 87.5%;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
         }
     </style>
   </head>
@@ -90,6 +95,50 @@
             </div>
         </sprout-contact-info>
     </sprout-more-info>
+
+    <sprout-footer>
+        <sprout-footer-list class="desktop" title="外科" href="product.php?type=s">
+			<a href="productslist.php?department=1">耳鼻喉科</a>
+    		<a href="productslist.php?department=2">胸腔外科</a>
+    		<a href="productslist.php?department=5">婦產科</a>
+    	    <a href="productslist.php?department=6">麻醉科</a>
+            <a href="productslist.php?department=8">泌尿科</a>
+            <a href="productslist.php?department=9">一般外科</a>
+        </sprout-footer-list>
+		<sprout-footer-list class="desktop" title="內科" href="product.php?type=i">
+			<a href="productslist.php?department=17">腸胃科-上消化道</a>
+            <a href="productslist.php?department=18">腸胃科-下消化道</a>
+			<a href="productslist.php?department=19">清洗消毒</a>
+            <a href="productslist.php?department=20">腸胃科-小腸鏡&amp;膠囊</a>
+            <a href="productslist.php?department=21">腸胃科-超音波</a>
+			<a href="productslist.php?department=22">胸腔科</a>
+        </sprout-footer-list>
+        <sprout-footer-list class="desktop" title="關聯產品" href="product.php?type=r">
+			<a href="productslist.php?department=13">消毒液</a>
+			<a href="productslist.php?department=14">酵素清潔液</a>
+			<a href="productslist.php?department=15">除鏽劑</a>
+			<a href="productslist.php?department=16">潤滑劑</a>
+        </sprout-footer-list>
+
+        <sprout-footer-list class="desktop">
+            <sprout-footer-split></sprout-footer-split>
+        </sprout-footer-list>
+
+        <sprout-footer-list class="desktop">
+			<a href="/index.php">首頁</a>
+			<a href="/news.php">最新消息</a>
+			<a href="/store.php">產品情報</a>
+		</sprout-footer-list>
+        <sprout-footer-list class="desktop">
+			<a href="/event.php">企業情報</a>
+			<a href="/course.php">技術支援</a>
+			<a href="/contact.php">聯絡我們</a>
+		</sprout-footer-list>
+        <sprout-footer-list>
+			<a href="https://www.facebook.com/pages/Olympus-TW/386268178057359?fref=ts" target="_blank"><i class="fa fa-facebook"></i> FACEBOOK</a>
+			<a href="#">中文</a>
+		</sprout-footer-list>
+    </sprout-footer>
 
   </body>
 </html>
