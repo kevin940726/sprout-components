@@ -1,0 +1,129 @@
+<dom-module id="sprout-contact-info">
+    <template>
+        <style>
+            :host ::content > div {
+                width: 100%;
+            }
+
+            :host ::content h5 {
+                font-size: 14px;
+                color: #fff;
+                text-align: left;
+                margin: 0 0 10px;
+            }
+
+            :host ::content > div > p {
+                font-size: 12px;
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+        </style>
+
+        <div class="info">
+            <h4>-{{title}}-</h4>
+            <content></content>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-contact-info'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-info">
+    <template>
+        <div class="info">
+            <h4>-{{title}}-</h4>
+            <p><content></content></p>
+            <a href$="{{href}}" class="more">瞭解更多</a>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-info'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-more-info">
+    <template>
+        <style>
+            :host {
+                display: flex;
+                width: 100%;
+            }
+
+            :host ::content > * {
+                display: flex;
+                flex-grow: 1;
+                flex-basis: 33.33%;
+            }
+            :host ::content .info {
+                display: flex;
+                width: 100%;
+                padding: 40px 60px;
+                box-sizing: border-box;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                position: relative;
+                letter-spacing: 0.1em;
+                line-height: 1.6em;
+            }
+            :host ::content h4 {
+                font-size: 18px;
+                color: #eee;
+                margin-bottom: 26px;
+                font-weight: 200;
+            }
+            :host ::content p {
+                color: #ccc;
+                margin: 5px 0 50px;
+                font-size: 14px;
+                max-width: 100%;
+            }
+            :host ::content .more {
+                text-align: center;
+                position: absolute;
+                left: 0;
+                right: 0;
+                margin: auto;
+                bottom: 30px;
+                border: 1px solid #fff;
+                padding: 10px 20px;
+                width: 130px;
+                color: #FFF;
+                font-size: 14px;
+                opacity: .3;
+                cursor: pointer;
+                transition: all 1s ease-out, background-color .2s ease-out;
+            }
+            :host ::content .more:hover {
+                background-color: #444;
+                opacity: 0.9;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    flex-wrap: wrap;
+                }
+                :host ::content > * {
+                    flex-basis: 100%;
+                }
+            }
+        </style>
+
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-more-info'
+        });
+    </script>
+</dom-module>
