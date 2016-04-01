@@ -1,6 +1,10 @@
 <dom-module id="sprout-contact-info">
     <template>
         <style>
+            :host ::content > div {
+                width: 100%;
+            }
+
             :host ::content h5 {
                 font-size: 14px;
                 color: #fff;
@@ -11,6 +15,7 @@
             :host ::content > div > p {
                 font-size: 12px;
                 margin-top: 0;
+                margin-bottom: 0;
             }
         </style>
 
@@ -73,7 +78,7 @@
             }
             :host ::content p {
                 color: #ccc;
-                margin: 5px 0;
+                margin: 5px 0 50px;
                 font-size: 14px;
             }
             :host ::content > * .more {
@@ -95,6 +100,15 @@
             :host ::content > * .more:hover {
                 background-color: #444;
                 opacity: 0.9;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    flex-wrap: wrap;
+                }
+                :host ::content > * {
+                    flex-basis: 100%;
+                }
             }
         </style>
 
