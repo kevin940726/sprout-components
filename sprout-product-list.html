@@ -1,7 +1,7 @@
 <dom-module id="sprout-product-item">
     <template>
         <style>
-            :host {
+            .product {
                 display: -webkit-box;
                 display: -webkit-flex;
                 display: -ms-flexbox;
@@ -78,11 +78,13 @@
             }
         </style>
 
-        <a href$="{{href}}" class="col-img"><img src$="{{img}}"></a>
-        <a href$="{{href}}"><h3>{{title}}</h3></a>
-        <p>
-            <content></content>
-        </p>
+        <div class="product">
+            <a href$="{{href}}" class="col-img"><img src$="{{img}}"></a>
+            <a href$="{{href}}"><h3>{{title}}</h3></a>
+            <p>
+                <content></content>
+            </p>
+        </div>
     </template>
 
     <script>
