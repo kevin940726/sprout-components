@@ -1,0 +1,138 @@
+<dom-module id="sprout-input-group">
+    <template>
+        <style>
+            :host {
+                width: 100%;
+            }
+            label {
+                display: flex;
+                margin: 10px 0px;
+                align-items: center;
+                width: 100%;
+            }
+            label p {
+                flex-basis: 24%;
+                text-align: right;
+                margin: 0px;
+                margin-right: 15px;
+            }
+            :host:last-of-type p {
+                align-self: flex-start;
+            }
+            a {
+                border: 1px solid #aaa;
+                padding: 10px;
+                border-radius: 3px;
+                margin: 0 auto;
+            }
+
+            :host ::content input, :host ::content textarea {
+                flex-grow: 1;
+                border-radius: 3px;
+                border: 1px solid #ccc;
+                font-size: 14px;
+                padding: 3px 6px;
+                box-sizing: border-box;
+            }
+            :host ::content input {
+                height: 26px;
+            }
+            :host ::content textarea {
+                height: 200px;
+            }
+            :host ::content .item {
+                width: auto;
+            }
+            :host ::content .item input {
+                margin: 0px 6px 0px 12px;
+                height: 16px;
+                padding: 0px;
+                box-sizing: border-box;
+            }
+        </style>
+
+        <label>
+            <p class="input-type">{{label}}</p>
+            <content></content>
+        </label>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-input-group',
+            properties: {
+                type: {
+                    type: String,
+                    value: "text"
+                }
+            }
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-form">
+    <template>
+        <style>
+            form {
+                color: #777;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                align-items: center;
+                margin: 0 auto;
+                width: 50%;
+                max-width: 520px;
+                min-width: 420px;
+                font-size: 14px;
+                line-height: 1.6em;
+                letter-spacing: 0.1em;
+            }
+
+            form input[type="submit"] {
+                border: 1px solid #aaa;
+                padding: 10px;
+                border-radius: 3px;
+                margin: 0 auto;
+                background-color: #FFF;
+                cursor: pointer;
+            }
+        </style>
+
+        <form>
+            <sprout-input-group label="單位名稱">
+                <input type="text" />
+            </sprout-input-group>
+            <sprout-input-group label="聯絡人姓名">
+                <input type="text" />
+            </sprout-input-group>
+            <sprout-input-group label="聯絡人手機號碼">
+                <input type="tel" />
+            </sprout-input-group>
+            <sprout-input-group label="聯絡人email">
+                <input type="email" />
+            </sprout-input-group>
+            <sprout-input-group label="產品編號">
+                <input type="text" />
+            </sprout-input-group>
+            <sprout-input-group label="聯絡事由">
+                <label class="item"><input type="radio" name="vehicle" value="askPrice">詢價</input></label>
+                <label class="item"><input type="radio" name="vehicle" value="help">技術支援</input></label>
+                <label class="item"><input type="radio" name="vehicle" value="demo">Demo</input></label>
+                <label class="item"><input type="radio" name="vehicle" value="demo">其他</label>
+            </sprout-input-group>
+            <sprout-input-group label="其他問題與建議">
+                <textarea></textarea>
+            </sprout-input-group>
+    
+            <input type="submit" value="送出訊息"></input>
+        </form>    
+        
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-form'
+        });
+    </script>
+</dom-module>
