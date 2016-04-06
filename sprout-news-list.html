@@ -44,6 +44,8 @@
                 cursor: pointer;
                 -webkit-transition: box-shadow .2s ease-out;
                 transition: box-shadow .2s ease-out;
+                -webkit-box-ordinal-group: 4;-webkit-order: 3;-ms-flex-order: 3;order: 3;
+                float: right;
             }
             .category.hot {
                 background-color: #3949AB;
@@ -79,26 +81,21 @@
 
             @media screen and (max-width: 767px) {
                 :host {
-                    -webkit-flex-wrap: wrap;
-                        -ms-flex-wrap: wrap;
-                            flex-wrap: wrap;
+                    display: block;
                     height: auto;
                 }
                 :host ::content > a {
-                    -webkit-box-ordinal-group: 3;
-                    -webkit-order: 2;
-                        -ms-flex-order: 2;
-                            order: 2;
-                    -webkit-flex-basis: 100%;
-                    -ms-flex-preferred-size: 100%;
-                            flex-basis: 100%;
+                    display: block;
+                }
+                .date {
+                    display: inline-block;
                 }
             }
         </style>
 
         <div class="date">{{date}}</div>
-        <a href$="{{href}}"><content></content></a>
         <div class$="category {{toLowerCase(tag)}}">{{toUpperCase(tag)}}</div>
+        <a href$="{{href}}"><content></content></a>
     </template>
 
     <script>
