@@ -4,13 +4,16 @@ $.fn.hasAttr = function(name) {
 
 jQuery.fn.extend({
     sproutSlide: function (settings) {
+        var windowW = $(document).width();   // returns width of browser viewport
+
         var config = {
-            'width': 960,
+            'width': windowW,
             'slideNum': 1,
             'duration':700,
             'autovalue':true,
             'interval':3000
         };
+
 
         if (settings){$.extend(config, settings);}
 
