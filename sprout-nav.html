@@ -4,10 +4,19 @@
     <template>
         <style>
             :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
                 display: flex;
                 height: 50px;
-                justify-content: space-between;
-                align-items: center;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
                 font-size: 14px;
                 letter-spacing: 0.1em;
                 float: left;
@@ -26,6 +35,7 @@
                 padding: 0 5px;
                 line-height: 20px;
                 margin: 0 5px;
+                -webkit-transition: color 0.2s ease-out, border-color 0.2s ease-out;
                 transition: color 0.2s ease-out, border-color 0.2s ease-out;
             }
             a:hover {
@@ -34,6 +44,9 @@
             }
 
             .searchbar {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
                 display: flex;
                 position: relative;
                 margin: 0 5px;
@@ -45,6 +58,7 @@
                 right: 0;
                 z-index: -100;
                 opacity: 0;
+                -webkit-transition: opacity 0.2s ease-out;
                 transition: opacity 0.2s ease-out;
                 font-size: 14px;
                 padding: 2px 5px;
@@ -62,9 +76,18 @@
             .side-logo {
                 background-color: #102A7C;
                 height: 100%;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
                 display: flex;
-                justify-content: center;
-                align-items: center;
+                -webkit-box-pack: center;
+                -webkit-justify-content: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
                 padding: 0 25px;
                 position: relative;
                 margin-left: 30px;
@@ -120,6 +143,7 @@
                 background-color: #FFF;
                 white-space: nowrap;
                 text-align: center;
+                -webkit-transition: box-shadow 0.2s ease-out;
                 transition: box-shadow 0.2s ease-out;
                 display: block;
                 overflow: auto;
@@ -158,6 +182,9 @@
     <template>
         <style>
             :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
                 display: flex;
                 z-index: -100;
                 opacity: 0;
@@ -166,21 +193,36 @@
                 position: absolute;
                 top: 100%;
                 left: 50%;
-                transform: translateX(-50%);
+                -webkit-transform: translateX(-50%);
+                        transform: translateX(-50%);
                 margin: 0 auto;
-                flex-direction: column;
-                justify-content: space-between;
-                align-items: stretch;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                -webkit-flex-direction: column;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: stretch;
+                -webkit-align-items: stretch;
+                    -ms-flex-align: stretch;
+                        align-items: stretch;
                 background-color: #FFF;
                 border: 1px solid #EEE;
                 border-top: 1px solid #FFF;
                 box-shadow: 0 3px 3px 1px rgba(0,0,0,.15);
+                -webkit-transition: opacity 0.2s ease-out;
                 transition: opacity 0.2s ease-out;
             }
             :host.opened {
                 height: auto;
                 z-index: 101;
                 opacity: 1;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
                 display: flex;
             }
 
@@ -233,7 +275,9 @@
             @media (max-width: 1024px) {
                 :host {
                     width: 100%;
-                    flex-basis: 100%;
+                    -webkit-flex-basis: 100%;
+                        -ms-flex-preferred-size: 100%;
+                            flex-basis: 100%;
                 }
             }
         </style>
@@ -284,17 +328,31 @@
     <template>
         <style>
             :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
                 display: flex;
-                align-self: flex-end;
+                -webkit-align-self: flex-end;
+                    -ms-flex-item-align: end;
+                        align-self: flex-end;
                 height: 100%;
                 float: left;
             }
 
             .navbar {
                 list-style: none;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
                 display: flex;
-                justify-content: space-between;
-                align-items: center;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
                 padding: 0;
                 margin: 0;
                 position: relative;
@@ -305,7 +363,11 @@
                     width: 100%;
                 }
                 .navbar {
-                    flex-direction: column;
+                    -webkit-box-orient: vertical;
+                    -webkit-box-direction: normal;
+                    -webkit-flex-direction: column;
+                        -ms-flex-direction: column;
+                            flex-direction: column;
                     background-color: #FFF;
                     width: 100%;
                     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.15);
@@ -340,8 +402,15 @@
                 background-color: #FFF;
                 padding: 0px;
                 box-sizing: border-box;
-                justify-content: space-between;
-                align-items: center;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                            -ms-grid-row-align: center;
+                        align-items: center;
                 border-bottom: 1px solid #EEE;
                 box-shadow: 0 3px 3px 1px rgba(0,0,0,.15);
                 z-index: 100;
@@ -349,7 +418,9 @@
 
             nav .brand-logo {
                 height: 30px;
-                align-self: flex-start;
+                -webkit-align-self: flex-start;
+                    -ms-flex-item-align: start;
+                        align-self: flex-start;
                 width: auto;
                 padding: 10px 20px;
                 display: inline-block;
@@ -395,7 +466,10 @@
                     width: 2.5px;
                     opacity: 0;
                     transition: -webkit-transform .2s ease-out,opacity .2s ease-out;
+                    -webkit-transition: opacity .2s ease-out,-webkit-transform .2s ease-out;
+                    transition: opacity .2s ease-out,-webkit-transform .2s ease-out;
                     transition: transform .2s ease-out,opacity .2s ease-out;
+                    transition: transform .2s ease-out,opacity .2s ease-out,-webkit-transform .2s ease-out;
                 }
                 .menu-icon:after {
                     height: 2.5px;
@@ -403,13 +477,17 @@
                     width: 60%;
                     box-shadow: 0 6px 0 0 #555,0 -6px 0 0 #555;
                     transition: -webkit-transform .2s ease-out,box-shadow .2s ease-out;
+                    -webkit-transition: box-shadow .2s ease-out,-webkit-transform .2s ease-out;
+                    transition: box-shadow .2s ease-out,-webkit-transform .2s ease-out;
                     transition: transform .2s ease-out,box-shadow .2s ease-out;
+                    transition: transform .2s ease-out,box-shadow .2s ease-out,-webkit-transform .2s ease-out;
                 }
 
 
                 #menu-icon:checked ~ .nav {
                     top: 50px;
-                    transform: translateY(0%);
+                    -webkit-transform: translateY(0%);
+                            transform: translateY(0%);
                     opacity: 1;
                 }
                 #menu-icon:checked + .menu-icon:before {
@@ -431,8 +509,12 @@
                     width: 100%;
                     z-index: 99;
                     opacity: 0;
-                    transform: translateY(-100%);
+                    -webkit-transform: translateY(-100%);
+                            transform: translateY(-100%);
+                    -webkit-transition: top 0.2s ease-out, opacity 0.2s ease-out, -webkit-transform 0.2s ease-out;
+                    transition: top 0.2s ease-out, opacity 0.2s ease-out, -webkit-transform 0.2s ease-out;
                     transition: transform 0.2s ease-out, top 0.2s ease-out, opacity 0.2s ease-out;
+                    transition: transform 0.2s ease-out, top 0.2s ease-out, opacity 0.2s ease-out, -webkit-transform 0.2s ease-out;
                 }
             }
         </style>
