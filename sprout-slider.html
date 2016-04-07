@@ -9,6 +9,8 @@
 				position: relative;
 				padding-bottom: 3px;
 				margin: 0px auto;
+				margin-top: 49px;
+				max-height: 370px;
 			}
 
 			.sprout-slide-container ul{
@@ -73,10 +75,11 @@
 		<div class="sprout-slide-container" id="slide1">
 			<div class="sprout-slide-wrapper">
 				<ul class="sprout-slide">
-					<li><img src="images/product-head-1.png" /></li>
-					<li><img src="images/product-head-2.png" /></li>
-					<li><img src="images/product-head-3.png" /></li>
-					<li><img src="images/product-head-4.png" /></li>
+					<li><img src="images/product-head-1.jpg" /></li>
+					<li><img src="images/product-head-2.jpg" /></li>
+					<li><img src="images/product-head-3.jpg" /></li>
+					<li><img src="images/product-head-4.jpg" /></li>
+					<li><img src="images/product-head-5.jpg" /></li>
 				</ul>
 			</div>
 			<div class="sprout-arrow">
@@ -91,18 +94,16 @@
 
     <script>
         Polymer({
-            is: 'sprout-slider'
+            is: 'sprout-slider',
+            ready: function() {
+            	$('#slide1').sproutSlide({
+					// 'width': 1000,		// Slide Visible content width;		//Default (960)
+					'slideNum': 1,		// One Page Slide li number;		//Default (4)
+					'duration':700,		// Animation Speed;			//Default (700)
+					'autovalue':true,	// Auto play control (true/false);	//Default (true)
+					'interval':4000		// Auto play interval;			//Default (3000)
+				});
+            }
         });
-
-        $(document).ready(function() {
-			// $(element).sproutSlide(options);
-			$('#slide1').sproutSlide({
-				'width': 900,		// Slide Visible content width;		//Default (960)
-				'slideNum': 1,		// One Page Slide li number;		//Default (4)
-				'duration':700,		// Animation Speed;			//Default (700)
-				'autovalue':true,	// Auto play control (true/false);	//Default (true)
-				'interval':4000		// Auto play interval;			//Default (3000)
-			});
-		});
     </script>
 </dom-module>
