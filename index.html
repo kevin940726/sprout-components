@@ -58,7 +58,7 @@
             var onImportLoaded = function() {
                 loaded++;
 
-                if (loaded >= links.length || timeout >= 3) {
+                if (loaded >= links.length || true) {
                     console.log('loaded');
                     document.body.classList.add('loaded');
                     clearInterval(timer);
