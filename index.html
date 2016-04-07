@@ -59,7 +59,7 @@
             var onImportLoaded = function() {
                 loaded++;
 
-                if (loaded >= links.length || timeout >= 10) {
+                if (loaded >= links.length || timeout >= 5) {
                     document.body.classList.remove('loading');
                     clearInterval(timer);
                 }
