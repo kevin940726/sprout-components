@@ -7,6 +7,15 @@
     <title>sprout-components</title>
 
     <script src="https://polygit.org/components/webcomponentsjs/webcomponents-lite.js"></script>
+
+    <!-- Don't forgot jquery, if your site already have it, it's no need to include again.-->
+    <script type="text/javascript" src="http://lab.25sprout.com/library/jquery/jquery-1.9.0.min.js"></script>
+     
+    <!-- KEY FEATURE SPROUT SLIDE -->
+    <script type="text/javascript" src="sprout-slide/sprout-slide.js"></script>
+    <script type="text/javascript" src="sprout-slide/jquery.touchSwipe.js"></script>
+    <link type="text/css" rel="stylesheet" href="sprout-slide/sprout-slide.css">
+
     <link rel="import" href="https://polygit.org/components/polymer/polymer.html">
 
     <link rel="import" href="./sprout-product-list.html">
@@ -15,6 +24,7 @@
     <link rel="import" href="./sprout-form.html">
     <link rel="import" href="./sprout-more-info.html">
     <link rel="import" href="./sprout-footer.html">
+    <link rel="import" href="./sprout-slider.html">
     <link rel="import" href="./sprout-nav.html">
 
     <style>
@@ -47,6 +57,8 @@
         <sprout-nav-other-list>
         </sprout-nav-other-list>
     </sprout-nav>
+
+    <sprout-slider></sprout-slider>
 
     <sprout-header ch="產品情報">PRODUCT</sprout-header>
     <sprout-product-list>

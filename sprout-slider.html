@@ -1,0 +1,108 @@
+<dom-module id="sprout-slider">
+    <template>
+        <style>
+			.sprout-slide-container{
+				width: 100%;
+				overflow: hidden;
+				/*display: none;*/
+				clear: both;
+				position: relative;
+				padding-bottom: 3px;
+				margin: 0px auto;
+			}
+
+			.sprout-slide-container ul{
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+			}
+
+			.sprout-slide-container ul li{
+				list-style-type: none;
+				float: left;
+				margin:0px !important;
+				padding:0px !important;
+				min-height: 10px;
+				text-align: center;
+				position: relative;
+			}
+
+			.sprout-slide-container ul li img{
+				max-width: 100%;
+			}
+
+			.sprout-slide-wrapper{
+				overflow: hidden;
+				margin: 0px auto;
+			}
+
+			.sprout-arrow > div{
+				position: absolute;
+				top: 35%;
+				width: 45px;
+				height: 45px;
+				cursor: pointer;
+			}
+			.sprout-arrow .sprout-prev{ left: 0px; background-image: url(sprout-slide/img/prev.png);}
+			.sprout-arrow .sprout-next{	right: 0px; background-image: url(sprout-slide/img/next.png);}
+
+			.sprout-dots {
+				width: 100%;
+				margin: 15px auto;
+				overflow:hidden;
+				text-align: center;
+			}
+
+			.sprout-dots div {
+				width: 11px;
+				height: 11px;
+				margin: 0px 5px;
+				border-radius: 11px;
+				background: #cccccc;
+				box-shadow:#fff 1px 1px 0px;
+				cursor: pointer;
+				display: inline-block;
+			}
+
+			.sprout-dots div.active{
+				background: #A2C54D;
+			}
+
+        </style>
+
+		<div class="sprout-slide-container" id="slide1">
+			<div class="sprout-slide-wrapper">
+				<ul class="sprout-slide">
+					<li><img src="images/product-head-1.png" /></li>
+					<li><img src="images/product-head-2.png" /></li>
+					<li><img src="images/product-head-3.png" /></li>
+					<li><img src="images/product-head-4.png" /></li>
+				</ul>
+			</div>
+			<div class="sprout-arrow">
+				<div class="sprout-prev"></div>
+				<div class="sprout-next"></div>
+			</div>
+			<div class="sprout-dots">
+			</div>
+		</div>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-slider'
+        });
+
+        $(document).ready(function() {
+			// $(element).sproutSlide(options);
+			$('#slide1').sproutSlide({
+				'width': 900,		// Slide Visible content width;		//Default (960)
+				'slideNum': 1,		// One Page Slide li number;		//Default (4)
+				'duration':700,		// Animation Speed;			//Default (700)
+				'autovalue':true,	// Auto play control (true/false);	//Default (true)
+				'interval':4000		// Auto play interval;			//Default (3000)
+			});
+		});
+    </script>
+</dom-module>
