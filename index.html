@@ -36,11 +36,10 @@
             var script = document.createElement('script');
             script.async = true;
             script.src = 'https://polygit.org/components/webcomponentsjs/webcomponents-lite.js';
-            script.onload = finishLazyLoading;
             document.head.appendChild(script);
-        } else {
-            finishLazyLoading();
         }
+
+        window.onload = finishLazyLoading;
 
         function finishLazyLoading() {
             // (Optional) Use native Shadow DOM if it's available in the browser.
