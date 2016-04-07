@@ -173,7 +173,12 @@
 
     <script>
         Polymer({
-            is: 'sprout-nav-sub-item'
+            is: 'sprout-nav-sub-item',
+            ready: function() {
+                this.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                })
+            }
         });
     </script>
 </dom-module>
@@ -220,10 +225,6 @@
                 height: auto;
                 z-index: 101;
                 opacity: 1;
-                display: -webkit-box;
-                display: -webkit-flex;
-                display: -ms-flexbox;
-                display: flex;
             }
 
             @media (max-width: 1024px) {
@@ -231,6 +232,10 @@
                     position: relative;
                     width: 100%;
                     display: none;
+                }
+                :host.opened {
+                    display: block;
+                    top: 0;
                 }
             }
         </style>
@@ -275,9 +280,8 @@
             @media (max-width: 1024px) {
                 :host {
                     width: 100%;
-                    -webkit-flex-basis: 100%;
-                        -ms-flex-preferred-size: 100%;
-                            flex-basis: 100%;
+                    display: block;
+                    height: auto;
                 }
             }
         </style>
@@ -371,6 +375,7 @@
                     background-color: #FFF;
                     width: 100%;
                     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.15);
+                    display: block;
                 }
             }
         </style>
