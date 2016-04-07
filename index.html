@@ -6,24 +6,88 @@
 
     <title>sprout-components</title>
 
-    <script src="https://polygit.org/components/webcomponentsjs/webcomponents-lite.js"></script>
-
     <!-- Don't forgot jquery, if your site already have it, it's no need to include again.-->
     <script type="text/javascript" src="http://lab.25sprout.com/library/jquery/jquery-1.9.0.min.js"></script>
      
     <!-- KEY FEATURE SPROUT SLIDE -->
     <script type="text/javascript" src="sprout-slide/sprout-slide.js"></script>
     <script type="text/javascript" src="sprout-slide/jquery.touchSwipe.js"></script>
+
     <link rel="import" href="https://polygit.org/components/polymer/polymer.html">
 
-    <link rel="import" href="./sprout-product-list.html">
-    <link rel="import" href="./sprout-news-list.html">
-    <link rel="import" href="./sprout-header.html">
-    <link rel="import" href="./sprout-form.html">
-    <link rel="import" href="./sprout-more-info.html">
-    <link rel="import" href="./sprout-footer.html">
-    <link rel="import" href="./sprout-slider.html">
-    <link rel="import" href="./sprout-nav.html">
+    <link rel="import" class="sprout-components" href="./sprout-product-list.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-news-list.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-header.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-form.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-more-info.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-footer.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-slider.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-nav.html" async>
+
+    <script async>
+        // 4. Conditionally load the webcomponents polyfill if needed by the browser.
+        // This feature detect will need to change over time as browsers implement
+        // different features.
+        var webComponentsSupported = ('registerElement' in document
+            && 'import' in document.createElement('link')
+            && 'content' in document.createElement('template'));
+
+        if (!webComponentsSupported) {
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://polygit.org/components/webcomponentsjs/webcomponents-lite.js';
+            script.onload = finishLazyLoading;
+            document.head.appendChild(script);
+        } else {
+            finishLazyLoading();
+        }
+
+        function finishLazyLoading() {
+            // (Optional) Use native Shadow DOM if it's available in the browser.
+            window.Polymer = window.Polymer || {dom: 'shadow'};
+
+            var links = document.getElementsByClassName('sprout-components');
+            var loaded = 0;
+            var timeout = 0;
+
+            var timer = setInterval(function() {
+                timeout++;
+            }, 1000);
+
+            // 6. Fade splash screen, then remove.
+            var onImportLoaded = function() {
+                loaded++;
+
+                if (loaded >= links.length || true) {
+                    console.log('loaded');
+                    document.body.classList.add('loaded');
+                    clearInterval(timer);
+                }
+                // App is visible and ready to load some data!
+            };
+
+            // 5. Go if the async Import loaded quickly. Otherwise wait for it.
+            // crbug.com/504944 - readyState never goes to complete until Chrome 46.
+            // crbug.com/505279 - Resource Timing API is not available until Chrome 46.
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i];
+                if (link.import && link.import.readyState === 'complete') {
+                    onImportLoaded();
+                } else {
+                    link.addEventListener('load', onImportLoaded);
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            opacity: 0;
+        }
+        body.loaded {
+            opacity: 1;
+        }
+    </style>
 
     <style>
         html {
@@ -32,6 +96,9 @@
         html, body {
             margin: 0;
             padding: 0;
+            width: 100vw;
+            /*overflow: hidden;*/
+
         }
     </style>
   </head>
@@ -173,6 +240,5 @@
 			<a href="#">中文</a>
 		</sprout-footer-list>
     </sprout-footer>
-
   </body>
 </html>
