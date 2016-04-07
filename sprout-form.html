@@ -6,12 +6,12 @@
             }
             label {
                 display: flex;
-                margin: 10px 0px;
+                margin: 6px 0px;
                 align-items: center;
                 width: 100%;
             }
             label p {
-                flex-basis: 24%;
+                width: 120px;
                 text-align: right;
                 margin: 0px;
                 margin-right: 15px;
@@ -25,6 +25,7 @@
                 border-radius: 3px;
                 margin: 0 auto;
             }
+          
 
             :host ::content input, :host ::content textarea {
                 flex-grow: 1;
@@ -81,22 +82,33 @@
                 justify-content: space-around;
                 align-items: center;
                 margin: 0 auto;
+                padding: 50px;
                 width: 50%;
-                max-width: 520px;
-                min-width: 420px;
+                max-width: 580px;
+                min-width: 480px;
                 font-size: 14px;
                 line-height: 1.6em;
                 letter-spacing: 0.1em;
+                box-shadow: 2px 2px 4px 0px rgba(50, 50, 50, 0.3);
+                background-color: #fff;
             }
 
             form input[type="submit"] {
                 border: 1px solid #aaa;
                 padding: 10px;
                 border-radius: 3px;
-                margin: 0 auto;
-                background-color: #FFF;
+                margin: 15px auto 0px;
+                background-color: rgba(25,25,25,0.1);
                 cursor: pointer;
+                color: #777;
+                font-size: 14px;
+                transition: background-color .2s ease-out;
             }
+
+            form input[type="submit"]:hover {
+                background-color: rgba(255,255,255,0.2);
+            }
+            
         </style>
 
         <form>
