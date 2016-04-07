@@ -15,6 +15,7 @@
     <link rel="import" href="./sprout-form.html">
     <link rel="import" href="./sprout-more-info.html">
     <link rel="import" href="./sprout-footer.html">
+    <link rel="import" href="./sprout-nav.html">
 
     <style>
         html {
@@ -27,6 +28,26 @@
     </style>
   </head>
   <body>
+    <sprout-nav logo="logo.png">
+        <sprout-nav-list>
+            <sprout-nav-item href="newslist.php" text="最新消息"></sprout-nav-item>
+            <sprout-nav-item href="product.php" text="產品情報">
+                <sprout-nav-sub-list>
+                    <sprout-nav-sub-item href="product.php" text="全部產品"></sprout-nav-sub-item>
+                    <sprout-nav-sub-item href="product.php?type=s" text="外科"></sprout-nav-sub-item>
+                    <sprout-nav-sub-item href="product.php?type=i" text="內科"></sprout-nav-sub-item>
+                    <sprout-nav-sub-item href="product.php?type=r" text="關聯產品"></sprout-nav-sub-item>
+                </sprout-nav-sub-list>
+            </sprout-nav-item>
+            <sprout-nav-item href="about.php" text="企業情報"></sprout-nav-item>
+            <sprout-nav-item href="support.php" text="技術支援"></sprout-nav-item>
+            <sprout-nav-item href="contact.php" text="聯絡我們"></sprout-nav-item>
+        </sprout-nav-list>
+        
+        <sprout-nav-other-list>
+        </sprout-nav-other-list>
+    </sprout-nav>
+
     <sprout-header ch="產品情報">PRODUCT</sprout-header>
     <sprout-product-list>
         <sprout-product-item number="3" href="#" title="體外診斷試劑" img="product-col-1.png">

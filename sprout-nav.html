@@ -1,8 +1,332 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+<dom-module id="sprout-nav-other-list">
+    <template>
+        <style>
+            :host {
+                display: flex;
+                height: 50px;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 14px;
+                letter-spacing: 0.1em;
+                float: left;
+            }
+
+            a {
+                text-decoration: none;
+                color: #999;
+                border: 1px solid #999;
+                border-radius: 20px;
+                padding: 0 5px;
+                line-height: 20px;
+                margin: 0 5px;
+                transition: color 0.2s ease-out, border-color 0.2s ease-out;
+            }
+            a:hover {
+                color: #555;
+                border-color: #555;
+            }
+
+            .searchbar {
+                display: flex;
+                position: relative;
+                margin: 0 5px;
+            }
+
+            .searchbar input {
+                position: absolute;
+                top: 100%;
+                right: 0;
+                z-index: -100;
+                opacity: 0;
+                transition: opacity 0.2s ease-out;
+                font-size: 14px;
+                padding: 2px 5px;
+                margin-top: 15px;
+            }
+            .searchbar.opened input {
+                z-index: 103;
+                opacity: 1;
+            }
+            .searchbar a {
+                padding: 0 3.5px;
+                margin: 0;
+            }
+
+            .side-logo {
+                background-color: #102A7C;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 0 25px;
+                position: relative;
+                margin-left: 30px;
+            }
+            .side-logo:before {
+                content: '';
+                top: 0;
+                right: 100%;
+                height: 0;
+                width: 0;
+                border-bottom: 50px solid transparent;
+                border-right: 30px solid #102A7C;
+                position: absolute;
+            }
+        </style>
+
+        <a href="">中文</a>
+        <a href=""><i class="fa fa-facebook"></i></a>
+        <div class="searchbar">
+            <input type="text" placeholder="search" required></input>
+            <a href="#"><i class="fa fa-search"></i></a>
+        </div>
+        <div class="side-logo">
+            <img src="logo2.png" alt="" />
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-other-list',
+            ready: function() {
+                var searchbar = this.querySelector('.searchbar');
+                this.querySelector('.searchbar a').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    searchbar.classList.toggle('opened');
+                    searchbar.querySelector('input').focus();
+                });
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-nav-sub-item">
+    <template>
+        <style>
+            :host {
+                height: 100%;
+                font-size: 14px;
+                padding: 5px 30px;
+                line-height: 30px;
+                letter-spacing: 0.1em;
+                cursor: pointer;
+                position: relative;
+                background-color: #FFF;
+                white-space: nowrap;
+                text-align: center;
+                transition: box-shadow 0.2s ease-out;
+            }
+            :host ::content > a {
+                text-decoration: none;
+                color: #000;
+            }
+            :host ::content > a:hover {
+                text-decoration: none;
+            }
+            :host:hover {
+                box-shadow: 0 1px 3px 1px rgba(0,0,0,.15);
+                z-index: 102;
+            }
+        </style>
+
+        <a href$="{{href}}">{{text}}</a>
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-sub-item'
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-nav-sub-list">
+    <template>
+        <style>
+            :host {
+                display: flex;
+                z-index: -100;
+                opacity: 0;
+                height: 0;
+                overflow: hidden;
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                margin: 0 auto;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: stretch;
+                background-color: #FFF;
+                border: 1px solid #EEE;
+                border-top: 1px solid #FFF;
+                box-shadow: 0 3px 3px 1px rgba(0,0,0,.15);
+                transition: opacity 0.2s ease-out;
+            }
+            :host.opened {
+                height: auto;
+                z-index: 101;
+                opacity: 1;
+            }
+        </style>
+
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-sub-list'
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-nav-item">
+    <template>
+        <style>
+            :host {
+                height: 100%;
+                font-size: 14px;
+                padding: 0;
+                line-height: 50px;
+                letter-spacing: 0.1em;
+                cursor: pointer;
+                position: relative;
+            }
+            :host ::content > a {
+                text-decoration: none;
+                color: #000;
+                padding: 0 30px;
+                display: block;
+                height: 100%;
+            }
+            :host ::content > a:hover {
+                text-decoration: none;
+            }
+            :host:not(:last-child):after {
+                content: '';
+                position: absolute;
+                right: 0;
+                height: 14px;
+                width: 1px;
+                background-color: #999;
+                top: 0;
+                bottom: 0;
+                margin: auto 0;
+            }
+            :host:hover {
+                box-shadow: 0 1px 3px 1px rgba(0,0,0,.15);
+            }
+        </style>
+
+        <a href$="{{href}}">{{text}}</a>
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-item',
+            ready: function() {
+                var sublist = this.querySelector('sprout-nav-sub-list');
+                if (sublist) {
+                    this.addEventListener('mouseover', function(e) { return showSubList(sublist); });
+                    this.addEventListener('click', function(e) { return showSubList(sublist); });
+                    this.addEventListener('mouseout', function(e) { return hideSubList(sublist); });
+                }
+            }
+        });
+
+        var showSubList = function(sublist) {
+            sublist.classList.add('opened');
+        };
+        var hideSubList = function(sublist) {
+            sublist.classList.remove('opened');
+        }
+    </script>
+</dom-module>
+
+<dom-module id="sprout-nav-list">
+    <template>
+        <style>
+            :host {
+                display: flex;
+                align-self: flex-end;
+                height: 100%;
+                float: left;
+            }
+
+            .navbar {
+                list-style: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0;
+                margin: 0;
+                position: relative;
+            }
+        </style>
+
+        <!-- <div class="mobile menu-background"></div> -->
+        <ul class="navbar">
+            <content></content>
+        </ul>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-list'
+        });
+    </script>
+</dom-module>
+
+
 <dom-module id="sprout-nav">
     <template>
         <style>
+            nav {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 50px;
+                background-color: #FFF;
+                padding: 0px;
+                box-sizing: border-box;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 1px solid #EEE;
+                box-shadow: 0 3px 3px 1px rgba(0,0,0,.15);
+                z-index: 100;
+            }
+
+            nav .brand-logo {
+                height: 30px;
+                align-self: flex-start;
+                width: auto;
+                padding: 10px 20px;
+                display: inline-block;
+            }
+
+            .nav {
+                float: right;
+            }
         </style>
 
+        <nav>
+            <a class="brand-logo" href="index.php">
+                <img src="{{logo}}" alt="{{alt}}" />
+            </a>
+
+            <div class="nav">
+                <!-- <input type="checkbox" class="mobile" id="menu-icon" /> -->
+                <!-- <label class="mobile menu-icon" for="menu-icon"></label> -->
+
+                <content></content>
+            </div>
+        </nav>
 
     </template>
 
