@@ -6,14 +6,13 @@
 
     <title>sprout-components</title>
 
-    <!-- <script src="https://polygit.org/components/webcomponentsjs/webcomponents-lite.js"></script> -->
-
     <!-- Don't forgot jquery, if your site already have it, it's no need to include again.-->
     <script type="text/javascript" src="http://lab.25sprout.com/library/jquery/jquery-1.9.0.min.js"></script>
 
     <!-- KEY FEATURE SPROUT SLIDE -->
     <script type="text/javascript" src="sprout-slide/sprout-slide.js"></script>
     <script type="text/javascript" src="sprout-slide/jquery.touchSwipe.js"></script>
+
     <link rel="import" href="https://polygit.org/components/polymer/polymer.html">
 
     <link rel="import" class="sprout-components" href="./sprout-product-list.html" async>
@@ -59,8 +58,9 @@
             var onImportLoaded = function() {
                 loaded++;
 
-                if (loaded >= links.length || timeout >= 5) {
-                    document.body.classList.remove('loading');
+                if (loaded >= links.length || timeout >= 3) {
+                    console.log('loaded');
+                    document.body.classList.add('loaded');
                     clearInterval(timer);
                 }
                 // App is visible and ready to load some data!
@@ -81,6 +81,15 @@
     </script>
 
     <style>
+        body {
+            opacity: 0;
+        }
+        body.loaded {
+            opacity: 1;
+        }
+    </style>
+
+    <style>
         html {
             font-size: 87.5%;
         }
@@ -90,18 +99,9 @@
             width: 100vw;
             /*overflow: hidden;*/
         }
-        body.loading {
-            opacity: 0;
-        }
     </style>
   </head>
-  <body class="loading">
-    <!-- 3. Light weight splash screen is outside of Polymer/imports and styled by
-     the main page. 1st paint is fast, even on polyfilled browsers. Alternatively,
-     one could create an "app shell" and style the page's un-upgraded elements
-     similar to their final upgraded version. -->
-    <div id="splash"></div>
-
+  <body>
     <sprout-nav logo="logo.png">
         <sprout-nav-list>
             <sprout-nav-item href="newslist.php" text="最新消息"></sprout-nav-item>
