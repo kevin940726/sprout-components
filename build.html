@@ -1,0 +1,4422 @@
+<!DOCTYPE html><html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>sprout-components</title>
+
+    <!-- Don't forgot jquery, if your site already have it, it's no need to include again.-->
+    <script type="text/javascript" src="http://lab.25sprout.com/library/jquery/jquery-1.9.0.min.js"></script>
+
+    <!-- KEY FEATURE SPROUT SLIDE -->
+    <script type="text/javascript" src="sprout-slide/sprout-slide.js">$.fn.hasAttr = function(name) {  
+   return this.attr(name) !== undefined;
+};
+
+jQuery.fn.extend({
+    sproutSlide: function (settings) {
+        var windowW = $(document).width();   // returns width of browser viewport
+
+        var config = {
+            'width': windowW,
+            'slideNum': 1,
+            'duration':700,
+            'autovalue':true,
+            'interval':3000
+        };
+
+
+        if (settings){$.extend(config, settings);}
+
+        return this.each(function(){
+            // element-specific code here
+            var slider = $(this);
+            var animateLoop;
+
+            var width = parseInt(config.width);
+            var slideNum = config.slideNum;
+            var itemNum = slider.find('.sprout-slide > li').length;
+            var pageNum = Math.ceil(itemNum/slideNum);
+            var lastItemNum = itemNum%slideNum;
+            var duration = config.duration;
+            var autoplay = config.autovalue;
+            var autoInterval = config.interval;
+            var currentDot = 0;
+
+            var copyFront = false;
+            var copyEnd = false;
+            var sliderFullWidth = width* pageNum;
+
+            // //先補上空白的 li for 除不盡
+            if (lastItemNum == 0){
+                var missli = 0;
+            } else {
+                var missli = slideNum - lastItemNum;
+                for ( k = 1 ; k <= missli ; k++ ){
+                    slider.find('.sprout-slide > li:last').after('<li> </li>');
+                }
+            }
+
+            //Initial Layout
+            slider.find('.sprout-slide-wrapper').css('width', width);
+            slider.find('.sprout-slide').css('width', sliderFullWidth);
+            slider.find('.sprout-slide > li').css('width', width/slideNum);
+
+
+            //清空 舊的 page li
+            //解決：如果有重新叫同一個 sider 時出現的 兩倍 li 問題
+            slider.find('.sprout-dots').html('');
+
+            //Create Page li
+            if (pageNum > 1){
+                for( i=1 ; i <= pageNum ; i++ ){
+                    slider.find('.sprout-dots').append('<div></div>');
+                };
+
+                // SET page attr in li
+                // 可能會有需要重複呼叫 slider 針對同一個 element,
+                // 所以需要確認是否需要重新編列 Attr --> page
+                // 先算出之前有幾頁。
+                var oldpage = 0;
+                $(slider.find('.sprout-slide > li')).each(function(){
+                    if($(this).hasAttr('page')){
+                        oldpage++;
+                    }
+                });
+
+                if( oldpage == pageNum) {
+                    //如果頁數一樣的話就不重新編列
+                } else {
+                    //第一次建立這個 slider，或是頁數不一樣。
+                    slider.find('.sprout-slide > li').removeAttr('page');
+                    for( i=1 ; i <= pageNum ; i++ ){
+                        slider.find('.sprout-slide > li').eq((i-1)*slideNum).attr('page',(i-1));
+                    };
+                }
+
+
+                //Active First dots
+                slider.find('.sprout-dots div').eq(0).addClass('active');
+                //解決：如果有重新叫同一個 sider 時出現的問題，一開始要把 ul margin-left 位置 歸0; 
+                slider.find('.sprout-slide').css('margin-left','0px');
+
+                //Fade In Slider
+                slider.delay(2000).fadeIn(500);
+
+                // true --> false || true --> true 都先清掉最後一個 timer;
+                // 解決 如果第一次呼叫是 autoplay 然後再次呼叫成為不 autoplay 的錯誤;
+                clearInterval(parseInt(slider.attr('slide-loop-id')));
+
+                // //Autoplay Slider
+                if (autoplay) {
+                    restartInterval();
+                };
+            } else {
+                //slider.find('.sprout-dots').hide();
+                slider.find('.sprout-arrow').hide();
+            }
+
+            //unbind 舊的 function
+            //解決：如果有重新叫同一個 sider 時出現的 duplicated function
+            slider.find('.sprout-next').unbind("click").bind("click",nextClick);
+            slider.find('.sprout-prev').unbind("click").bind("click",prevClick);
+            slider.find('.sprout-dots div').unbind("click").bind("click",dotsClick);
+
+            //mobile touch slide
+            slider.swipe({
+                swipe:function(event, direction, distance, duration, fingerCount) {
+                    //alert("You swiped " + direction);  
+                    if (direction == 'left'){
+                        //console.debug('swipe'+animateLoop);
+                        //clearInterval(animateLoop);
+                        animateSlide('right');
+                    } else if (direction == 'right'){
+                        //console.debug('swipe'+animateLoop);
+                        //clearInterval(animateLoop);
+                        animateSlide('left');
+                    }
+                },
+                //Default is 75px, set to 0 for demo so any distance triggers swipe
+                 threshold:75
+            });
+
+            function nextClick(){
+                //console.debug('right');
+                animateSlide('right');
+            }
+            function prevClick(){
+                //console.debug('left');
+                animateSlide('left');
+            }
+            function dotsClick(){
+                //console.debug('dots');
+                if ( $(this).index() == currentDot){
+                    //console.debug('no move');
+                } else {
+                    animateSlide($(this).index());
+                }
+            }
+
+            function restartInterval(){
+                //console.debug('last-loop'+animateLoop);
+                //clearInterval(animateLoop);
+                animateLoop = setInterval(function(){animateSlide('right');},autoInterval);
+                slider.attr('slide-loop-id',animateLoop);
+                //console.debug('new-loop'+animateLoop);
+            }
+
+            function animateSlide(where){
+                //console.debug('last-loop'+animateLoop);
+                clearInterval(animateLoop);
+                slider.find('.sprout-next').unbind("click",nextClick);
+                slider.find('.sprout-prev').unbind("click",prevClick);
+                slider.find('.sprout-dots div').unbind("click",dotsClick);
+                
+                //add animateTimer function to end of animation queue
+                if (autoplay) {
+                    restartInterval();
+                };
+
+                //取得現在 active 的點, 並且移除所有 active;
+                currentDot = slider.find('.sprout-dots .active').index();
+                slider.find('.sprout-dots div').removeClass('active');
+
+                /* using a if statement and the where variable check 
+                we will check where the user wants to slide (left or right)*/  
+                if(where == 'left'){  
+                    //...calculating the new left indent of the unordered list (ul) for left sliding  
+                    var left_indent = parseInt(slider.find('.sprout-slide').css('margin-left')) + width;
+                    currentDot = currentDot-1;
+                    if (currentDot < 0){
+                        currentDot = currentDot+pageNum;
+                    }
+                } else if (where == 'right'){  
+                    //...calculating the new left indent of the unordered list (ul) for right sliding  
+                    var left_indent = parseInt(slider.find('.sprout-slide').css('margin-left')) - width;
+                    currentDot = currentDot+1;
+                    if (currentDot >= pageNum){
+                        currentDot = 0;
+                    }
+                } else {
+                    // animate to page 'where' value;
+                    //console.log('currentDot'+currentDot);
+                    //console.log('where'+where);
+                    var old_indent = parseInt(slider.find('.sprout-slide li[page="'+currentDot+'"]').offset().left);
+                    var new_indent = parseInt(slider.find('.sprout-slide li[page="'+where+'"]').offset().left);
+                    var left_indent = parseInt(slider.find('.sprout-slide').css('margin-left')) - (new_indent - old_indent);
+                    
+                    //console.log('old_indent'+old_indent);
+                    currentDot = where;
+                }
+
+                if(left_indent > 0){
+                    //alert('左邊沒了');
+                    copyFront = true;
+                    for (j = 0 ; j < slideNum*(pageNum-1) ; j++ ){
+                        slider.find('.sprout-slide > li:first').before(slider.find('.sprout-slide > li:last'));
+                    }
+                    slider.find('.sprout-slide').css('margin-left',(pageNum-1)*(-1)*width);
+                    var left_indent = parseInt(slider.find('.sprout-slide').css('margin-left')) + width;
+                } else if(left_indent <= sliderFullWidth*(-1)){
+                    //alert('右邊沒了');
+                    copyEnd = true;
+                    for (j = 0 ; j < slideNum*(pageNum-1) ; j++ ){
+                        slider.find('.sprout-slide > li:last').after(slider.find('.sprout-slide > li:first'));
+                    }
+                    slider.find('.sprout-slide').css('margin-left','0px');
+                    var left_indent = parseInt(slider.find('.sprout-slide').css('margin-left')) - width;
+                }
+
+                //make the sliding effect using jQuery's animate function... '  
+                slider.find('.sprout-slide:not(:animated)').animate({'margin-left' : left_indent},duration,function(){  
+
+                    //...and then just get back the default left indent  
+                    slider.find('.sprout-dots div:eq('+currentDot+')').addClass('active');
+
+                    if(copyFront){
+                        //恢復原狀
+                        //alert('恢復原狀copyFront');
+                        for (j = 0 ; j < slideNum ; j++ ){
+                            slider.find('.sprout-slide > li:first').before(slider.find('.sprout-slide > li:last'));
+                        }
+                        slider.find('.sprout-slide').css('margin-left',(pageNum-1)*(-1)*width);
+                        copyFront = false;
+                    } else if(copyEnd){
+                        //恢復原狀
+                        //alert('恢復原狀copyEnd');
+                        for (j = 0 ; j < slideNum ; j++ ){
+                            slider.find('.sprout-slide > li:last').after(slider.find('.sprout-slide > li:first'));
+                        }
+                        slider.find('.sprout-slide').css('margin-left','0px');
+                        copyEnd = false;
+                    } 
+
+                    slider.find('.sprout-next').bind("click",nextClick);
+                    slider.find('.sprout-prev').bind("click",prevClick);
+                    slider.find('.sprout-dots div').bind("click",dotsClick);
+                });
+            }  
+        });
+    }
+});</script>
+    <script type="text/javascript" src="sprout-slide/jquery.touchSwipe.js">/*
+* @fileOverview TouchSwipe - jQuery Plugin
+* @version 1.6.5
+*
+* @author Matt Bryson http://www.github.com/mattbryson
+* @see https://github.com/mattbryson/TouchSwipe-Jquery-Plugin
+* @see http://labs.skinkers.com/touchSwipe/
+* @see http://plugins.jquery.com/project/touchSwipe
+*
+* Copyright (c) 2010 Matt Bryson
+* Dual licensed under the MIT or GPL Version 2 licenses.
+*
+*
+* Changelog
+* $Date: 2010-12-12 (Wed, 12 Dec 2010) $
+* $version: 1.0.0
+* $version: 1.0.1 - removed multibyte comments
+*
+* $Date: 2011-21-02 (Mon, 21 Feb 2011) $
+* $version: 1.1.0 	- added allowPageScroll property to allow swiping and scrolling of page
+*					- changed handler signatures so one handler can be used for multiple events
+* $Date: 2011-23-02 (Wed, 23 Feb 2011) $
+* $version: 1.2.0 	- added click handler. This is fired if the user simply clicks and does not swipe. The event object and click target are passed to handler.
+*					- If you use the http://code.google.com/p/jquery-ui-for-ipad-and-iphone/ plugin, you can also assign jQuery mouse events to children of a touchSwipe object.
+* $version: 1.2.1 	- removed console log!
+*
+* $version: 1.2.2 	- Fixed bug where scope was not preserved in callback methods.
+*
+* $Date: 2011-28-04 (Thurs, 28 April 2011) $
+* $version: 1.2.4 	- Changed licence terms to be MIT or GPL inline with jQuery. Added check for support of touch events to stop non compatible browsers erroring.
+*
+* $Date: 2011-27-09 (Tues, 27 September 2011) $
+* $version: 1.2.5 	- Added support for testing swipes with mouse on desktop browser (thanks to https://github.com/joelhy)
+*
+* $Date: 2012-14-05 (Mon, 14 May 2012) $
+* $version: 1.2.6 	- Added timeThreshold between start and end touch, so user can ignore slow swipes (thanks to Mark Chase). Default is null, all swipes are detected
+*
+* $Date: 2012-05-06 (Tues, 05 June 2012) $
+* $version: 1.2.7 	- Changed time threshold to have null default for backwards compatibility. Added duration param passed back in events, and refactored how time is handled.
+*
+* $Date: 2012-05-06 (Tues, 05 June 2012) $
+* $version: 1.2.8 	- Added the possibility to return a value like null or false in the trigger callback. In that way we can control when the touch start/move should take effect or not (simply by returning in some cases return null; or return false;) This effects the ontouchstart/ontouchmove event.
+*
+* $Date: 2012-06-06 (Wed, 06 June 2012) $
+* $version: 1.3.0 	- Refactored whole plugin to allow for methods to be executed, as well as exposed defaults for user override. Added 'enable', 'disable', and 'destroy' methods
+*
+* $Date: 2012-05-06 (Fri, 05 June 2012) $
+* $version: 1.3.1 	- Bug fixes  - bind() with false as last argument is no longer supported in jQuery 1.6, also, if you just click, the duration is now returned correctly.
+*
+* $Date: 2012-29-07 (Sun, 29 July 2012) $
+* $version: 1.3.2	- Added fallbackToMouseEvents option to NOT capture mouse events on non touch devices.
+* 			- Added "all" fingers value to the fingers property, so any combination of fingers triggers the swipe, allowing event handlers to check the finger count
+*
+* $Date: 2012-09-08 (Thurs, 9 Aug 2012) $
+* $version: 1.3.3	- Code tidy prep for minefied version
+*
+* $Date: 2012-04-10 (wed, 4 Oct 2012) $
+* $version: 1.4.0	- Added pinch support, pinchIn and pinchOut
+*
+* $Date: 2012-11-10 (Thurs, 11 Oct 2012) $
+* $version: 1.5.0	- Added excludedElements, a jquery selector that specifies child elements that do NOT trigger swipes. By default, this is one select that removes all form, input select, button and anchor elements.
+*
+* $Date: 2012-22-10 (Mon, 22 Oct 2012) $
+* $version: 1.5.1	- Fixed bug with jQuery 1.8 and trailing comma in excludedElements
+*					- Fixed bug with IE and eventPreventDefault()
+* $Date: 2013-01-12 (Fri, 12 Jan 2013) $
+* $version: 1.6.0	- Fixed bugs with pinching, mainly when both pinch and swipe enabled, as well as adding time threshold for multifinger gestures, so releasing one finger beofre the other doesnt trigger as single finger gesture.
+*					- made the demo site all static local HTML pages so they can be run locally by a developer
+*					- added jsDoc comments and added documentation for the plugin	
+*					- code tidy
+*					- added triggerOnTouchLeave property that will end the event when the user swipes off the element.
+* $Date: 2013-03-23 (Sat, 23 Mar 2013) $
+* $version: 1.6.1	- Added support for ie8 touch events
+* $version: 1.6.2	- Added support for events binding with on / off / bind in jQ for all callback names.
+*                   - Deprecated the 'click' handler in favour of tap.
+*                   - added cancelThreshold property
+*                   - added option method to update init options at runtime
+*
+* $version 1.6.3    - added doubletap, longtap events and longTapThreshold, doubleTapThreshold property
+* $Date: 2013-04-04 (Thurs, 04 April 2013) $
+* $version 1.6.4    - Fixed bug with cancelThreshold introduced in 1.6.3, where swipe status no longer fired start event, and stopped once swiping back.
+*
+* $Date: 2013-08-24 (Sat, 24 Aug 2013) $
+* $version 1.6.5    - Merged a few pull requests fixing various bugs, added AMD support.
+
+*/
+
+/**
+ * See (http://jquery.com/).
+ * @name $
+ * @class 
+ * See the jQuery Library  (http://jquery.com/) for full details.  This just
+ * documents the function and classes that are added to jQuery by this plug-in.
+ */
+ 
+/**
+ * See (http://jquery.com/)
+ * @name fn
+ * @class 
+ * See the jQuery Library  (http://jquery.com/) for full details.  This just
+ * documents the function and classes that are added to jQuery by this plug-in.
+ * @memberOf $
+ */
+
+
+
+(function (factory) {
+    if (typeof define === 'function' && define.amd && define.amd.jQuery) {
+        // AMD. Register as anonymous module.
+        define(['jquery'], factory);
+    } else {
+        // Browser globals.
+        factory(jQuery);
+    }
+}(function ($) {
+	"use strict";
+
+	//Constants
+	var LEFT = "left",
+		RIGHT = "right",
+		UP = "up",
+		DOWN = "down",
+		IN = "in",
+		OUT = "out",
+
+		NONE = "none",
+		AUTO = "auto",
+		
+		SWIPE = "swipe",
+		PINCH = "pinch",
+		TAP = "tap",
+		DOUBLE_TAP = "doubletap",
+		LONG_TAP = "longtap",
+		
+		HORIZONTAL = "horizontal",
+		VERTICAL = "vertical",
+
+		ALL_FINGERS = "all",
+		
+		DOUBLE_TAP_THRESHOLD = 10,
+
+		PHASE_START = "start",
+		PHASE_MOVE = "move",
+		PHASE_END = "end",
+		PHASE_CANCEL = "cancel",
+
+		SUPPORTS_TOUCH = 'ontouchstart' in window,
+
+		PLUGIN_NS = 'TouchSwipe';
+
+
+
+	/**
+	* The default configuration, and available options to configure touch swipe with.
+	* You can set the default values by updating any of the properties prior to instantiation.
+	* @name $.fn.swipe.defaults
+	* @namespace
+	* @property {int} [fingers=1] The number of fingers to detect in a swipe. Any swipes that do not meet this requirement will NOT trigger swipe handlers.
+	* @property {int} [threshold=75] The number of pixels that the user must move their finger by before it is considered a swipe. 
+	* @property {int} [cancelThreshold=null] The number of pixels that the user must move their finger back from the original swipe direction to cancel the gesture.
+	* @property {int} [pinchThreshold=20] The number of pixels that the user must pinch their finger by before it is considered a pinch. 
+	* @property {int} [maxTimeThreshold=null] Time, in milliseconds, between touchStart and touchEnd must NOT exceed in order to be considered a swipe. 
+	* @property {int} [fingerReleaseThreshold=250] Time in milliseconds between releasing multiple fingers.  If 2 fingers are down, and are released one after the other, if they are within this threshold, it counts as a simultaneous release. 
+	* @property {int} [longTapThreshold=500] Time in milliseconds between tap and release for a long tap
+    * @property {int} [doubleTapThreshold=200] Time in milliseconds between 2 taps to count as a double tap
+	* @property {function} [swipe=null] A handler to catch all swipes. See {@link $.fn.swipe#event:swipe}
+	* @property {function} [swipeLeft=null] A handler that is triggered for "left" swipes. See {@link $.fn.swipe#event:swipeLeft}
+	* @property {function} [swipeRight=null] A handler that is triggered for "right" swipes. See {@link $.fn.swipe#event:swipeRight}
+	* @property {function} [swipeUp=null] A handler that is triggered for "up" swipes. See {@link $.fn.swipe#event:swipeUp}
+	* @property {function} [swipeDown=null] A handler that is triggered for "down" swipes. See {@link $.fn.swipe#event:swipeDown}
+	* @property {function} [swipeStatus=null] A handler triggered for every phase of the swipe. See {@link $.fn.swipe#event:swipeStatus}
+	* @property {function} [pinchIn=null] A handler triggered for pinch in events. See {@link $.fn.swipe#event:pinchIn}
+	* @property {function} [pinchOut=null] A handler triggered for pinch out events. See {@link $.fn.swipe#event:pinchOut}
+	* @property {function} [pinchStatus=null] A handler triggered for every phase of a pinch. See {@link $.fn.swipe#event:pinchStatus}
+	* @property {function} [tap=null] A handler triggered when a user just taps on the item, rather than swipes it. If they do not move, tap is triggered, if they do move, it is not. 
+	* @property {function} [doubleTap=null] A handler triggered when a user double taps on the item. The delay between taps can be set with the doubleTapThreshold property. See {@link $.fn.swipe.defaults#doubleTapThreshold}
+	* @property {function} [longTap=null] A handler triggered when a user long taps on the item. The delay between start and end can be set with the longTapThreshold property. See {@link $.fn.swipe.defaults#doubleTapThreshold}
+	* @property {boolean} [triggerOnTouchEnd=true] If true, the swipe events are triggered when the touch end event is received (user releases finger).  If false, it will be triggered on reaching the threshold, and then cancel the touch event automatically. 
+	* @property {boolean} [triggerOnTouchLeave=false] If true, then when the user leaves the swipe object, the swipe will end and trigger appropriate handlers. 
+	* @property {string|undefined} [allowPageScroll='auto'] How the browser handles page scrolls when the user is swiping on a touchSwipe object. See {@link $.fn.swipe.pageScroll}.  <br/><br/>
+										<code>"auto"</code> : all undefined swipes will cause the page to scroll in that direction. <br/>
+										<code>"none"</code> : the page will not scroll when user swipes. <br/>
+										<code>"horizontal"</code> : will force page to scroll on horizontal swipes. <br/>
+										<code>"vertical"</code> : will force page to scroll on vertical swipes. <br/>
+	* @property {boolean} [fallbackToMouseEvents=true] If true mouse events are used when run on a non touch device, false will stop swipes being triggered by mouse events on non tocuh devices. 
+	* @property {string} [excludedElements="button, input, select, textarea, a, .noSwipe"] A jquery selector that specifies child elements that do NOT trigger swipes. By default this excludes all form, input, select, button, anchor and .noSwipe elements. 
+	
+	*/
+	var defaults = {
+		fingers: 1, 		
+		threshold: 75, 	
+		cancelThreshold:null,	
+		pinchThreshold:20,
+		maxTimeThreshold: null, 
+		fingerReleaseThreshold:250, 
+		longTapThreshold:500,
+		doubleTapThreshold:200,
+		swipe: null, 		
+		swipeLeft: null, 	
+		swipeRight: null, 	
+		swipeUp: null, 		
+		swipeDown: null, 	
+		swipeStatus: null, 	
+		pinchIn:null,		
+		pinchOut:null,		
+		pinchStatus:null,	
+		click:null, //Deprecated since 1.6.2
+		tap:null,
+		doubleTap:null,
+		longTap:null, 		
+		triggerOnTouchEnd: true, 
+		triggerOnTouchLeave:false, 
+		allowPageScroll: "auto", 
+		fallbackToMouseEvents: true,	
+		excludedElements:"label, button, input, select, textarea, a, .noSwipe"
+	};
+
+
+
+	/**
+	* Applies TouchSwipe behaviour to one or more jQuery objects.
+	* The TouchSwipe plugin can be instantiated via this method, or methods within 
+	* TouchSwipe can be executed via this method as per jQuery plugin architecture.
+	* @see TouchSwipe
+	* @class
+	* @param {Mixed} method If the current DOMNode is a TouchSwipe object, and <code>method</code> is a TouchSwipe method, then
+	* the <code>method</code> is executed, and any following arguments are passed to the TouchSwipe method.
+	* If <code>method</code> is an object, then the TouchSwipe class is instantiated on the current DOMNode, passing the 
+	* configuration properties defined in the object. See TouchSwipe
+	*
+	*/
+	$.fn.swipe = function (method) {
+		var $this = $(this),
+			plugin = $this.data(PLUGIN_NS);
+
+		//Check if we are already instantiated and trying to execute a method	
+		if (plugin && typeof method === 'string') {
+			if (plugin[method]) {
+				return plugin[method].apply(this, Array.prototype.slice.call(arguments, 1));
+			} else {
+				$.error('Method ' + method + ' does not exist on jQuery.swipe');
+			}
+		}
+		//Else not instantiated and trying to pass init object (or nothing)
+		else if (!plugin && (typeof method === 'object' || !method)) {
+			return init.apply(this, arguments);
+		}
+
+		return $this;
+	};
+
+	//Expose our defaults so a user could override the plugin defaults
+	$.fn.swipe.defaults = defaults;
+
+	/**
+	* The phases that a touch event goes through.  The <code>phase</code> is passed to the event handlers. 
+	* These properties are read only, attempting to change them will not alter the values passed to the event handlers.
+	* @namespace
+	* @readonly
+	* @property {string} PHASE_START Constant indicating the start phase of the touch event. Value is <code>"start"</code>.
+	* @property {string} PHASE_MOVE Constant indicating the move phase of the touch event. Value is <code>"move"</code>.
+	* @property {string} PHASE_END Constant indicating the end phase of the touch event. Value is <code>"end"</code>.
+	* @property {string} PHASE_CANCEL Constant indicating the cancel phase of the touch event. Value is <code>"cancel"</code>.
+	*/
+	$.fn.swipe.phases = {
+		PHASE_START: PHASE_START,
+		PHASE_MOVE: PHASE_MOVE,
+		PHASE_END: PHASE_END,
+		PHASE_CANCEL: PHASE_CANCEL
+	};
+
+	/**
+	* The direction constants that are passed to the event handlers. 
+	* These properties are read only, attempting to change them will not alter the values passed to the event handlers.
+	* @namespace
+	* @readonly
+	* @property {string} LEFT Constant indicating the left direction. Value is <code>"left"</code>.
+	* @property {string} RIGHT Constant indicating the right direction. Value is <code>"right"</code>.
+	* @property {string} UP Constant indicating the up direction. Value is <code>"up"</code>.
+	* @property {string} DOWN Constant indicating the down direction. Value is <code>"cancel"</code>.
+	* @property {string} IN Constant indicating the in direction. Value is <code>"in"</code>.
+	* @property {string} OUT Constant indicating the out direction. Value is <code>"out"</code>.
+	*/
+	$.fn.swipe.directions = {
+		LEFT: LEFT,
+		RIGHT: RIGHT,
+		UP: UP,
+		DOWN: DOWN,
+		IN : IN,
+		OUT: OUT
+	};
+	
+	/**
+	* The page scroll constants that can be used to set the value of <code>allowPageScroll</code> option
+	* These properties are read only
+	* @namespace
+	* @readonly
+	* @see $.fn.swipe.defaults#allowPageScroll
+	* @property {string} NONE Constant indicating no page scrolling is allowed. Value is <code>"none"</code>.
+	* @property {string} HORIZONTAL Constant indicating horizontal page scrolling is allowed. Value is <code>"horizontal"</code>.
+	* @property {string} VERTICAL Constant indicating vertical page scrolling is allowed. Value is <code>"vertical"</code>.
+	* @property {string} AUTO Constant indicating either horizontal or vertical will be allowed, depending on the swipe handlers registered. Value is <code>"auto"</code>.
+	*/
+	$.fn.swipe.pageScroll = {
+		NONE: NONE,
+		HORIZONTAL: HORIZONTAL,
+		VERTICAL: VERTICAL,
+		AUTO: AUTO
+	};
+
+	/**
+	* Constants representing the number of fingers used in a swipe.  These are used to set both the value of <code>fingers</code> in the 
+	* options object, as well as the value of the <code>fingers</code> event property.
+	* These properties are read only, attempting to change them will not alter the values passed to the event handlers.
+	* @namespace
+	* @readonly
+	* @see $.fn.swipe.defaults#fingers
+	* @property {string} ONE Constant indicating 1 finger is to be detected / was detected. Value is <code>1</code>.
+	* @property {string} TWO Constant indicating 2 fingers are to be detected / were detected. Value is <code>1</code>.
+	* @property {string} THREE Constant indicating 3 finger are to be detected / were detected. Value is <code>1</code>.
+	* @property {string} ALL Constant indicating any combination of finger are to be detected.  Value is <code>"all"</code>.
+	*/
+	$.fn.swipe.fingers = {
+		ONE: 1,
+		TWO: 2,
+		THREE: 3,
+		ALL: ALL_FINGERS
+	};
+
+	/**
+	* Initialise the plugin for each DOM element matched
+	* This creates a new instance of the main TouchSwipe class for each DOM element, and then
+	* saves a reference to that instance in the elements data property.
+	* @internal
+	*/
+	function init(options) {
+		//Prep and extend the options
+		if (options && (options.allowPageScroll === undefined && (options.swipe !== undefined || options.swipeStatus !== undefined))) {
+			options.allowPageScroll = NONE;
+		}
+		
+        //Check for deprecated options
+		//Ensure that any old click handlers are assigned to the new tap, unless we have a tap
+		if(options.click!==undefined && options.tap===undefined) {
+		    options.tap = options.click;
+		}
+
+		if (!options) {
+			options = {};
+		}
+		
+        //pass empty object so we dont modify the defaults
+		options = $.extend({}, $.fn.swipe.defaults, options);
+
+		//For each element instantiate the plugin
+		return this.each(function () {
+			var $this = $(this);
+
+			//Check we havent already initialised the plugin
+			var plugin = $this.data(PLUGIN_NS);
+
+			if (!plugin) {
+				plugin = new TouchSwipe(this, options);
+				$this.data(PLUGIN_NS, plugin);
+			}
+		});
+	}
+
+	/**
+	* Main TouchSwipe Plugin Class.
+	* Do not use this to construct your TouchSwipe object, use the jQuery plugin method $.fn.swipe(); {@link $.fn.swipe}
+	* @private
+	* @name TouchSwipe
+	* @param {DOMNode} element The HTML DOM object to apply to plugin to
+	* @param {Object} options The options to configure the plugin with.  @link {$.fn.swipe.defaults}
+	* @see $.fh.swipe.defaults
+	* @see $.fh.swipe
+    * @class
+	*/
+	function TouchSwipe(element, options) {
+		var useTouchEvents = (SUPPORTS_TOUCH || !options.fallbackToMouseEvents),
+			START_EV = useTouchEvents ? 'touchstart' : 'mousedown',
+			MOVE_EV = useTouchEvents ? 'touchmove' : 'mousemove',
+			END_EV = useTouchEvents ? 'touchend' : 'mouseup',
+			LEAVE_EV = useTouchEvents ? null : 'mouseleave', //we manually detect leave on touch devices, so null event here
+			CANCEL_EV = 'touchcancel';
+
+
+
+		//touch properties
+		var distance = 0,
+			direction = null,
+			duration = 0,
+			startTouchesDistance = 0,
+			endTouchesDistance = 0,
+			pinchZoom = 1,
+			pinchDistance = 0,
+			pinchDirection = 0,
+			maximumsMap=null;
+
+		
+		
+		//jQuery wrapped element for this instance
+		var $element = $(element);
+		
+		//Current phase of th touch cycle
+		var phase = "start";
+
+		// the current number of fingers being used.
+		var fingerCount = 0; 			
+
+		//track mouse points / delta
+		var fingerData=null;
+
+		//track times
+		var startTime = 0,
+			endTime = 0,
+			previousTouchEndTime=0,
+			previousTouchFingerCount=0,
+			doubleTapStartTime=0;
+
+        //Timeouts
+        var singleTapTimeout=null;
+        
+		// Add gestures to all swipable areas if supported
+		try {
+			$element.bind(START_EV, touchStart);
+			$element.bind(CANCEL_EV, touchCancel);
+		}
+		catch (e) {
+			$.error('events not supported ' + START_EV + ',' + CANCEL_EV + ' on jQuery.swipe');
+		}
+
+		//
+		//Public methods
+		//
+		
+		/**
+		* re-enables the swipe plugin with the previous configuration
+		* @function
+		* @name $.fn.swipe#enable
+		* @return {DOMNode} The Dom element that was registered with TouchSwipe 
+		* @example $("#element").swipe("enable");
+		*/
+		this.enable = function () {
+			$element.bind(START_EV, touchStart);
+			$element.bind(CANCEL_EV, touchCancel);
+			return $element;
+		};
+
+		/**
+		* disables the swipe plugin
+		* @function
+		* @name $.fn.swipe#disable
+		* @return {DOMNode} The Dom element that is now registered with TouchSwipe
+	    * @example $("#element").swipe("disable");
+		*/
+		this.disable = function () {
+			removeListeners();
+			return $element;
+		};
+
+		/**
+		* Destroy the swipe plugin completely. To use any swipe methods, you must re initialise the plugin.
+		* @function
+		* @name $.fn.swipe#destroy
+		* @return {DOMNode} The Dom element that was registered with TouchSwipe 
+		* @example $("#element").swipe("destroy");
+		*/
+		this.destroy = function () {
+			removeListeners();
+			$element.data(PLUGIN_NS, null);
+			return $element;
+		};
+
+
+        /**
+         * Allows run time updating of the swipe configuration options.
+         * @function
+    	 * @name $.fn.swipe#option
+    	 * @param {String} property The option property to get or set
+         * @param {Object} [value] The value to set the property to
+		 * @return {Object} If only a property name is passed, then that property value is returned.
+		 * @example $("#element").swipe("option", "threshold"); // return the threshold
+         * @example $("#element").swipe("option", "threshold", 100); // set the threshold after init
+         * @see $.fn.swipe.defaults
+         *
+         */
+        this.option = function (property, value) {
+            if(options[property]!==undefined) {
+                if(value===undefined) {
+                    return options[property];
+                } else {
+                    options[property] = value;
+                }
+            } else {
+                $.error('Option ' + property + ' does not exist on jQuery.swipe.options');
+            }
+
+            return null;
+        }
+
+		//
+		// Private methods
+		//
+		
+		//
+		// EVENTS
+		//
+		/**
+		* Event handler for a touch start event.
+		* Stops the default click event from triggering and stores where we touched
+		* @inner
+		* @param {object} jqEvent The normalised jQuery event object.
+		*/
+		function touchStart(jqEvent) {
+			//If we already in a touch event (a finger already in use) then ignore subsequent ones..
+			if( getTouchInProgress() )
+				return;
+			
+			//Check if this element matches any in the excluded elements selectors,  or its parent is excluded, if so, DON'T swipe
+			if( $(jqEvent.target).closest( options.excludedElements, $element ).length>0 ) 
+				return;
+				
+			//As we use Jquery bind for events, we need to target the original event object
+			//If these events are being programmatically triggered, we don't have an original event object, so use the Jq one.
+			var event = jqEvent.originalEvent ? jqEvent.originalEvent : jqEvent;
+			
+			var ret,
+				evt = SUPPORTS_TOUCH ? event.touches[0] : event;
+
+			phase = PHASE_START;
+
+			//If we support touches, get the finger count
+			if (SUPPORTS_TOUCH) {
+				// get the total number of fingers touching the screen
+				fingerCount = event.touches.length;
+			}
+			//Else this is the desktop, so stop the browser from dragging the image
+			else {
+				jqEvent.preventDefault(); //call this on jq event so we are cross browser
+			}
+
+			//clear vars..
+			distance = 0;
+			direction = null;
+			pinchDirection=null;
+			duration = 0;
+			startTouchesDistance=0;
+			endTouchesDistance=0;
+			pinchZoom = 1;
+			pinchDistance = 0;
+			fingerData=createAllFingerData();
+			maximumsMap=createMaximumsData();
+			cancelMultiFingerRelease();
+
+			
+			// check the number of fingers is what we are looking for, or we are capturing pinches
+			if (!SUPPORTS_TOUCH || (fingerCount === options.fingers || options.fingers === ALL_FINGERS) || hasPinches()) {
+				// get the coordinates of the touch
+				createFingerData( 0, evt );
+				startTime = getTimeStamp();
+				
+				if(fingerCount==2) {
+					//Keep track of the initial pinch distance, so we can calculate the diff later
+					//Store second finger data as start
+					createFingerData( 1, event.touches[1] );
+					startTouchesDistance = endTouchesDistance = calculateTouchesDistance(fingerData[0].start, fingerData[1].start);
+				}
+				
+				if (options.swipeStatus || options.pinchStatus) {
+					ret = triggerHandler(event, phase);
+				}
+			}
+			else {
+				//A touch with more or less than the fingers we are looking for, so cancel
+				ret = false; 
+			}
+
+			//If we have a return value from the users handler, then return and cancel
+			if (ret === false) {
+				phase = PHASE_CANCEL;
+				triggerHandler(event, phase);
+				return ret;
+			}
+			else {
+				setTouchInProgress(true);
+			}
+
+            return null;
+		};
+		
+		
+		
+		/**
+		* Event handler for a touch move event. 
+		* If we change fingers during move, then cancel the event
+		* @inner
+		* @param {object} jqEvent The normalised jQuery event object.
+		*/
+		function touchMove(jqEvent) {
+			
+			//As we use Jquery bind for events, we need to target the original event object
+			//If these events are being programmatically triggered, we don't have an original event object, so use the Jq one.
+			var event = jqEvent.originalEvent ? jqEvent.originalEvent : jqEvent;
+			
+			//If we are ending, cancelling, or within the threshold of 2 fingers being released, don't track anything..
+			if (phase === PHASE_END || phase === PHASE_CANCEL || inMultiFingerRelease())
+				return;
+
+			var ret,
+				evt = SUPPORTS_TOUCH ? event.touches[0] : event;
+			
+
+			//Update the  finger data 
+			var currentFinger = updateFingerData(evt);
+			endTime = getTimeStamp();
+			
+			if (SUPPORTS_TOUCH) {
+				fingerCount = event.touches.length;
+			}
+
+			phase = PHASE_MOVE;
+
+			//If we have 2 fingers get Touches distance as well
+			if(fingerCount==2) {
+				
+				//Keep track of the initial pinch distance, so we can calculate the diff later
+				//We do this here as well as the start event, in case they start with 1 finger, and the press 2 fingers
+				if(startTouchesDistance==0) {
+					//Create second finger if this is the first time...
+					createFingerData( 1, event.touches[1] );
+					
+					startTouchesDistance = endTouchesDistance = calculateTouchesDistance(fingerData[0].start, fingerData[1].start);
+				} else {
+					//Else just update the second finger
+					updateFingerData(event.touches[1]);
+				
+					endTouchesDistance = calculateTouchesDistance(fingerData[0].end, fingerData[1].end);
+					pinchDirection = calculatePinchDirection(fingerData[0].end, fingerData[1].end);
+				}
+				
+				
+				pinchZoom = calculatePinchZoom(startTouchesDistance, endTouchesDistance);
+				pinchDistance = Math.abs(startTouchesDistance - endTouchesDistance);
+			}
+			
+			
+			if ( (fingerCount === options.fingers || options.fingers === ALL_FINGERS) || !SUPPORTS_TOUCH || hasPinches() ) {
+				
+				direction = calculateDirection(currentFinger.start, currentFinger.end);
+				
+				//Check if we need to prevent default event (page scroll / pinch zoom) or not
+				validateDefaultEvent(jqEvent, direction);
+
+				//Distance and duration are all off the main finger
+				distance = calculateDistance(currentFinger.start, currentFinger.end);
+				duration = calculateDuration();
+
+                //Cache the maximum distance we made in this direction
+                setMaxDistance(direction, distance);
+
+
+				if (options.swipeStatus || options.pinchStatus) {
+					ret = triggerHandler(event, phase);
+				}
+				
+				
+				//If we trigger end events when threshold are met, or trigger events when touch leaves element
+				if(!options.triggerOnTouchEnd || options.triggerOnTouchLeave) {
+					
+					var inBounds = true;
+					
+					//If checking if we leave the element, run the bounds check (we can use touchleave as its not supported on webkit)
+					if(options.triggerOnTouchLeave) {
+						var bounds = getbounds( this );
+						inBounds = isInBounds( currentFinger.end, bounds );
+					}
+					
+					//Trigger end handles as we swipe if thresholds met or if we have left the element if the user has asked to check these..
+					if(!options.triggerOnTouchEnd && inBounds) {
+						phase = getNextPhase( PHASE_MOVE );
+					} 
+					//We end if out of bounds here, so set current phase to END, and check if its modified 
+					else if(options.triggerOnTouchLeave && !inBounds ) {
+						phase = getNextPhase( PHASE_END );
+					}
+						
+					if(phase==PHASE_CANCEL || phase==PHASE_END)	{
+						triggerHandler(event, phase);
+					}				
+				}
+			}
+			else {
+				phase = PHASE_CANCEL;
+				triggerHandler(event, phase);
+			}
+
+			if (ret === false) {
+				phase = PHASE_CANCEL;
+				triggerHandler(event, phase);
+			}
+		}
+
+
+
+		/**
+		* Event handler for a touch end event. 
+		* Calculate the direction and trigger events
+		* @inner
+		* @param {object} jqEvent The normalised jQuery event object.
+		*/
+		function touchEnd(jqEvent) {
+			//As we use Jquery bind for events, we need to target the original event object
+			var event = jqEvent.originalEvent;
+				
+
+			//If we are still in a touch with another finger return
+			//This allows us to wait a fraction and see if the other finger comes up, if it does within the threshold, then we treat it as a multi release, not a single release.
+			if (SUPPORTS_TOUCH) {
+				if(event.touches.length>0) {
+					startMultiFingerRelease();
+					return true;
+				}
+			}
+			
+			//If a previous finger has been released, check how long ago, if within the threshold, then assume it was a multifinger release.
+			//This is used to allow 2 fingers to release fractionally after each other, whilst maintainig the event as containg 2 fingers, not 1
+			if(inMultiFingerRelease()) {	
+				fingerCount=previousTouchFingerCount;
+			}	
+				 
+			//call this on jq event so we are cross browser 
+			jqEvent.preventDefault(); 
+			
+			//Set end of swipe
+			endTime = getTimeStamp();
+			
+			//Get duration incase move was never fired
+			duration = calculateDuration();
+			
+			//If we trigger handlers at end of swipe OR, we trigger during, but they didnt trigger and we are still in the move phase
+			if(didSwipeBackToCancel()) {
+			    phase = PHASE_CANCEL;
+                triggerHandler(event, phase);
+			} else if (options.triggerOnTouchEnd || (options.triggerOnTouchEnd == false && phase === PHASE_MOVE)) {
+				phase = PHASE_END;
+                triggerHandler(event, phase);
+			}
+			//Special cases - A tap should always fire on touch end regardless,
+			//So here we manually trigger the tap end handler by itself
+			//We dont run trigger handler as it will re-trigger events that may have fired already
+			else if (!options.triggerOnTouchEnd && hasTap()) {
+                //Trigger the pinch events...
+			    phase = PHASE_END;
+			    triggerHandlerForGesture(event, phase, TAP);
+			}
+			else if (phase === PHASE_MOVE) {
+				phase = PHASE_CANCEL;
+				triggerHandler(event, phase);
+			}
+
+			setTouchInProgress(false);
+
+            return null;
+		}
+
+
+
+		/**
+		* Event handler for a touch cancel event. 
+		* Clears current vars
+		* @inner
+		*/
+		function touchCancel() {
+			// reset the variables back to default values
+			fingerCount = 0;
+			endTime = 0;
+			startTime = 0;
+			startTouchesDistance=0;
+			endTouchesDistance=0;
+			pinchZoom=1;
+			
+			//If we were in progress of tracking a possible multi touch end, then re set it.
+			cancelMultiFingerRelease();
+			
+			setTouchInProgress(false);
+		}
+		
+		
+		/**
+		* Event handler for a touch leave event. 
+		* This is only triggered on desktops, in touch we work this out manually
+		* as the touchleave event is not supported in webkit
+		* @inner
+		*/
+		function touchLeave(jqEvent) {
+			var event = jqEvent.originalEvent;
+			
+			//If we have the trigger on leave property set....
+			if(options.triggerOnTouchLeave) {
+				phase = getNextPhase( PHASE_END );
+				triggerHandler(event, phase);
+			}
+		}
+		
+		/**
+		* Removes all listeners that were associated with the plugin
+		* @inner
+		*/
+		function removeListeners() {
+			$element.unbind(START_EV, touchStart);
+			$element.unbind(CANCEL_EV, touchCancel);
+			$element.unbind(MOVE_EV, touchMove);
+			$element.unbind(END_EV, touchEnd);
+			
+			//we only have leave events on desktop, we manually calculate leave on touch as its not supported in webkit
+			if(LEAVE_EV) { 
+				$element.unbind(LEAVE_EV, touchLeave);
+			}
+			
+			setTouchInProgress(false);
+		}
+
+		
+		/**
+		 * Checks if the time and distance thresholds have been met, and if so then the appropriate handlers are fired.
+		 */
+		function getNextPhase(currentPhase) {
+			
+			var nextPhase = currentPhase;
+			
+			// Ensure we have valid swipe (under time and over distance  and check if we are out of bound...)
+			var validTime = validateSwipeTime();
+			var validDistance = validateSwipeDistance();
+			var didCancel = didSwipeBackToCancel();
+						
+			//If we have exceeded our time, then cancel	
+			if(!validTime || didCancel) {
+				nextPhase = PHASE_CANCEL;
+			}
+			//Else if we are moving, and have reached distance then end
+			else if (validDistance && currentPhase == PHASE_MOVE && (!options.triggerOnTouchEnd || options.triggerOnTouchLeave) ) {
+				nextPhase = PHASE_END;
+			} 
+			//Else if we have ended by leaving and didn't reach distance, then cancel
+			else if (!validDistance && currentPhase==PHASE_END && options.triggerOnTouchLeave) {
+				nextPhase = PHASE_CANCEL;
+			}
+			
+			return nextPhase;
+		}
+		
+		
+		/**
+		* Trigger the relevant event handler
+		* The handlers are passed the original event, the element that was swiped, and in the case of the catch all handler, the direction that was swiped, "left", "right", "up", or "down"
+		* @param {object} event the original event object
+		* @param {string} phase the phase of the swipe (start, end cancel etc) {@link $.fn.swipe.phases}
+		* @inner
+		*/
+		function triggerHandler(event, phase) {
+			
+			var ret = undefined;
+			
+			// SWIPE GESTURES
+			if(didSwipe() || hasSwipes()) { //hasSwipes as status needs to fire even if swipe is invalid
+				//Trigger the swipe events...
+				ret = triggerHandlerForGesture(event, phase, SWIPE);
+			} 
+			
+			// PINCH GESTURES (if the above didn't cancel)
+			else if((didPinch() || hasPinches()) && ret!==false) {
+				//Trigger the pinch events...
+				ret = triggerHandlerForGesture(event, phase, PINCH);
+			}
+			
+			// CLICK / TAP (if the above didn't cancel)
+			if(didDoubleTap() && ret!==false) {
+				//Trigger the tap events...
+				ret = triggerHandlerForGesture(event, phase, DOUBLE_TAP);
+			}
+			
+			// CLICK / TAP (if the above didn't cancel)
+			else if(didLongTap() && ret!==false) {
+				//Trigger the tap events...
+				ret = triggerHandlerForGesture(event, phase, LONG_TAP);
+			}
+
+			// CLICK / TAP (if the above didn't cancel)
+			else if(didTap() && ret!==false) {
+				//Trigger the tap event..
+				ret = triggerHandlerForGesture(event, phase, TAP);
+	    	}
+			
+			
+			
+			// If we are cancelling the gesture, then manually trigger the reset handler
+			if (phase === PHASE_CANCEL) {
+				touchCancel(event);
+			}
+			
+			// If we are ending the gesture, then manually trigger the reset handler IF all fingers are off
+			if(phase === PHASE_END) {
+				//If we support touch, then check that all fingers are off before we cancel
+				if (SUPPORTS_TOUCH) {
+					if(event.touches.length==0) {
+						touchCancel(event);	
+					}
+				} 
+				else {
+					touchCancel(event);
+				}
+			}
+					
+			return ret;
+		}
+		
+		
+		
+		/**
+		* Trigger the relevant event handler
+		* The handlers are passed the original event, the element that was swiped, and in the case of the catch all handler, the direction that was swiped, "left", "right", "up", or "down"
+		* @param {object} event the original event object
+		* @param {string} phase the phase of the swipe (start, end cancel etc) {@link $.fn.swipe.phases}
+		* @param {string} gesture the gesture to trigger a handler for : PINCH or SWIPE {@link $.fn.swipe.gestures}
+		* @return Boolean False, to indicate that the event should stop propagation, or void.
+		* @inner
+		*/
+		function triggerHandlerForGesture(event, phase, gesture) {	
+			
+			var ret=undefined;
+			
+			//SWIPES....
+			if(gesture==SWIPE) {
+				//Trigger status every time..
+				
+				//Trigger the event...
+				$element.trigger('swipeStatus', [phase, direction || null, distance || 0, duration || 0, fingerCount]);
+				
+				//Fire the callback
+				if (options.swipeStatus) {
+					ret = options.swipeStatus.call($element, event, phase, direction || null, distance || 0, duration || 0, fingerCount);
+					//If the status cancels, then dont run the subsequent event handlers..
+					if(ret===false) return false;
+				}
+				
+				
+				
+				
+				if (phase == PHASE_END && validateSwipe()) {
+					//Fire the catch all event
+					$element.trigger('swipe', [direction, distance, duration, fingerCount]);
+					
+					//Fire catch all callback
+					if (options.swipe) {
+						ret = options.swipe.call($element, event, direction, distance, duration, fingerCount);
+						//If the status cancels, then dont run the subsequent event handlers..
+						if(ret===false) return false;
+					}
+					
+					//trigger direction specific event handlers	
+					switch (direction) {
+						case LEFT:
+							//Trigger the event
+							$element.trigger('swipeLeft', [direction, distance, duration, fingerCount]);
+					
+					        //Fire the callback
+							if (options.swipeLeft) {
+								ret = options.swipeLeft.call($element, event, direction, distance, duration, fingerCount);
+							}
+							break;
+	
+						case RIGHT:
+							//Trigger the event
+					        $element.trigger('swipeRight', [direction, distance, duration, fingerCount]);
+					
+					        //Fire the callback
+							if (options.swipeRight) {
+								ret = options.swipeRight.call($element, event, direction, distance, duration, fingerCount);
+							}
+							break;
+	
+						case UP:
+							//Trigger the event
+					        $element.trigger('swipeUp', [direction, distance, duration, fingerCount]);
+					
+					        //Fire the callback
+							if (options.swipeUp) {
+								ret = options.swipeUp.call($element, event, direction, distance, duration, fingerCount);
+							}
+							break;
+	
+						case DOWN:
+							//Trigger the event
+					        $element.trigger('swipeDown', [direction, distance, duration, fingerCount]);
+					
+					        //Fire the callback
+							if (options.swipeDown) {
+								ret = options.swipeDown.call($element, event, direction, distance, duration, fingerCount);
+							}
+							break;
+					}
+				}
+			}
+			
+			
+			//PINCHES....
+			if(gesture==PINCH) {
+				//Trigger the event
+			     $element.trigger('pinchStatus', [phase, pinchDirection || null, pinchDistance || 0, duration || 0, fingerCount, pinchZoom]);
+					
+                //Fire the callback
+				if (options.pinchStatus) {
+					ret = options.pinchStatus.call($element, event, phase, pinchDirection || null, pinchDistance || 0, duration || 0, fingerCount, pinchZoom);
+					//If the status cancels, then dont run the subsequent event handlers..
+					if(ret===false) return false;
+				}
+				
+				if(phase==PHASE_END && validatePinch()) {
+					
+					switch (pinchDirection) {
+						case IN:
+							//Trigger the event
+                            $element.trigger('pinchIn', [pinchDirection || null, pinchDistance || 0, duration || 0, fingerCount, pinchZoom]);
+                    
+                            //Fire the callback
+                            if (options.pinchIn) {
+								ret = options.pinchIn.call($element, event, pinchDirection || null, pinchDistance || 0, duration || 0, fingerCount, pinchZoom);
+							}
+							break;
+						
+						case OUT:
+							//Trigger the event
+                            $element.trigger('pinchOut', [pinchDirection || null, pinchDistance || 0, duration || 0, fingerCount, pinchZoom]);
+                    
+                            //Fire the callback
+                            if (options.pinchOut) {
+								ret = options.pinchOut.call($element, event, pinchDirection || null, pinchDistance || 0, duration || 0, fingerCount, pinchZoom);
+							}
+							break;	
+					}
+				}
+			}
+			
+
+
+                
+	    		
+			if(gesture==TAP) {
+				if(phase === PHASE_CANCEL || phase === PHASE_END) {
+					
+    			    
+    			    //Cancel any existing double tap
+				    clearTimeout(singleTapTimeout);
+				           
+					//If we are also looking for doubelTaps, wait incase this is one...
+				    if(hasDoubleTap() && !inDoubleTap()) {
+				        //Cache the time of this tap
+                        doubleTapStartTime = getTimeStamp();
+                       
+				        //Now wait for the double tap timeout, and trigger this single tap
+				        //if its not cancelled by a double tap
+				        singleTapTimeout = setTimeout($.proxy(function() {
+        			        doubleTapStartTime=null;
+        			        //Trigger the event
+                            $element.trigger('tap', [event.target]);
+
+                        
+                            //Fire the callback
+                            if(options.tap) {
+                                ret = options.tap.call($element, event, event.target);
+                            }
+    			        }, this), options.doubleTapThreshold );
+    			    	
+    			    } else {
+                        doubleTapStartTime=null;
+                        
+                        //Trigger the event
+                        $element.trigger('tap', [event.target]);
+
+                        
+                        //Fire the callback
+                        if(options.tap) {
+                            ret = options.tap.call($element, event, event.target);
+                        }
+	    		    }
+	    		}
+			}
+			
+			else if (gesture==DOUBLE_TAP) {
+				if(phase === PHASE_CANCEL || phase === PHASE_END) {
+					//Cancel any pending singletap 
+				    clearTimeout(singleTapTimeout);
+				    doubleTapStartTime=null;
+				        
+                    //Trigger the event
+                    $element.trigger('doubletap', [event.target]);
+                
+                    //Fire the callback
+                    if(options.doubleTap) {
+                        ret = options.doubleTap.call($element, event, event.target);
+                    }
+	    		}
+			}
+			
+			else if (gesture==LONG_TAP) {
+				if(phase === PHASE_CANCEL || phase === PHASE_END) {
+					//Cancel any pending singletap (shouldnt be one)
+				    clearTimeout(singleTapTimeout);
+				    doubleTapStartTime=null;
+				        
+                    //Trigger the event
+                    $element.trigger('longtap', [event.target]);
+                
+                    //Fire the callback
+                    if(options.longTap) {
+                        ret = options.longTap.call($element, event, event.target);
+                    }
+	    		}
+			}				
+				
+			return ret;
+		}
+
+
+
+		
+		//
+		// GESTURE VALIDATION
+		//
+		
+		/**
+		* Checks the user has swipe far enough
+		* @return Boolean if <code>threshold</code> has been set, return true if the threshold was met, else false.
+		* If no threshold was set, then we return true.
+		* @inner
+		*/
+		function validateSwipeDistance() {
+			var valid = true;
+			//If we made it past the min swipe distance..
+			if (options.threshold !== null) {
+				valid = distance >= options.threshold;
+			}
+			
+            return valid;
+		}
+		
+		/**
+		* Checks the user has swiped back to cancel.
+		* @return Boolean if <code>cancelThreshold</code> has been set, return true if the cancelThreshold was met, else false.
+		* If no cancelThreshold was set, then we return true.
+		* @inner
+		*/
+		function didSwipeBackToCancel() {
+            var cancelled = false;
+    		if(options.cancelThreshold !== null && direction !==null)  {
+    		    cancelled =  (getMaxDistance( direction ) - distance) >= options.cancelThreshold;
+			}
+			
+			return cancelled;
+		}
+
+		/**
+		* Checks the user has pinched far enough
+		* @return Boolean if <code>pinchThreshold</code> has been set, return true if the threshold was met, else false.
+		* If no threshold was set, then we return true.
+		* @inner
+		*/
+		function validatePinchDistance() {
+			if (options.pinchThreshold !== null) {
+				return pinchDistance >= options.pinchThreshold;
+			}
+			return true;
+		}
+
+		/**
+		* Checks that the time taken to swipe meets the minimum / maximum requirements
+		* @return Boolean
+		* @inner
+		*/
+		function validateSwipeTime() {
+			var result;
+			//If no time set, then return true
+
+			if (options.maxTimeThreshold) {
+				if (duration >= options.maxTimeThreshold) {
+					result = false;
+				} else {
+					result = true;
+				}
+			}
+			else {
+				result = true;
+			}
+
+			return result;
+		}
+
+
+		/**
+		* Checks direction of the swipe and the value allowPageScroll to see if we should allow or prevent the default behaviour from occurring.
+		* This will essentially allow page scrolling or not when the user is swiping on a touchSwipe object.
+		* @param {object} jqEvent The normalised jQuery representation of the event object.
+		* @param {string} direction The direction of the event. See {@link $.fn.swipe.directions}
+		* @see $.fn.swipe.directions
+		* @inner
+		*/
+		function validateDefaultEvent(jqEvent, direction) {
+			if (options.allowPageScroll === NONE || hasPinches()) {
+				jqEvent.preventDefault();
+			} else {
+				var auto = options.allowPageScroll === AUTO;
+
+				switch (direction) {
+					case LEFT:
+						if ((options.swipeLeft && auto) || (!auto && options.allowPageScroll != HORIZONTAL)) {
+							jqEvent.preventDefault();
+						}
+						break;
+
+					case RIGHT:
+						if ((options.swipeRight && auto) || (!auto && options.allowPageScroll != HORIZONTAL)) {
+							jqEvent.preventDefault();
+						}
+						break;
+
+					case UP:
+						if ((options.swipeUp && auto) || (!auto && options.allowPageScroll != VERTICAL)) {
+							jqEvent.preventDefault();
+						}
+						break;
+
+					case DOWN:
+						if ((options.swipeDown && auto) || (!auto && options.allowPageScroll != VERTICAL)) {
+							jqEvent.preventDefault();
+						}
+						break;
+				}
+			}
+
+		}
+
+
+		// PINCHES
+		/**
+		 * Returns true of the current pinch meets the thresholds
+		 * @return Boolean
+		 * @inner
+		*/
+		function validatePinch() {
+		    var hasCorrectFingerCount = validateFingers();
+		    var hasEndPoint = validateEndPoint();
+			var hasCorrectDistance = validatePinchDistance();
+			return hasCorrectFingerCount && hasEndPoint && hasCorrectDistance;
+			
+		}
+		
+		/**
+		 * Returns true if any Pinch events have been registered
+		 * @return Boolean
+		 * @inner
+		*/
+		function hasPinches() {
+			//Enure we dont return 0 or null for false values
+			return !!(options.pinchStatus || options.pinchIn || options.pinchOut);
+		}
+		
+		/**
+		 * Returns true if we are detecting pinches, and have one
+		 * @return Boolean
+		 * @inner
+		 */
+		function didPinch() {
+			//Enure we dont return 0 or null for false values
+			return !!(validatePinch() && hasPinches());
+		}
+
+
+
+
+		// SWIPES
+		/**
+		 * Returns true if the current swipe meets the thresholds
+		 * @return Boolean
+		 * @inner
+		*/
+		function validateSwipe() {
+			//Check validity of swipe
+			var hasValidTime = validateSwipeTime();
+			var hasValidDistance = validateSwipeDistance();	
+			var hasCorrectFingerCount = validateFingers();
+		    var hasEndPoint = validateEndPoint();
+		    var didCancel = didSwipeBackToCancel();	
+		    
+			// if the user swiped more than the minimum length, perform the appropriate action
+			// hasValidDistance is null when no distance is set 
+			var valid =  !didCancel && hasEndPoint && hasCorrectFingerCount && hasValidDistance && hasValidTime;
+			
+			return valid;
+		}
+		
+		/**
+		 * Returns true if any Swipe events have been registered
+		 * @return Boolean
+		 * @inner
+		*/
+		function hasSwipes() {
+			//Enure we dont return 0 or null for false values
+			return !!(options.swipe || options.swipeStatus || options.swipeLeft || options.swipeRight || options.swipeUp || options.swipeDown);
+		}
+		
+		
+		/**
+		 * Returns true if we are detecting swipes and have one
+		 * @return Boolean
+		 * @inner
+		*/
+		function didSwipe() {
+			//Enure we dont return 0 or null for false values
+			return !!(validateSwipe() && hasSwipes());
+		}
+
+        /**
+		 * Returns true if we have matched the number of fingers we are looking for
+		 * @return Boolean
+		 * @inner
+		*/
+        function validateFingers() {
+            //The number of fingers we want were matched, or on desktop we ignore
+    		return ((fingerCount === options.fingers || options.fingers === ALL_FINGERS) || !SUPPORTS_TOUCH);
+    	}
+        
+        /**
+		 * Returns true if we have an end point for the swipe
+		 * @return Boolean
+		 * @inner
+		*/
+        function validateEndPoint() {
+            //We have an end value for the finger
+		    return fingerData[0].end.x !== 0;
+        }
+
+		// TAP / CLICK
+		/**
+		 * Returns true if a click / tap events have been registered
+		 * @return Boolean
+		 * @inner
+		*/
+		function hasTap() {
+			//Enure we dont return 0 or null for false values
+			return !!(options.tap) ;
+		}
+		
+		/**
+		 * Returns true if a double tap events have been registered
+		 * @return Boolean
+		 * @inner
+		*/
+		function hasDoubleTap() {
+			//Enure we dont return 0 or null for false values
+			return !!(options.doubleTap) ;
+		}
+		
+		/**
+		 * Returns true if any long tap events have been registered
+		 * @return Boolean
+		 * @inner
+		*/
+		function hasLongTap() {
+			//Enure we dont return 0 or null for false values
+			return !!(options.longTap) ;
+		}
+		
+		/**
+		 * Returns true if we could be in the process of a double tap (one tap has occurred, we are listening for double taps, and the threshold hasn't past.
+		 * @return Boolean
+		 * @inner
+		*/
+		function validateDoubleTap() {
+		    if(doubleTapStartTime==null){
+		        return false;
+		    }
+		    var now = getTimeStamp();
+		    return (hasDoubleTap() && ((now-doubleTapStartTime) <= options.doubleTapThreshold));
+		}
+		
+		/**
+		 * Returns true if we could be in the process of a double tap (one tap has occurred, we are listening for double taps, and the threshold hasn't past.
+		 * @return Boolean
+		 * @inner
+		*/
+		function inDoubleTap() {
+		    return validateDoubleTap();
+		}
+		
+		
+		/**
+		 * Returns true if we have a valid tap
+		 * @return Boolean
+		 * @inner
+		*/
+		function validateTap() {
+		    return ((fingerCount === 1 || !SUPPORTS_TOUCH) && (isNaN(distance) || distance === 0));
+		}
+		
+		/**
+		 * Returns true if we have a valid long tap
+		 * @return Boolean
+		 * @inner
+		*/
+		function validateLongTap() {
+		    //slight threshold on moving finger
+            return ((duration > options.longTapThreshold) && (distance < DOUBLE_TAP_THRESHOLD)); 
+		}
+		
+		/**
+		 * Returns true if we are detecting taps and have one
+		 * @return Boolean
+		 * @inner
+		*/
+		function didTap() {
+		    //Enure we dont return 0 or null for false values
+			return !!(validateTap() && hasTap());
+		}
+		
+		
+		/**
+		 * Returns true if we are detecting double taps and have one
+		 * @return Boolean
+		 * @inner
+		*/
+		function didDoubleTap() {
+		    //Enure we dont return 0 or null for false values
+			return !!(validateDoubleTap() && hasDoubleTap());
+		}
+		
+		/**
+		 * Returns true if we are detecting long taps and have one
+		 * @return Boolean
+		 * @inner
+		*/
+		function didLongTap() {
+		    //Enure we dont return 0 or null for false values
+			return !!(validateLongTap() && hasLongTap());
+		}
+		
+		
+		
+		
+		// MULTI FINGER TOUCH
+		/**
+		 * Starts tracking the time between 2 finger releases, and keeps track of how many fingers we initially had up
+		 * @inner
+		*/
+		function startMultiFingerRelease() {
+			previousTouchEndTime = getTimeStamp();
+			previousTouchFingerCount = event.touches.length+1;
+		}
+		
+		/**
+		 * Cancels the tracking of time between 2 finger releases, and resets counters
+		 * @inner
+		*/
+		function cancelMultiFingerRelease() {
+			previousTouchEndTime = 0;
+			previousTouchFingerCount = 0;
+		}
+		
+		/**
+		 * Checks if we are in the threshold between 2 fingers being released 
+		 * @return Boolean
+		 * @inner
+		*/
+		function inMultiFingerRelease() {
+			
+			var withinThreshold = false;
+			
+			if(previousTouchEndTime) {	
+				var diff = getTimeStamp() - previousTouchEndTime	
+				if( diff<=options.fingerReleaseThreshold ) {
+					withinThreshold = true;
+				}
+			}
+			
+			return withinThreshold;	
+		}
+		
+
+		/**
+		* gets a data flag to indicate that a touch is in progress
+		* @return Boolean
+		* @inner
+		*/
+		function getTouchInProgress() {
+			//strict equality to ensure only true and false are returned
+			return !!($element.data(PLUGIN_NS+'_intouch') === true);
+		}
+		
+		/**
+		* Sets a data flag to indicate that a touch is in progress
+		* @param {boolean} val The value to set the property to
+		* @inner
+		*/
+		function setTouchInProgress(val) {
+			
+			//Add or remove event listeners depending on touch status
+			if(val===true) {
+				$element.bind(MOVE_EV, touchMove);
+				$element.bind(END_EV, touchEnd);
+				
+				//we only have leave events on desktop, we manually calcuate leave on touch as its not supported in webkit
+				if(LEAVE_EV) { 
+					$element.bind(LEAVE_EV, touchLeave);
+				}
+			} else {
+				$element.unbind(MOVE_EV, touchMove, false);
+				$element.unbind(END_EV, touchEnd, false);
+			
+				//we only have leave events on desktop, we manually calcuate leave on touch as its not supported in webkit
+				if(LEAVE_EV) { 
+					$element.unbind(LEAVE_EV, touchLeave, false);
+				}
+			}
+			
+		
+			//strict equality to ensure only true and false can update the value
+			$element.data(PLUGIN_NS+'_intouch', val === true);
+		}
+		
+		
+		/**
+		 * Creates the finger data for the touch/finger in the event object.
+		 * @param {int} index The index in the array to store the finger data (usually the order the fingers were pressed)
+		 * @param {object} evt The event object containing finger data
+		 * @return finger data object
+		 * @inner
+		*/
+		function createFingerData( index, evt ) {
+			var id = evt.identifier!==undefined ? evt.identifier : 0; 
+			
+			fingerData[index].identifier = id;
+			fingerData[index].start.x = fingerData[index].end.x = evt.pageX||evt.clientX;
+			fingerData[index].start.y = fingerData[index].end.y = evt.pageY||evt.clientY;
+			
+			return fingerData[index];
+		}
+		
+		/**
+		 * Updates the finger data for a particular event object
+		 * @param {object} evt The event object containing the touch/finger data to upadte
+		 * @return a finger data object.
+		 * @inner
+		*/
+		function updateFingerData(evt) {
+			
+			var id = evt.identifier!==undefined ? evt.identifier : 0; 
+			var f = getFingerData( id );
+			
+			f.end.x = evt.pageX||evt.clientX;
+			f.end.y = evt.pageY||evt.clientY;
+			
+			return f;
+		}
+		
+		/**
+		 * Returns a finger data object by its event ID.
+		 * Each touch event has an identifier property, which is used 
+		 * to track repeat touches
+		 * @param {int} id The unique id of the finger in the sequence of touch events.
+		 * @return a finger data object.
+		 * @inner
+		*/
+		function getFingerData( id ) {
+			for(var i=0; i<fingerData.length; i++) {
+				if(fingerData[i].identifier == id) {
+					return fingerData[i];	
+				}
+			}
+		}
+		
+		/**
+		 * Creats all the finger onjects and returns an array of finger data
+		 * @return Array of finger objects
+		 * @inner
+		*/
+		function createAllFingerData() {
+			var fingerData=[];
+			for (var i=0; i<=5; i++) {
+				fingerData.push({
+					start:{ x: 0, y: 0 },
+					end:{ x: 0, y: 0 },
+					identifier:0
+				});
+			}
+			
+			return fingerData;
+		}
+		
+		/**
+		 * Sets the maximum distance swiped in the given direction. 
+		 * If the new value is lower than the current value, the max value is not changed.
+		 * @param {string}  direction The direction of the swipe
+		 * @param {int}  distance The distance of the swipe
+		 * @inner
+		*/
+		function setMaxDistance(direction, distance) {
+    		distance = Math.max(distance, getMaxDistance(direction) );
+    		maximumsMap[direction].distance = distance;
+		}
+        
+        /**
+		 * gets the maximum distance swiped in the given direction. 
+		 * @param {string}  direction The direction of the swipe
+		 * @return int  The distance of the swipe
+		 * @inner
+		*/        
+		function getMaxDistance(direction) {
+			if (maximumsMap[direction]) return maximumsMap[direction].distance;
+			return undefined;
+		}
+		
+		/**
+		 * Creats a map of directions to maximum swiped values.
+		 * @return Object A dictionary of maximum values, indexed by direction.
+		 * @inner
+		*/
+		function createMaximumsData() {
+			var maxData={};
+			maxData[LEFT]=createMaximumVO(LEFT);
+			maxData[RIGHT]=createMaximumVO(RIGHT);
+			maxData[UP]=createMaximumVO(UP);
+			maxData[DOWN]=createMaximumVO(DOWN);
+			
+			return maxData;
+		}
+		
+		/**
+		 * Creates a map maximum swiped values for a given swipe direction
+		 * @param {string} The direction that these values will be associated with
+		 * @return Object Maximum values
+		 * @inner
+		*/
+		function createMaximumVO(dir) {
+		    return { 
+		        direction:dir, 
+		        distance:0
+		    }
+		}
+		
+		
+		//
+		// MATHS / UTILS
+		//
+
+		/**
+		* Calculate the duration of the swipe
+		* @return int
+		* @inner
+		*/
+		function calculateDuration() {
+			return endTime - startTime;
+		}
+		
+		/**
+		* Calculate the distance between 2 touches (pinch)
+		* @param {point} startPoint A point object containing x and y co-ordinates
+	    * @param {point} endPoint A point object containing x and y co-ordinates
+	    * @return int;
+		* @inner
+		*/
+		function calculateTouchesDistance(startPoint, endPoint) {
+			var diffX = Math.abs(startPoint.x - endPoint.x);
+			var diffY = Math.abs(startPoint.y - endPoint.y);
+				
+			return Math.round(Math.sqrt(diffX*diffX+diffY*diffY));
+		}
+		
+		/**
+		* Calculate the zoom factor between the start and end distances
+		* @param {int} startDistance Distance (between 2 fingers) the user started pinching at
+	    * @param {int} endDistance Distance (between 2 fingers) the user ended pinching at
+	    * @return float The zoom value from 0 to 1.
+		* @inner
+		*/
+		function calculatePinchZoom(startDistance, endDistance) {
+			var percent = (endDistance/startDistance) * 1;
+			return percent.toFixed(2);
+		}
+		
+		
+		/**
+		* Returns the pinch direction, either IN or OUT for the given points
+		* @return string Either {@link $.fn.swipe.directions.IN} or {@link $.fn.swipe.directions.OUT}
+		* @see $.fn.swipe.directions
+		* @inner
+		*/
+		function calculatePinchDirection() {
+			if(pinchZoom<1) {
+				return OUT;
+			}
+			else {
+				return IN;
+			}
+		}
+		
+		
+		/**
+		* Calculate the length / distance of the swipe
+		* @param {point} startPoint A point object containing x and y co-ordinates
+	    * @param {point} endPoint A point object containing x and y co-ordinates
+	    * @return int
+		* @inner
+		*/
+		function calculateDistance(startPoint, endPoint) {
+			return Math.round(Math.sqrt(Math.pow(endPoint.x - startPoint.x, 2) + Math.pow(endPoint.y - startPoint.y, 2)));
+		}
+
+		/**
+		* Calculate the angle of the swipe
+		* @param {point} startPoint A point object containing x and y co-ordinates
+	    * @param {point} endPoint A point object containing x and y co-ordinates
+	    * @return int
+		* @inner
+		*/
+		function calculateAngle(startPoint, endPoint) {
+			var x = startPoint.x - endPoint.x;
+			var y = endPoint.y - startPoint.y;
+			var r = Math.atan2(y, x); //radians
+			var angle = Math.round(r * 180 / Math.PI); //degrees
+
+			//ensure value is positive
+			if (angle < 0) {
+				angle = 360 - Math.abs(angle);
+			}
+
+			return angle;
+		}
+
+		/**
+		* Calculate the direction of the swipe
+		* This will also call calculateAngle to get the latest angle of swipe
+		* @param {point} startPoint A point object containing x and y co-ordinates
+	    * @param {point} endPoint A point object containing x and y co-ordinates
+	    * @return string Either {@link $.fn.swipe.directions.LEFT} / {@link $.fn.swipe.directions.RIGHT} / {@link $.fn.swipe.directions.DOWN} / {@link $.fn.swipe.directions.UP}
+		* @see $.fn.swipe.directions
+		* @inner
+		*/
+		function calculateDirection(startPoint, endPoint ) {
+			var angle = calculateAngle(startPoint, endPoint);
+
+			if ((angle <= 45) && (angle >= 0)) {
+				return LEFT;
+			} else if ((angle <= 360) && (angle >= 315)) {
+				return LEFT;
+			} else if ((angle >= 135) && (angle <= 225)) {
+				return RIGHT;
+			} else if ((angle > 45) && (angle < 135)) {
+				return DOWN;
+			} else {
+				return UP;
+			}
+		}
+		
+
+		/**
+		* Returns a MS time stamp of the current time
+		* @return int
+		* @inner
+		*/
+		function getTimeStamp() {
+			var now = new Date();
+			return now.getTime();
+		}
+		
+		
+		
+		/**
+		 * Returns a bounds object with left, right, top and bottom properties for the element specified.
+		 * @param {DomNode} The DOM node to get the bounds for.
+		 */
+		function getbounds( el ) {
+			el = $(el);
+			var offset = el.offset();
+			
+			var bounds = {	
+					left:offset.left,
+					right:offset.left+el.outerWidth(),
+					top:offset.top,
+					bottom:offset.top+el.outerHeight()
+					}
+			
+			return bounds;	
+		}
+		
+		
+		/**
+		 * Checks if the point object is in the bounds object.
+		 * @param {object} point A point object.
+		 * @param {int} point.x The x value of the point.
+		 * @param {int} point.y The x value of the point.
+		 * @param {object} bounds The bounds object to test
+		 * @param {int} bounds.left The leftmost value
+		 * @param {int} bounds.right The righttmost value
+		 * @param {int} bounds.top The topmost value
+		* @param {int} bounds.bottom The bottommost value
+		 */
+		function isInBounds(point, bounds) {
+			return (point.x > bounds.left && point.x < bounds.right && point.y > bounds.top && point.y < bounds.bottom);
+		};
+	
+	
+	}
+	
+	
+
+
+/**
+ * A catch all handler that is triggered for all swipe directions. 
+ * @name $.fn.swipe#swipe
+ * @event
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {int} direction The direction the user swiped in. See {@link $.fn.swipe.directions}
+ * @param {int} distance The distance the user swiped
+ * @param {int} duration The duration of the swipe in milliseconds
+ * @param {int} fingerCount The number of fingers used. See {@link $.fn.swipe.fingers}
+ */
+ 
+
+
+
+/**
+ * A handler that is triggered for "left" swipes.
+ * @name $.fn.swipe#swipeLeft
+ * @event
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {int} direction The direction the user swiped in. See {@link $.fn.swipe.directions}
+ * @param {int} distance The distance the user swiped
+ * @param {int} duration The duration of the swipe in milliseconds
+ * @param {int} fingerCount The number of fingers used. See {@link $.fn.swipe.fingers}
+ */
+ 
+/**
+ * A handler that is triggered for "right" swipes.
+ * @name $.fn.swipe#swipeRight
+ * @event
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {int} direction The direction the user swiped in. See {@link $.fn.swipe.directions}
+ * @param {int} distance The distance the user swiped
+ * @param {int} duration The duration of the swipe in milliseconds
+ * @param {int} fingerCount The number of fingers used. See {@link $.fn.swipe.fingers}
+ */
+
+/**
+ * A handler that is triggered for "up" swipes.
+ * @name $.fn.swipe#swipeUp
+ * @event
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {int} direction The direction the user swiped in. See {@link $.fn.swipe.directions}
+ * @param {int} distance The distance the user swiped
+ * @param {int} duration The duration of the swipe in milliseconds
+ * @param {int} fingerCount The number of fingers used. See {@link $.fn.swipe.fingers}
+ */
+ 
+/**
+ * A handler that is triggered for "down" swipes.
+ * @name $.fn.swipe#swipeDown
+ * @event
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {int} direction The direction the user swiped in. See {@link $.fn.swipe.directions}
+ * @param {int} distance The distance the user swiped
+ * @param {int} duration The duration of the swipe in milliseconds
+ * @param {int} fingerCount The number of fingers used. See {@link $.fn.swipe.fingers}
+ */
+ 
+/**
+ * A handler triggered for every phase of the swipe. This handler is constantly fired for the duration of the pinch.
+ * This is triggered regardless of swipe thresholds.
+ * @name $.fn.swipe#swipeStatus
+ * @event
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {string} phase The phase of the swipe event. See {@link $.fn.swipe.phases}
+ * @param {string} direction The direction the user swiped in. This is null if the user has yet to move. See {@link $.fn.swipe.directions}
+ * @param {int} distance The distance the user swiped. This is 0 if the user has yet to move.
+ * @param {int} duration The duration of the swipe in milliseconds
+ * @param {int} fingerCount The number of fingers used. See {@link $.fn.swipe.fingers}
+ */
+ 
+/**
+ * A handler triggered for pinch in events.
+ * @name $.fn.swipe#pinchIn
+ * @event
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {int} direction The direction the user pinched in. See {@link $.fn.swipe.directions}
+ * @param {int} distance The distance the user pinched
+ * @param {int} duration The duration of the swipe in milliseconds
+ * @param {int} fingerCount The number of fingers used. See {@link $.fn.swipe.fingers}
+ * @param {int} zoom The zoom/scale level the user pinched too, 0-1.
+ */
+
+/**
+ * A handler triggered for pinch out events.
+ * @name $.fn.swipe#pinchOut
+ * @event
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {int} direction The direction the user pinched in. See {@link $.fn.swipe.directions}
+ * @param {int} distance The distance the user pinched
+ * @param {int} duration The duration of the swipe in milliseconds
+ * @param {int} fingerCount The number of fingers used. See {@link $.fn.swipe.fingers}
+ * @param {int} zoom The zoom/scale level the user pinched too, 0-1.
+ */ 
+
+/**
+ * A handler triggered for all pinch events. This handler is constantly fired for the duration of the pinch. This is triggered regardless of thresholds.
+ * @name $.fn.swipe#pinchStatus
+ * @event
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {int} direction The direction the user pinched in. See {@link $.fn.swipe.directions}
+ * @param {int} distance The distance the user pinched
+ * @param {int} duration The duration of the swipe in milliseconds
+ * @param {int} fingerCount The number of fingers used. See {@link $.fn.swipe.fingers}
+ * @param {int} zoom The zoom/scale level the user pinched too, 0-1.
+ */
+
+/**
+ * A click handler triggered when a user simply clicks, rather than swipes on an element.
+ * This is deprecated since version 1.6.2, any assignment to click will be assigned to the tap handler.
+ * You cannot use <code>on</code> to bind to this event as the default jQ <code>click</code> event will be triggered.
+ * Use the <code>tap</code> event instead.
+ * @name $.fn.swipe#click
+ * @event
+ * @deprecated since version 1.6.2, please use {@link $.fn.swipe#tap} instead 
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {DomObject} target The element clicked on.
+ */
+ 
+ /**
+ * A click / tap handler triggered when a user simply clicks or taps, rather than swipes on an element.
+ * @name $.fn.swipe#tap
+ * @event
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {DomObject} target The element clicked on.
+ */
+ 
+/**
+ * A double tap handler triggered when a user double clicks or taps on an element.
+ * You can set the time delay for a double tap with the {@link $.fn.swipe.defaults#doubleTapThreshold} property. 
+ * Note: If you set both <code>doubleTap</code> and <code>tap</code> handlers, the <code>tap</code> event will be delayed by the <code>doubleTapThreshold</code>
+ * as the script needs to check if its a double tap.
+ * @name $.fn.swipe#doubleTap
+ * @see  $.fn.swipe.defaults#doubleTapThreshold
+ * @event
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {DomObject} target The element clicked on.
+ */
+ 
+ /**
+ * A long tap handler triggered when a user long clicks or taps on an element.
+ * You can set the time delay for a long tap with the {@link $.fn.swipe.defaults#longTapThreshold} property. 
+ * @name $.fn.swipe#longTap
+ * @see  $.fn.swipe.defaults#longTapThreshold
+ * @event
+ * @default null
+ * @param {EventObject} event The original event object
+ * @param {DomObject} target The element clicked on.
+ */
+
+}));
+</script>
+
+    <script src="https://polygit.org/components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="https://polygit.org/components/polymer/polymer.html">
+
+    
+
+    <style>
+        body {
+            /*opacity: 0;*/
+        }
+        body.loaded {
+            opacity: 1;
+        }
+    </style>
+
+    <style>
+        html {
+            font-size: 87.5%;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            /*overflow: hidden;*/
+
+        }
+    </style>
+  </head>
+  <body><div hidden="" by-vulcanize=""><dom-module id="sprout-product-item" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-flex: 1;-webkit-flex: 1;-ms-flex: 1;flex: 1;
+            }
+            .product {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                width: 100%;
+                padding: 0 20px;
+                box-sizing: border-box;
+                font-size: 1rem;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                -webkit-flex-flow: column;
+                    -ms-flex-flow: column;
+                        flex-flow: column;
+                letter-spacing: 0.1em;
+                line-height: 1.6em;
+            }
+
+            .col-img {
+                position: relative;
+                height: 140px;
+                width: 140px;
+                margin: 0 auto;
+                border: 1px solid #fff;
+                cursor: pointer;
+                -webkit-transform: scale(0.9, 0.9);
+                        transform: scale(0.9, 0.9);
+                -webkit-transition: -webkit-transform .5s;
+                transition: -webkit-transform .5s;
+                transition: transform .5s;
+                transition: transform .5s, -webkit-transform .5s;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-pack: center;
+                -webkit-justify-content: center;
+                -ms-flex-pack: center;
+                        justify-content: center;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                -ms-flex-align: center;
+                        align-items: center;
+            }
+
+            .col-img:hover {
+                -webkit-transform: scale(1.0, 1.0);
+                        transform: scale(1.0, 1.0);
+            }
+
+            a,
+            a:hover {
+                text-decoration: none;
+            }
+
+            h3 {
+                color: #444;
+            }
+
+            h3:hover {
+                color: #999;
+            }
+
+            p {
+                color: #666;
+                max-width: 100%;
+            }
+
+            @media screen and (max-width: 1130px) and (min-width: 765px) {
+                :host {
+                    -webkit-flex-basis: var(--percent-of-item, 33.3%);
+                        -ms-flex-preferred-size: var(--percent-of-item, 33.3%);
+                            flex-basis: var(--percent-of-item, 33.3%);
+                }
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    -webkit-flex-basis: 100%;
+                        -ms-flex-preferred-size: 100%;
+                            flex-basis: 100%;
+                }
+            }
+        </style>
+
+        <div class="product">
+            <a href$="{{href}}" class="col-img"><img src$="{{img}}"></a>
+            <a href$="{{href}}"><h3>{{title}}</h3></a>
+            <p>
+                <content></content>
+            </p>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-product-item',
+            properties: {
+                number: {
+                    type: Number,
+                    value: 3
+                }
+            },
+            resizeEvent: function() {
+                this.customStyle['--percent-of-item'] = 100 / this.number + "%";
+                this.updateStyles();
+            },
+            ready: function() {
+                this.resizeEvent();
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-product-list" assetpath="/">
+
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                position: relative;
+                -webkit-box-pack: start;
+                -webkit-justify-content: flex-start;
+                    -ms-flex-pack: start;
+                        justify-content: flex-start;
+                -webkit-box-align: start;-webkit-align-items: flex-start;-ms-flex-align: start;-ms-grid-row-align: flex-start;align-items: flex-start;
+                -webkit-flex-wrap: wrap;
+                    -ms-flex-wrap: wrap;
+                        flex-wrap: wrap;
+            }
+        </style>
+
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-product-list'
+        });
+    </script>
+
+</dom-module>
+<dom-module id="sprout-news-item" assetpath="/">
+    <template>
+        <style>
+            :host {
+                width: 100%;
+                border-bottom: 1px solid #ccc;
+                height: 50px;
+                position: relative;
+                padding: 10px 0;
+                box-sizing: border-box;
+                color: #555;
+                line-height: 24px;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: -webkit-box;
+                display: flex;
+                -webkit-align-items: center;
+                -ms-flex-align: center;
+                -webkit-box-align: center;
+                        align-items: center;
+                -webkit-justify-content: space-between;
+                -ms-flex-pack: justify;
+                -webkit-box-pack: justify;
+                        justify-content: space-between;
+                letter-spacing: 0.1em;
+            }
+            :host:first-of-type {
+                border-top: 1px solid #777;
+            }
+
+            .date {
+                color: #999;
+                font-size: 12px;
+                min-width: 110px;
+            }
+            .category {
+                min-width: 130px;
+                background-color: #C2C2C2;
+                color: #FFF;
+                height: 25px;
+                line-height: 25px;
+                font-size: 12px;
+                text-align: center;
+                -webkit-transition: box-shadow .2s ease-out;
+                transition: box-shadow .2s ease-out;
+                -webkit-box-ordinal-group: 4;-webkit-order: 3;-ms-flex-order: 3;order: 3;
+                float: right;
+            }
+            .category.hot {
+                background-color: #3949AB;
+            }
+            .category.event {
+                background-color: #1A2371;
+            }
+            .category.product {
+                background-color: #aaa;
+            }
+            .category.information {
+                background-color: #555555;
+            }
+            .category:hover {
+               /* box-shadow: 0 3px 6px rgba(0,0,0,.16),0 3px 6px rgba(0,0,0,.23);*/
+            }
+            :host ::content > a {
+                text-decoration: none;
+                -webkit-transition: color .2s ease-out;
+                transition: color .2s ease-out;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                -webkit-box-flex: 1;
+                -webkit-flex-grow: 1;
+                    -ms-flex-positive: 1;
+                        flex-grow: 1;
+                color: inherit;
+                cursor: pointer;
+            }
+            :host ::content > a:hover {
+                color: #222;
+                font-weight: 800;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    display: block;
+                    height: auto;
+                }
+                :host ::content > a {
+                    display: block;
+                }
+                .date {
+                    display: inline-block;
+                }
+            }
+        </style>
+
+        <div class="date">{{date}}</div>
+        <div class$="category {{toLowerCase(tag)}}">{{toUpperCase(tag)}}</div>
+        <a href$="{{href}}"><content></content></a>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-news-item',
+            properties: {
+                tag: {
+                    type: String
+                }
+            },
+            toLowerCase: function(str) {
+                return str.toLowerCase();
+            },
+            toUpperCase: function(str) {
+                return str.toUpperCase();
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-news-list" assetpath="/">
+
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-flow: column;
+                    -ms-flex-flow: column;
+                        flex-flow: column;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                width: 100%;
+                background-color: #fff;
+                padding: 30px;
+                margin: 0 auto;
+                box-sizing: border-box;
+                font-size: 14px;
+                max-width: 950px;
+                z-index: -1;
+                color: #777;
+                font-weight: 200;
+                box-shadow: 2px 2px 4px 0 rgba(50,50,50,.3);
+                line-height: 1.6em;
+            }
+            .more {
+                border: 1px solid #eee;
+                padding: 5px 10px;
+                margin-top: 13px;
+                box-sizing: border-box;
+                -webkit-align-self: flex-end;
+                    -ms-flex-item-align: end;
+                        align-self: flex-end;
+                -webkit-transition: color .3s,background-color .3s,border .7s;
+                transition: color .3s,background-color .3s,border .7s;
+                text-decoration: none;
+                color: inherit;
+            }
+            .more:hover {
+                text-decoration: none;
+                background-color: #eee;
+                border: 1px solid #999;
+                color: #222;
+            }
+        </style>
+
+        <content></content>
+        <a class="more" href$="{{more}}">more</a>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-news-list'
+        });
+    </script>
+
+</dom-module>
+<dom-module id="sprout-header" assetpath="/">
+    <template>
+        <style>
+            :host {
+                text-align: center;
+                font-size: 28px;
+                letter-spacing: 2px;
+                color: #777;
+                margin-bottom: 40px;
+                margin-top: 40px;
+                position: relative;
+                font-family: Oswald,sans-serif;
+                font-weight: 600;
+                display: block;
+            }
+
+            span {
+                font-size: 14px;
+                display: block;
+                font-weight: lighter;
+                font-family: sans-serif;
+            }
+        </style>
+
+        <content></content>
+        <span>－{{ch}}－</span>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-header'
+        });
+    </script>
+</dom-module>
+<dom-module id="sprout-input-group" assetpath="/">
+    <template>
+        <style>
+            :host {
+                width: 100%;
+            }
+            label {
+                display: flex;
+                margin: 6px 0px;
+                align-items: center;
+                width: 100%;
+            }
+            label p {
+                width: 120px;
+                text-align: right;
+                margin: 0px;
+                margin-right: 15px;
+            }
+            :host:last-of-type p {
+                align-self: flex-start;
+            }
+            a {
+                border: 1px solid #aaa;
+                padding: 10px;
+                border-radius: 3px;
+                margin: 0 auto;
+            }
+          
+
+            :host ::content input, :host ::content textarea {
+                flex-grow: 1;
+                border-radius: 3px;
+                border: 1px solid #ccc;
+                font-size: 14px;
+                padding: 3px 6px;
+                box-sizing: border-box;
+            }
+            :host ::content input {
+                height: 26px;
+            }
+            :host ::content textarea {
+                height: 200px;
+            }
+            :host ::content .item {
+                width: auto;
+            }
+            :host ::content .item input {
+                margin: 0px 6px 0px 12px;
+                height: 16px;
+                padding: 0px;
+                box-sizing: border-box;
+            }
+        </style>
+
+        <label>
+            <p class="input-type">{{label}}</p>
+            <content></content>
+        </label>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-input-group',
+            properties: {
+                type: {
+                    type: String,
+                    value: "text"
+                }
+            }
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-form" assetpath="/">
+    <template>
+        <style>
+            form {
+                color: #777;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                align-items: center;
+                margin: 0 auto;
+                padding: 50px;
+                width: 50%;
+                max-width: 580px;
+                min-width: 480px;
+                font-size: 14px;
+                line-height: 1.6em;
+                letter-spacing: 0.1em;
+                box-shadow: 2px 2px 4px 0px rgba(50, 50, 50, 0.3);
+                background-color: #fff;
+            }
+
+            form input[type="submit"] {
+                border: 1px solid #aaa;
+                padding: 10px;
+                border-radius: 3px;
+                margin: 15px auto 0px;
+                background-color: rgba(25,25,25,0.1);
+                cursor: pointer;
+                color: #777;
+                font-size: 14px;
+                transition: background-color .2s ease-out;
+            }
+
+            form input[type="submit"]:hover {
+                background-color: rgba(255,255,255,0.2);
+            }
+            
+        </style>
+        
+        <sprout-header ch="留下訊息">MESSAGE</sprout-header>
+        <form>
+            <sprout-input-group label="單位名稱">
+                <input type="text">
+            </sprout-input-group>
+            <sprout-input-group label="聯絡人姓名">
+                <input type="text">
+            </sprout-input-group>
+            <sprout-input-group label="聯絡人手機號碼">
+                <input type="tel">
+            </sprout-input-group>
+            <sprout-input-group label="聯絡人email">
+                <input type="email">
+            </sprout-input-group>
+            <sprout-input-group label="產品編號">
+                <input type="text">
+            </sprout-input-group>
+            <sprout-input-group label="聯絡事由">
+                <label class="item"><input type="radio" name="vehicle" value="askPrice">詢價</label>
+                <label class="item"><input type="radio" name="vehicle" value="help">技術支援</label>
+                <label class="item"><input type="radio" name="vehicle" value="demo">Demo</label>
+                <label class="item"><input type="radio" name="vehicle" value="demo">其他</label>
+            </sprout-input-group>
+            <sprout-input-group label="其他問題與建議">
+                <textarea></textarea>
+            </sprout-input-group>
+    
+            <input type="submit" value="送出訊息">
+        </form>    
+        
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-form'
+        });
+    </script>
+</dom-module>
+<dom-module id="sprout-contact-info" assetpath="/">
+    <template>
+        <style>
+            :host ::content > div {
+                width: 100%;
+            }
+            :host ::content .service {
+                width: 100%;
+            }
+
+            :host ::content h5 {
+                font-size: 14px;
+                color: #fff;
+                text-align: left;
+                margin: 0 0 10px;
+            }
+
+            :host ::content > div p {
+                font-size: 12px;
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+        </style>
+
+        <div class="info">
+            <h4>－{{title}}－</h4>
+            <content></content>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-contact-info'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-info" assetpath="/">
+    <template>
+        <div class="info">
+            <h4>－{{title}}－</h4>
+            <p><content></content></p>
+            <a href$="{{href}}" class="more">瞭解更多</a>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-info'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-more-info" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                width: 100%;
+            }
+
+            :host ::content > * {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-flex: 1;
+                -webkit-flex-grow: 1;
+                    -ms-flex-positive: 1;
+                        flex-grow: 1;
+                -webkit-flex-basis: 33.33%;
+                    -ms-flex-preferred-size: 33.33%;
+                        flex-basis: 33.33%;
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-position: center bottom;
+            }
+            :host ::content .info {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                width: 100%;
+                padding: 40px 60px;
+                box-sizing: border-box;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                -webkit-flex-direction: column;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+                -webkit-box-pack: start;
+                -webkit-justify-content: flex-start;
+                    -ms-flex-pack: start;
+                        justify-content: flex-start;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                position: relative;
+                letter-spacing: 0.1em;
+                line-height: 1.6em;
+            }
+            :host ::content h4 {
+                font-size: 18px;
+                color: #eee;
+                margin-bottom: 26px;
+                margin-top: 0;
+                font-weight: 200;
+            }
+            :host ::content p {
+                color: #ccc;
+                margin: 5px 0 50px;
+                font-size: 14px;
+                max-width: 100%;
+            }
+            :host ::content .more {
+                text-align: center;
+                position: absolute;
+                left: 0;
+                right: 0;
+                margin: auto;
+                bottom: 30px;
+                border: 1px solid #fff;
+                padding: 10px 20px;
+                width: 130px;
+                color: #FFF;
+                font-size: 14px;
+                opacity: .3;
+                cursor: pointer;
+                -webkit-transition: all 1s ease-out, background-color .2s ease-out;
+                transition: all 1s ease-out, background-color .2s ease-out;
+            }
+            :host ::content .more:hover {
+                background-color: #444;
+                opacity: 0.9;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    -webkit-flex-wrap: wrap;
+                        -ms-flex-wrap: wrap;
+                            flex-wrap: wrap;
+                }
+                :host ::content > * {
+                    -webkit-flex-basis: 100%;
+                        -ms-flex-preferred-size: 100%;
+                            flex-basis: 100%;
+                }
+            }
+        </style>
+
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-more-info'
+        });
+    </script>
+</dom-module>
+<dom-module id="sprout-footer-logo" assetpath="/">
+    <template>
+        <style>
+            :host {
+                position: absolute;
+                bottom: 40px;
+                right: 8%;
+                text-align: right;
+            }
+
+            ul {
+                -webkit-align-self: flex-end;
+                    -ms-flex-item-align: end;
+                        align-self: flex-end;
+                padding: 0;
+                margin: 0;
+                margin-top: 15px;
+                list-style: none;
+                color: #999;
+                font-size: 12px;
+            }
+
+            ul > li {
+                margin-top: 0px;
+            }
+
+            a {
+                text-decoration: none;
+                color: #999;
+                -webkit-transition: color 0.2s ease-out;
+                transition: color 0.2s ease-out;
+            }
+            a:hover {
+                text-decoration: none;
+                color: #FFF;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    position: relative;
+                    bottom: auto;
+                    right: auto;
+                    text-align: center;
+                }
+            }
+        </style>
+
+		<ul>
+			<li>
+                <img src$="{{logo}}">
+				<a href="http://www.olympus.com.tw/zh/" target="_blank">Taiwan</a> |
+				<a href="http://www.olympus.co.jp/jp/" target="_blank">Japan</a> |
+				<a href="http://www.olympus-global.com/en/" target="_blank">Goobal</a>
+			</li>
+			<li>© 2015 YUANYU Group CO., LTD. All Rights Reserved.</li>
+		</ul>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-footer-logo'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-footer-split" assetpath="/">
+    <template>
+        <style>
+            :host {
+                height: 100%;
+                width: 1px;
+                background-color: #FFF;
+                position: absolute;
+            }
+        </style>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-footer-split'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-footer-list" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-flex: 1;
+                -webkit-flex-grow: 1;
+                    -ms-flex-positive: 1;
+                        flex-grow: 1;
+            }
+            ul {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                list-style: none;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                -webkit-flex-direction: column;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+                padding: 0;
+                margin: 0;
+            }
+
+            .title {
+                color: #FFF;
+                text-decoration: none;
+                font-size: 1em;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            .title:hover {
+                text-decoration: none;
+            }
+
+            :host ::content ul > a, :host ::content ul > li {
+                color: #CCC;
+                text-decoration: none;
+                -webkit-transition: color 0.2s ease-out;
+                transition: color 0.2s ease-out;
+                display: inline-block;
+            }
+            :host ::content ul > a:hover, :host ::content ul > li:hover {
+                text-decoration: none;
+                color: #FFF;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host.desktop {
+                    display: none;
+                }
+
+
+                :host {
+                    -webkit-box-flex: 0;
+                    -webkit-flex-grow: 0;
+                        -ms-flex-positive: 0;
+                            flex-grow: 0;
+                }
+                ul {
+                    -webkit-box-orient: horizontal;
+                    -webkit-box-direction: normal;
+                    -webkit-flex-direction: row;
+                        -ms-flex-direction: row;
+                            flex-direction: row;
+                }
+                :host ::content ul > a, :host ::content ul > li {
+                    margin: 0 10px;
+                }
+            }
+        </style>
+
+        <ul class$="{{class}}">
+            <template is="dom-if" if="{{title}}">
+                <a href$="{{href}}" class="title">{{title}}</a>
+            </template>
+            <content></content>
+        </ul>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-footer-list'
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-footer" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: block;
+                width: 100%;
+                padding: 40px 8%;
+                box-sizing: border-box;
+                background-color: #444;
+                position: relative;
+            }
+
+            .footer-content {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                width: 100%;
+                max-width: 900px;
+                font-size: 14px;
+                letter-spacing: 0.1em;
+                line-height: 1.6em;
+                -webkit-justify-content: space-around;
+                    -ms-flex-pack: distribute;
+                        justify-content: space-around;
+                -webkit-box-align: stretch;
+                -webkit-align-items: stretch;
+                    -ms-flex-align: stretch;
+                        align-items: stretch;
+                position: relative;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    display: -webkit-box;
+                    display: -webkit-flex;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -webkit-box-orient: vertical;
+                    -webkit-box-direction: normal;
+                    -webkit-flex-direction: column;
+                        -ms-flex-direction: column;
+                            flex-direction: column;
+                    padding: 40px 20px;
+                }
+                .footer-content {
+                    -webkit-box-pack: center;
+                    -webkit-justify-content: center;
+                        -ms-flex-pack: center;
+                            justify-content: center;
+                    -webkit-box-align: center;
+                    -webkit-align-items: center;
+                        -ms-flex-align: center;
+                                -ms-grid-row-align: center;
+                            align-items: center;
+                }
+            }
+        </style>
+
+        <div class="footer-content">
+            <content></content>
+        </div>
+        <sprout-footer-logo logo="{{logo}}"></sprout-footer-logo>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-footer'
+        });
+    </script>
+</dom-module>
+<dom-module id="sprout-slider-item" assetpath="/">
+    <template>
+        <style>
+			:host li {
+				list-style-type: none;
+				float: left;
+				margin:0px !important;
+				padding:0px !important;
+				min-height: 10px;
+				text-align: center;
+				position: relative;
+			}
+			:host li img {
+				max-width: 100%;
+			}
+
+        </style>
+		<li><img src$="{{img}}"></li>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-slider-item',
+    //         ready: function() {
+    //         	$('#slide1').sproutSlide({
+				// 	// 'width': 1000,		// Slide Visible content width;		//Default (960)
+				// 	'slideNum': 1,		// One Page Slide li number;		//Default (4)
+				// 	'duration':700,		// Animation Speed;			//Default (700)
+				// 	'autovalue':true,	// Auto play control (true/false);	//Default (true)
+				// 	'interval':4000		// Auto play interval;			//Default (3000)
+				// });
+    //         }
+        });
+    </script>
+</dom-module>
+
+
+
+<dom-module id="sprout-slider" assetpath="/">
+    <template>
+        <style>
+			.sprout-slide-container{
+				width: 100%;
+				overflow: hidden;
+				/*display: none;*/
+				clear: both;
+				position: relative;
+				padding-bottom: 3px;
+				margin: 0px auto;
+				margin-top: 49px;
+				max-height: 370px;
+			}
+			.sprout-slide-container ul{
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+			}
+
+			.sprout-slide-container ul li{
+				list-style-type: none;
+				float: left;
+				margin:0px !important;
+				padding:0px !important;
+				min-height: 10px;
+				text-align: center;
+				position: relative;
+			}
+
+			.sprout-slide-container ul li img{
+				max-width: 100%;
+			}
+
+			.sprout-slide-wrapper{
+				overflow: hidden;
+				margin: 0px auto;
+			}
+
+			.sprout-arrow > div{
+				position: absolute;
+				top: 40%;
+				width: 45px;
+				height: 45px;
+				cursor: pointer;
+			}
+			.sprout-arrow .sprout-prev{ left: 0px; background-image: url("sprout-slide/img/prev.png");}
+			.sprout-arrow .sprout-next{	right: 0px; background-image: url("sprout-slide/img/next.png");}
+
+			.sprout-dots {
+				width: 100%;
+				margin: 15px auto;
+				overflow:hidden;
+				text-align: center;
+			}
+
+			.sprout-dots div {
+				width: 11px;
+				height: 11px;
+				margin: 0px 5px;
+				border-radius: 11px;
+				background: #cccccc;
+				box-shadow:#fff 1px 1px 0px;
+				cursor: pointer;
+				display: inline-block;
+			}
+
+			.sprout-dots div.active{
+				background: #A2C54D;
+			}
+
+
+        </style>
+
+		<div class="sprout-slide-container" id="slide1">
+			<div class="sprout-slide-wrapper">
+				<ul class="sprout-slide">
+
+					<li><img src="images/product-head-2.jpg"></li>
+			        <li><img src="images/product-head-3.jpg"></li>
+			        <li><img src="images/product-head-4.jpg"></li>
+			        <li><img src="images/product-head-5.jpg"></li>
+					
+					<content></content>
+				</ul>
+			</div>
+			<div class="sprout-arrow">
+				<div class="sprout-prev"></div>
+				<div class="sprout-next"></div>
+			</div>
+			<div class="sprout-dots">
+			</div>
+		</div>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-slider',
+            ready: function() {
+            	$('#slide1').sproutSlide({
+					// 'width': 1000,		// Slide Visible content width;		//Default (960)
+					'slideNum': 1,		// One Page Slide li number;		//Default (4)
+					'duration':700,		// Animation Speed;			//Default (700)
+					'autovalue':true,	// Auto play control (true/false);	//Default (true)
+					'interval':4000		// Auto play interval;			//Default (3000)
+				});
+            }
+        });
+    </script>
+</dom-module>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+<dom-module id="sprout-nav-other-list" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                height: 50px;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                font-size: 14px;
+                letter-spacing: 0.1em;
+                float: left;
+            }
+            @media (max-width: 1024px) {
+                :host {
+                    display: none;
+                }
+            }
+
+            a {
+                text-decoration: none;
+                color: #999;
+                border: 1px solid #999;
+                border-radius: 20px;
+                padding: 0 5px;
+                line-height: 20px;
+                margin: 0 5px;
+                -webkit-transition: color 0.2s ease-out, border-color 0.2s ease-out;
+                transition: color 0.2s ease-out, border-color 0.2s ease-out;
+            }
+            a:hover {
+                color: #555;
+                border-color: #555;
+            }
+
+            .searchbar {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                position: relative;
+                margin: 0 5px;
+            }
+
+            .searchbar input {
+                position: absolute;
+                left: -2px;
+                top: 0;
+                bottom: 0;
+                margin: auto 0;
+                height: 20px;
+                width: 20px;
+                border: 1px solid #999;
+                border-radius: 20px;
+                font-size: 0;
+                -webkit-transition: width 0.2s ease-out, border-radius 0.2s ease-out, padding 0.2s ease-out, border-color 0.2s ease-out;
+                transition: width 0.2s ease-out, border-radius 0.2s ease-out, padding 0.2s ease-out, border-color 0.2s ease-out;
+            }
+            .searchbar input:focus, .searchbar input:valid {
+                width: 150px;
+                font-size: 14px;
+                outline: none;
+                border-radius: 15px;
+                border-color: #555;
+                padding: 4px 5px 4px 22px;
+                z-index: 105;
+            }
+            .searchbar label {
+                z-index: 106;
+                height: 20px;
+                width: 20px;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                font-size: 14px;
+                -webkit-box-pack: center;
+                -webkit-justify-content: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                color: #999;
+                cursor: pointer;
+                -webkit-transition: color 0.2s ease-out;
+                transition: color 0.2s ease-out;
+            }
+            .searchbar label:hover {
+                color: #555;
+            }
+            .searchbar input:focus + label, .searchbar input:valid + label {
+                color: #555;
+            }
+
+            .side-logo {
+                background-color: #102A7C;
+                height: 100%;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-pack: center;
+                -webkit-justify-content: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                padding: 0 25px;
+                position: relative;
+                margin-left: 30px;
+            }
+            .side-logo:before {
+                content: '';
+                top: 0;
+                right: 100%;
+                height: 0;
+                width: 0;
+                border-bottom: 50px solid transparent;
+                border-right: 30px solid #102A7C;
+                position: absolute;
+            }
+        </style>
+
+        <a href="">中文</a>
+        <a href=""><i class="fa fa-facebook"></i></a>
+        <div class="searchbar">
+            <input id="searchbar" type="text" placeholder="search" required="">
+            <label for="searchbar"><i class="fa fa-search"></i></label>
+        </div>
+        <div class="side-logo">
+            <img src="logo2.png" alt="">
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-other-list'
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-nav-sub-item" assetpath="/">
+    <template>
+        <style>
+            :host {
+                height: auto;
+                font-size: 14px;
+                line-height: 30px;
+                letter-spacing: 0.1em;
+                cursor: pointer;
+                position: relative;
+                background-color: #FFF;
+                white-space: nowrap;
+                text-align: center;
+                -webkit-transition: box-shadow 0.2s ease-out;
+                transition: box-shadow 0.2s ease-out;
+                display: block;
+                overflow: auto;
+            }
+            :host ::content > a {
+                text-decoration: none;
+                color: #000;
+                z-index: 103;
+                width: 100%;
+                height: 100%;
+                display: block;
+                padding: 5px 30px;
+                box-sizing: border-box;
+            }
+            :host ::content > a:hover {
+                text-decoration: none;
+            }
+            :host:hover {
+                box-shadow: 0 1px 3px 1px rgba(0,0,0,.15);
+                z-index: 102;
+            }
+        </style>
+
+        <a href$="{{href}}">{{text}}</a>
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-sub-item',
+            ready: function() {
+                this.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                })
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-nav-sub-list" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                z-index: -100;
+                opacity: 0;
+                height: 0;
+                overflow: hidden;
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                -webkit-transform: translateX(-50%);
+                        transform: translateX(-50%);
+                margin: 0 auto;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                -webkit-flex-direction: column;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: stretch;
+                -webkit-align-items: stretch;
+                    -ms-flex-align: stretch;
+                        align-items: stretch;
+                background-color: #FFF;
+                border: 1px solid #EEE;
+                border-top: 1px solid #FFF;
+                box-shadow: 0 3px 3px 1px rgba(0,0,0,.15);
+                -webkit-transition: opacity 0.2s ease-out;
+                transition: opacity 0.2s ease-out;
+            }
+            :host.opened {
+                height: auto;
+                z-index: 101;
+                opacity: 1;
+            }
+
+            @media (max-width: 1024px) {
+                :host {
+                    position: relative;
+                    width: 100%;
+                    display: none;
+                }
+                :host.opened {
+                    display: block;
+                    top: 0;
+                }
+            }
+        </style>
+
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-sub-list'
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-nav-item" assetpath="/">
+    <template>
+        <style>
+            :host {
+                height: 50px;
+                font-size: 14px;
+                padding: 0;
+                line-height: 50px;
+                letter-spacing: 0.1em;
+                cursor: pointer;
+                position: relative;
+                margin-right: 1px;
+            }
+            :host ::content > a {
+                text-decoration: none;
+                color: #000;
+                padding: 0 20px;
+                display: block;
+                height: 100%;
+            }
+            :host ::content > a:hover {
+                text-decoration: none;
+            }
+            :host:hover {
+                box-shadow: 0 1px 3px 1px rgba(0,0,0,.15);
+            }
+
+            @media (max-width: 1024px) {
+                :host {
+                    width: 100%;
+                    display: block;
+                    height: auto;
+                }
+            }
+        </style>
+
+        <a href$="{{href}}">{{text}}</a>
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-item',
+            ready: function() {
+                var sublist = this.querySelector('sprout-nav-sub-list');
+                var isOpened = false;
+
+                if (sublist) {
+                    this.addEventListener('mouseover', function(e) {
+                        e.preventDefault();
+                        if (window.innerWidth >= 1024) {
+                            sublist.classList.add('opened');
+                        }
+                    });
+                    this.addEventListener('mouseleave', function(e) {
+                        e.preventDefault();
+                        if (window.innerWidth >= 1024) {
+                            sublist.classList.remove('opened');
+                        }
+                    });
+                    this.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if (isOpened) {
+                            sublist.classList.remove('opened');
+                        }
+                        else {
+                            sublist.classList.add('opened');
+                        }
+                        isOpened = !isOpened;
+                    });
+                }
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-nav-list" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-align-self: flex-end;
+                    -ms-flex-item-align: end;
+                        align-self: flex-end;
+                height: 100%;
+                float: left;
+            }
+
+            .navbar {
+                list-style: none;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                padding: 0;
+                margin: 0;
+                position: relative;
+            }
+
+            @media (max-width: 1024px) {
+                :host {
+                    width: 100%;
+                }
+                .navbar {
+                    -webkit-box-orient: vertical;
+                    -webkit-box-direction: normal;
+                    -webkit-flex-direction: column;
+                        -ms-flex-direction: column;
+                            flex-direction: column;
+                    background-color: #FFF;
+                    width: 100%;
+                    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.15);
+                    display: block;
+                }
+            }
+        </style>
+
+        <ul class="navbar">
+            <content></content>
+        </ul>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-list'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-nav" assetpath="/">
+    <template>
+        <style>
+            nav {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 50px;
+                background-color: #FFF;
+                padding: 0px;
+                box-sizing: border-box;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                            -ms-grid-row-align: center;
+                        align-items: center;
+                border-bottom: 1px solid #EEE;
+                box-shadow: 0 3px 3px 1px rgba(0,0,0,.15);
+                z-index: 100;
+            }
+
+            nav .brand-logo {
+                height: 30px;
+                -webkit-align-self: flex-start;
+                    -ms-flex-item-align: start;
+                        align-self: flex-start;
+                width: auto;
+                padding: 10px 20px;
+                display: inline-block;
+            }
+
+            .nav {
+                float: right;
+            }
+
+            .menu-icon {
+                display: none;
+            }
+            #menu-icon {
+                position: absolute;
+                left: -9999px;
+            }
+
+            @media (max-width: 1024px) {
+                .menu-icon {
+                    display: inline-block;
+                    float: left;
+                    border: 1px solid #CCC;
+                    height: 30px;
+                    width: 30px;
+                    margin: 10px 0 10px 15px;
+                    cursor: pointer;
+                    position: relative;
+                    z-index: 101;
+                }
+                .menu-icon:before, .menu-icon:after {
+                    bottom: 0;
+                    right: 0;
+                    margin: auto;
+                    box-sizing: padding-box;
+                    background-color: #555;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    content: '';
+                }
+                .menu-icon:before {
+                    height: 60%;
+                    width: 2.5px;
+                    opacity: 0;
+                    transition: -webkit-transform .2s ease-out,opacity .2s ease-out;
+                    -webkit-transition: opacity .2s ease-out,-webkit-transform .2s ease-out;
+                    transition: opacity .2s ease-out,-webkit-transform .2s ease-out;
+                    transition: transform .2s ease-out,opacity .2s ease-out;
+                    transition: transform .2s ease-out,opacity .2s ease-out,-webkit-transform .2s ease-out;
+                }
+                .menu-icon:after {
+                    height: 2.5px;
+                    border-radius: 2.5px;
+                    width: 60%;
+                    box-shadow: 0 6px 0 0 #555,0 -6px 0 0 #555;
+                    transition: -webkit-transform .2s ease-out,box-shadow .2s ease-out;
+                    -webkit-transition: box-shadow .2s ease-out,-webkit-transform .2s ease-out;
+                    transition: box-shadow .2s ease-out,-webkit-transform .2s ease-out;
+                    transition: transform .2s ease-out,box-shadow .2s ease-out;
+                    transition: transform .2s ease-out,box-shadow .2s ease-out,-webkit-transform .2s ease-out;
+                }
+
+
+                #menu-icon:checked ~ .nav {
+                    top: 50px;
+                    -webkit-transform: translateY(0%);
+                            transform: translateY(0%);
+                    opacity: 1;
+                }
+                #menu-icon:checked + .menu-icon:before {
+                    -webkit-transform: rotate(45deg);
+                            transform: rotate(45deg);
+                    opacity: 1;
+                }
+                #menu-icon:checked + .menu-icon:after {
+                    -webkit-transform: rotate(45deg);
+                            transform: rotate(45deg);
+                    box-shadow: none;
+                }
+
+
+                .nav {
+                    position: absolute;
+                    top: -5px;
+                    left: 0;
+                    width: 100%;
+                    z-index: 99;
+                    opacity: 0;
+                    -webkit-transform: translateY(-100%);
+                            transform: translateY(-100%);
+                    -webkit-transition: top 0.2s ease-out, opacity 0.2s ease-out, -webkit-transform 0.2s ease-out;
+                    transition: top 0.2s ease-out, opacity 0.2s ease-out, -webkit-transform 0.2s ease-out;
+                    transition: transform 0.2s ease-out, top 0.2s ease-out, opacity 0.2s ease-out;
+                    transition: transform 0.2s ease-out, top 0.2s ease-out, opacity 0.2s ease-out, -webkit-transform 0.2s ease-out;
+                }
+            }
+        </style>
+
+        <nav>
+            <a class="brand-logo" href="index.php">
+                <img src="{{logo}}" alt="{{alt}}">
+            </a>
+
+            <input type="checkbox" id="menu-icon">
+            <label class="menu-icon" for="menu-icon"></label>
+
+            <div class="nav">
+                <content></content>
+            </div>
+        </nav>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav'
+        });
+    </script>
+</dom-module>
+<dom-module id="sprout-news-grid-item" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-flex: 1;
+                -webkit-flex-grow: 1;
+                    -ms-flex-positive: 1;
+                        flex-grow: 1;
+                -webkit-flex-basis: 32%;
+                    -ms-flex-preferred-size: 32%;
+                        flex-basis: 32%;
+                max-width: 32%;
+                margin-bottom: 20px;
+                border: 1px solid #EEE;
+                -webkit-flex-wrap: wrap;
+                    -ms-flex-wrap: wrap;
+                        flex-wrap: wrap;
+                -webkit-box-pack: start;
+                -webkit-justify-content: flex-start;
+                    -ms-flex-pack: start;
+                        justify-content: flex-start;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                -webkit-align-content: space-between;
+                    -ms-flex-line-pack: justify;
+                        align-content: space-between;
+                font-size: 14px;
+                letter-spacing: 0.1em;
+                line-height: 1.6em;
+            }
+
+            .news-photo {
+                width: 100%;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                position: relative;
+                -webkit-box-pack: center;
+                -webkit-justify-content: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                max-height: 200px;
+                overflow: hidden;
+            }
+            .news-photo img {
+                width: 100%;
+                height: auto;
+                -webkit-transition: -webkit-transform 0.2s ease-out;
+                transition: -webkit-transform 0.2s ease-out;
+                transition: transform 0.2s ease-out;
+                transition: transform 0.2s ease-out, -webkit-transform 0.2s ease-out;
+            }
+            .news-photo:hover img {
+                -webkit-transform: scale(1.1);
+                        transform: scale(1.1);
+            }
+
+            .content-block {
+                width: 100%;
+            }
+
+            .news-description {
+                display: block;
+                padding: 20px;
+                box-sizing: border-box;
+                width: 100%;
+            }
+
+            .news-description h4 {
+                color: #aaa;
+                font-size: 16px;
+                margin-top: 0;
+                border-bottom: 1px solid #ddd;
+                padding-bottom: .5em;
+                margin-bottom: .5em;
+                -webkit-transition: color 0.2s ease-out;
+                transition: color 0.2s ease-out;
+                white-space: nowrap;
+                overflow: hidden;
+                width: 100%;
+                text-overflow: ellipsis;
+                display: block;
+            }
+            .news-description h4:hover {
+                color: #CCC;
+            }
+            a {
+                text-decoration: none;
+            }
+            .news-description .date {
+                color: #425377;
+                font-size: 12px;
+            }
+
+            .tag-block {
+                -webkit-align-self: flex-end;
+                    -ms-flex-item-align: end;
+                        align-self: flex-end;
+                margin-top: 20px;
+                padding: 20px;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .tags-list {
+                display: inline-block;
+                padding: 0;
+                width: 50%;
+                margin: 0;
+            }
+            .tags-list .tag {
+                display: inline-block;
+                color: #aaa;
+                font-size: 12px;
+                margin-right: 0;
+                padding: .2em .5em;
+                border: 1px solid transparent;
+                border-radius: 2px;
+                box-sizing: border-box;
+            }
+            .tags-list .tag:hover {
+                border: 1px solid #aaa;
+            }
+
+            .category {
+                min-width: 130px;
+                background-color: #C2C2C2;
+                color: #FFF;
+                height: 25px;
+                line-height: 25px;
+                font-size: 12px;
+                text-align: center;
+                cursor: pointer;
+                -webkit-transition: box-shadow .2s ease-out;
+                transition: box-shadow .2s ease-out;
+                -webkit-box-ordinal-group: 4;-webkit-order: 3;-ms-flex-order: 3;order: 3;
+                float: right;
+                -webkit-align-self: flex-end;
+                    -ms-flex-item-align: end;
+                        align-self: flex-end;
+            }
+            .category.hot {
+                background-color: #3949AB;
+            }
+            .category.event {
+                background-color: #1A2371;
+            }
+            .category.product {
+                background-color: #aaa;
+            }
+            .category.information {
+                background-color: #555555;
+            }
+            .category:hover {
+                box-shadow: 0 3px 6px rgba(0,0,0,.16),0 3px 6px rgba(0,0,0,.23);
+            }
+
+            @media screen and (max-width: 1130px) and (min-width: 765px) {
+                :host {
+                    -webkit-flex-basis: 49%;
+                        -ms-flex-preferred-size: 49%;
+                            flex-basis: 49%;
+                    max-width: 49%;
+                }
+            }
+            @media screen and (max-width: 765px) {
+                :host {
+                    -webkit-flex-basis: 100%;
+                        -ms-flex-preferred-size: 100%;
+                            flex-basis: 100%;
+                    max-width: 100%;
+                }
+            }
+        </style>
+
+        <div class="content-block">
+            <a href$="{{href}}" class="news-photo">
+                <img src$="{{img}}">
+            </a>
+            <div class="news-description">
+                <a class="title" href$="{{href}}"><h4>{{title}}</h4></a>
+                <span class="date">{{date}}</span>
+                <p>{{desc}}</p>
+            </div>
+        </div>
+        <div class="tag-block">
+            <ul class="tags-list">
+                <template is="dom-repeat" items="{{tags}}">
+                    <a class="tag" href$="{{tagPrefix}}{{item}}">{{item}}</a>
+                </template>
+            </ul>
+            <a class$="category {{category}}" href$="{{categoryPrefix}}{{category}}">{{category}}</a>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-news-grid-item',
+            properties: {
+                tags: Array,
+                tagPrefix: {
+                    type: String,
+                    value: "newslist.php?tag="
+                },
+                categoryPrefix: {
+                    type: String,
+                    value: "newslist.php?type="
+                }
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-news-grid" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-wrap: wrap;
+                    -ms-flex-wrap: wrap;
+                        flex-wrap: wrap;
+                -webkit-box-pack: start;
+                -webkit-justify-content: flex-start;
+                    -ms-flex-pack: start;
+                        justify-content: flex-start;
+                position: relative;
+                width: 100%;
+                max-width: 1280px;
+                padding: 20px 10%;
+                margin: 0 auto;
+                box-sizing: border-box;
+                font-size: 0;
+            }
+
+
+            :host ::content > sprout-news-grid-item {
+                margin-right: 1.5%;
+            }
+
+            @media screen and (min-width: 1130px) {
+                :host ::content > sprout-news-grid-item:nth-of-type(3n+3) {
+                    margin-right: 0;
+                }
+            }
+            @media screen and (max-width: 1130px) and (min-width: 765px) {
+                :host ::content > sprout-news-grid-item {
+                    margin-right: auto;
+                }
+                :host ::content > sprout-news-grid-item:nth-of-type(2n+2) {
+                    margin-right: 0;
+                }
+            }
+            @media screen and (max-width: 768px) {
+                :host ::content > sprout-news-grid-item {
+                    margin-right: 0;
+                }
+            }
+        </style>
+
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-news-grid'
+        });
+    </script>
+
+</dom-module>
+<script async="">
+        // 4. Conditionally load the webcomponents polyfill if needed by the browser.
+        // This feature detect will need to change over time as browsers implement
+        // different features.
+        // var webComponentsSupported = ('registerElement' in document
+        //     && 'import' in document.createElement('link')
+        //     && 'content' in document.createElement('template'));
+        //
+        // if (!webComponentsSupported) {
+        //     var script = document.createElement('script');
+        //     script.async = true;
+        //     script.src = 'https://polygit.org/components/webcomponentsjs/webcomponents-lite.js';
+        //     document.head.appendChild(script);
+        // }
+        //
+        // window.onload = finishLazyLoading;
+        //
+        // function finishLazyLoading() {
+        //     // (Optional) Use native Shadow DOM if it's available in the browser.
+            window.Polymer = window.Polymer || {dom: 'shadow'};
+        //
+        //     var links = document.getElementsByClassName('sprout-components');
+        //     var loaded = 0;
+        //     var timeout = 0;
+        //
+        //     var timer = setInterval(function() {
+        //         timeout++;
+        //     }, 1000);
+        //
+        //     // 6. Fade splash screen, then remove.
+        //     var onImportLoaded = function() {
+        //         loaded++;
+        //
+        //         if (loaded >= links.length || true) {
+        //             console.log('loaded');
+        //             document.body.classList.add('loaded');
+        //             clearInterval(timer);
+        //         }
+        //         // App is visible and ready to load some data!
+        //     };
+        //
+        //     // 5. Go if the async Import loaded quickly. Otherwise wait for it.
+        //     // crbug.com/504944 - readyState never goes to complete until Chrome 46.
+        //     // crbug.com/505279 - Resource Timing API is not available until Chrome 46.
+        //     for (var i = 0; i < links.length; i++) {
+        //         var link = links[i];
+        //         if (link.import && link.import.readyState === 'complete') {
+        //             onImportLoaded();
+        //         } else {
+        //             link.addEventListener('load', onImportLoaded);
+        //         }
+        //     }
+        // }
+    </script></div>
+    <sprout-nav logo="logo.png">
+        <sprout-nav-list>
+            <sprout-nav-item href="newslist.php" text="最新消息"></sprout-nav-item>
+            <sprout-nav-item href="product.php" text="產品情報">
+                <sprout-nav-sub-list>
+                    <sprout-nav-sub-item href="product.php" text="全部產品"></sprout-nav-sub-item>
+                    <sprout-nav-sub-item href="product.php?type=s" text="外科"></sprout-nav-sub-item>
+                    <sprout-nav-sub-item href="product.php?type=i" text="內科"></sprout-nav-sub-item>
+                    <sprout-nav-sub-item href="product.php?type=r" text="關聯產品"></sprout-nav-sub-item>
+                </sprout-nav-sub-list>
+            </sprout-nav-item>
+            <sprout-nav-item href="about.php" text="企業情報"></sprout-nav-item>
+            <sprout-nav-item href="support.php" text="技術支援"></sprout-nav-item>
+            <sprout-nav-item href="contact.php" text="聯絡我們"></sprout-nav-item>
+        </sprout-nav-list>
+
+        <sprout-nav-other-list>
+        </sprout-nav-other-list>
+    </sprout-nav>
+
+    <sprout-slider>
+        <sprout-slider-item img="images/product-head-2.jpg"></sprout-slider-item>
+        <sprout-slider-item img="images/product-head-3.jpg"></sprout-slider-item>
+    </sprout-slider>
+
+    <sprout-header ch="產品情報">PRODUCT</sprout-header>
+    <sprout-product-list>
+        <sprout-product-item number="3" href="#" title="體外診斷試劑" img="product-col-1.png">
+            顯微鏡泛指將微小不可見或難見物品之影像放大，而能被肉眼或其他成像儀器觀察之工具。日常用語中之顯微鏡多指光學顯微鏡。放大倍率和清析度（聚焦）為顯微鏡重要因素。
+        </sprout-product-item>
+        <sprout-product-item number="3" href="#" title="體外診斷儀器" img="product-col-1.png">
+            內視鏡泛指經各種管道進入人體，以觀察人體內部狀況的醫療儀器。部份內視鏡同時具備治療的功能，如膀胱鏡、胃鏡、大腸鏡、支氣管鏡、腹腔鏡等。
+        </sprout-product-item>
+        <sprout-product-item number="3" href="#" title="實驗室自動化系統" img="product-col-1.png">
+            攝錄影機（也稱攝影機，英語：camcorder）是一種使用光學原理來紀錄影像的裝置。攝影機的發明初時是用於電影及電視節目製作，但現時已普及化。
+        </sprout-product-item>
+        <sprout-product-item number="3" href="#" title="體內診斷試劑" img="product-col-1.png">
+            顯微鏡泛指將微小不可見或難見物品之影像放大，而能被肉眼或其他成像儀器觀察之工具。日常用語中之顯微鏡多指光學顯微鏡。放大倍率和清析度（聚焦）為顯微鏡重要因素。
+        </sprout-product-item>
+        <sprout-product-item number="3" href="#" title="其他產品" img="product-col-1.png">
+            顯微鏡泛指將微小不可見或難見物品之影像放大，而能被肉眼或其他成像儀器觀察之工具。日常用語中之顯微鏡多指光學顯微鏡。放大倍率和清析度（聚焦）為顯微鏡重要因素。
+        </sprout-product-item>
+    </sprout-product-list>
+
+    <sprout-header ch="最新消息">NEWS</sprout-header>
+    <sprout-news-list more="newslist.php">
+        <sprout-news-item date="31 Dec, 2015" tag="information">
+            STYLUS 1 絕佳好禮1+1
+        </sprout-news-item>
+        <sprout-news-item date="14 Dec, 2015" tag="product">
+            滿足高階活細胞研究的 FV1200
+        </sprout-news-item>
+        <sprout-news-item date="14 Dec, 2015" tag="event">
+            E-M10 MARK II公告事項
+        </sprout-news-item>
+        <sprout-news-item date="13 Dec, 2015" tag="product">
+            專為電生理學提供的無震動、高可靠性及穏定性的
+        </sprout-news-item>
+        <sprout-news-item date="12 Dec, 2015" tag="information">
+            新一代TOUGH TG-3 開始預購
+        </sprout-news-item>
+    </sprout-news-list>
+
+    <sprout-news-grid>
+        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png" title="Stylus 1 絕佳好禮1+1" date="2015-12-31" desc="外線接收器USB‑C，用於維修和支援內建電源供應器如果有其他規" tags="[&quot;人像攝影&quot;, &quot;入門&quot;]" category="information">
+        </sprout-news-grid-item>
+        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png" title="滿足高階活細胞研究的 FV1200" date="2015-12-14" desc="螢光標本太暗，用傳統光電倍增管無法觀察時，可改用選配的超高靈敏度砷化鎵光電倍增管來觀察。 砷化鎵光電倍增管的量子效率峰值高達 45%" tags="[&quot;邱志偉&quot;]" category="product">
+        </sprout-news-grid-item>
+        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png" title="E-M10 Mark II公告事項" date="2015-12-14" desc="近來Olympus發現部分OM-D E-M10 Mark II相機在配合塑膠鏡頭使用時存在鎖定栓的瑕疵，進而可能導致鏡頭與相機無法卡緊的問題。" tags="[&quot;入門&quot;, &quot;邱志偉&quot;, &quot;人像攝影&quot;]" category="event">
+        </sprout-news-grid-item>
+        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png" title="專為電生理學提供的無震動、高可靠性及穏定性的" date="2015-12-13" desc="專為電生理學提供的無震動、高可靠性及穏定性的正立電生理用顯微鏡，供細胞培養及體內腦切片電生理實驗用。" tags="[&quot;入門&quot;]" category="product">
+        </sprout-news-grid-item>
+        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png" title="新一代Tough TG-3 開始預購" date="2015-12-13" desc="即日起至2014.6.13凡於期間至經銷商辦理預購，即隨貨附贈原廠專用相機包CSCH-107(市價:880元)" tags="[&quot;入門&quot;, &quot;人像攝影&quot;]" category="information">
+        </sprout-news-grid-item>
+    </sprout-news-grid>
+
+    <sprout-form></sprout-form>
+
+    <sprout-more-info>
+        <sprout-info title="企業情報" style="background-image: url('images/moreinfo-about.png'); background-color: rgba(70, 70,70, 0.9);">
+            元佑實業有限公司及其關係企業創立於1970年，總代理日本OLYMPUS株式会社之醫療、工業、生化、及數位產品，為OLYMPUS三十多年來最信賴及關係最密切之合作伙伴。憑藉著OLYMPUS高品質的產品及本公司完善的售後服務，30多年來銷售網遍佈全台及大中華地區，服務品質也深獲客戶信賴。
+        </sprout-info>
+        <sprout-info title="技術支援" style="background-image: url('images/moreinfo-help.png'); background-color: rgba(55,53,107, 0.9);">
+            修理場所佔地寬廣，由個人維修工作檯(可同時容納17人同時維修)；儀器裝備測試組裝間；氣体動力產生房；物品待修及完成暫存間；零件庫存區；無塵工作檯；氮氣充填設備；以及修理管理作業區；原廠修理文書資料區等場所構成。
+        </sprout-info>
+        <sprout-contact-info title="客戶服務" style="background-image: url('images/moreinfo-service.png'); background-color: rgba(35, 35, 95, 0.9);">
+            <div class="service">
+                <h5>・台北總公司</h5>
+                <p>台北市內湖區陽光街365巷37號5樓<br>
+                TEL：(02)8751-5888<br>
+                業務部分機 219(軟視鏡) 229(硬視鏡)<br>
+                技術部分機 239<br>
+                FAX：(02)8751-5355<br></p>
+                <br>
+                <h5>・台中分公司</h5>
+                <p>台中市文心路三段447號23樓<br>
+                TEL：(04)2293-3161<br>
+                FAX：(04)2297-3049<br></p>
+                <br>
+                <h5>・高雄分公司</h5>
+                <p>高雄市中正一路120號11樓之4<br>
+                TEL：(07)716-1241<br>
+                FAX：(07)716-0951</p>
+            </div>
+        </sprout-contact-info>
+    </sprout-more-info>
+
+    <sprout-footer>
+        <sprout-footer-list class="desktop" title="外科" href="product.php?type=s">
+			<a href="productslist.php?department=1">耳鼻喉科</a>
+    		<a href="productslist.php?department=2">胸腔外科</a>
+    		<a href="productslist.php?department=5">婦產科</a>
+    	    <a href="productslist.php?department=6">麻醉科</a>
+            <a href="productslist.php?department=8">泌尿科</a>
+            <a href="productslist.php?department=9">一般外科</a>
+        </sprout-footer-list>
+		<sprout-footer-list class="desktop" title="內科" href="product.php?type=i">
+			<a href="productslist.php?department=17">腸胃科-上消化道</a>
+            <a href="productslist.php?department=18">腸胃科-下消化道</a>
+			<a href="productslist.php?department=19">清洗消毒</a>
+            <a href="productslist.php?department=20">腸胃科-小腸鏡&amp;膠囊</a>
+            <a href="productslist.php?department=21">腸胃科-超音波</a>
+			<a href="productslist.php?department=22">胸腔科</a>
+        </sprout-footer-list>
+        <sprout-footer-list class="desktop" title="關聯產品" href="product.php?type=r">
+			<a href="productslist.php?department=13">消毒液</a>
+			<a href="productslist.php?department=14">酵素清潔液</a>
+			<a href="productslist.php?department=15">除鏽劑</a>
+			<a href="productslist.php?department=16">潤滑劑</a>
+        </sprout-footer-list>
+
+        <sprout-footer-list class="desktop">
+            <sprout-footer-split></sprout-footer-split>
+        </sprout-footer-list>
+
+        <sprout-footer-list class="desktop">
+			<a href="/index.php">首頁</a>
+			<a href="/news.php">最新消息</a>
+			<a href="/store.php">產品情報</a>
+		</sprout-footer-list>
+        <sprout-footer-list class="desktop">
+			<a href="/event.php">企業情報</a>
+			<a href="/course.php">技術支援</a>
+			<a href="/contact.php">聯絡我們</a>
+		</sprout-footer-list>
+        <sprout-footer-list>
+			<a href="https://www.facebook.com/pages/Olympus-TW/386268178057359?fref=ts" target="_blank"><i class="fa fa-facebook"></i> FACEBOOK</a>
+			<a href="#">中文</a>
+		</sprout-footer-list>
+    </sprout-footer>
+  
+
+</body></html>
