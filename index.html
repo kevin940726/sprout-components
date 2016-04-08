@@ -13,7 +13,6 @@
     <script type="text/javascript" src="sprout-slide/sprout-slide.js"></script>
     <script type="text/javascript" src="sprout-slide/jquery.touchSwipe.js"></script>
 
-    <script src="https://polygit.org/components/webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="https://polygit.org/components/polymer/polymer.html">
 
     <link rel="import" class="sprout-components" href="./sprout-product-list.html" async>
@@ -45,43 +44,29 @@
 
         function finishLazyLoading() {
             // (Optional) Use native Shadow DOM if it's available in the browser.
-            window.Polymer = window.Polymer || {dom: 'shadow'};
+            // window.Polymer = window.Polymer || {dom: 'shadow'};
 
             var links = document.getElementsByClassName('sprout-components');
 
             // 6. Fade splash screen, then remove.
-            var onImportLoaded = function() {
-                document.body.classList.add('loaded');
-                // loaded++;
-                //
-                // if (loaded >= links.length || true) {
-                //     console.log('loaded');
-                //     document.body.classList.add('loaded');
-                //     clearInterval(timer);
-                // }
-                // App is visible and ready to load some data!
+            var onImportLoaded = function(href) {
+                $('.sprout-component').addClass('loaded');
             };
 
-            // 5. Go if the async Import loaded quickly. Otherwise wait for it.
-            // crbug.com/504944 - readyState never goes to complete until Chrome 46.
-            // crbug.com/505279 - Resource Timing API is not available until Chrome 46.
-            for (var i = 0; i < links.length; i++) {
-                var link = links[i];
-                if (link.import && link.import.readyState === 'complete') {
-                    onImportLoaded();
-                } else {
-                    link.addEventListener('load', onImportLoaded);
-                }
+            var link = links[0];
+            if (link.import && link.import.readyState === 'complete') {
+                onImportLoaded(link.href);
+            } else {
+                link.addEventListener('load', function() {
+                    onImportLoaded(link.href);
+                });
             }
         }
     </script>
 
     <style>
-        body {
-            opacity: 0;
-        }
-        body.loaded {
-            opacity: 1;
+        .sprout-component:not(.loaded) {
+            display: none;
         }
     </style>
 
@@ -93,13 +78,11 @@
             margin: 0;
             padding: 0;
             width: 100vw;
-            /*overflow: hidden;*/
-
         }
     </style>
   </head>
   <body>
-    <sprout-nav logo="logo.png">
+    <sprout-nav class="sprout-component" logo="logo.png">
         <sprout-nav-list>
             <sprout-nav-item href="newslist.php" text="最新消息"></sprout-nav-item>
             <sprout-nav-item href="product.php" text="產品情報">
@@ -119,13 +102,13 @@
         </sprout-nav-other-list>
     </sprout-nav>
 
-    <sprout-slider>
+    <sprout-slider class="sprout-component">
         <sprout-slider-item img="images/product-head-2.jpg"></sprout-slider-item>
         <sprout-slider-item img="images/product-head-3.jpg"></sprout-slider-item>
     </sprout-slider>
 
-    <sprout-header ch="產品情報">PRODUCT</sprout-header>
-    <sprout-product-list>
+    <sprout-header class="sprout-component" ch="產品情報">PRODUCT</sprout-header>
+    <sprout-product-list class="sprout-component">
         <sprout-product-item number="3" href="#" title="體外診斷試劑" img="product-col-1.png">
             顯微鏡泛指將微小不可見或難見物品之影像放大，而能被肉眼或其他成像儀器觀察之工具。日常用語中之顯微鏡多指光學顯微鏡。放大倍率和清析度（聚焦）為顯微鏡重要因素。
         </sprout-product-item>
@@ -143,8 +126,8 @@
         </sprout-product-item>
     </sprout-product-list>
 
-    <sprout-header ch="最新消息">NEWS</sprout-header>
-    <sprout-news-list more="newslist.php">
+    <sprout-header class="sprout-component" ch="最新消息">NEWS</sprout-header>
+    <sprout-news-list class="sprout-component" more="newslist.php">
         <sprout-news-item date="31 Dec, 2015" tag="information">
             STYLUS 1 絕佳好禮1+1
         </sprout-news-item>
@@ -162,7 +145,7 @@
         </sprout-news-item>
     </sprout-news-list>
 
-    <sprout-news-grid>
+    <sprout-news-grid class="sprout-component">
         <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png"
             title="Stylus 1 絕佳好禮1+1" date="2015-12-31" desc="外線接收器USB‑C，用於維修和支援內建電源供應器如果有其他規"
             tags='["人像攝影", "入門"]' category="information">
@@ -185,9 +168,9 @@
         </sprout-news-grid-item>
     </sprout-news-grid>
 
-    <sprout-form></sprout-form>
+    <sprout-form class="sprout-component"></sprout-form>
 
-    <sprout-more-info>
+    <sprout-more-info class="sprout-component">
         <sprout-info title="企業情報" style="background-image: url('images/moreinfo-about.png'); background-color: rgba(70, 70,70, 0.9);">
             元佑實業有限公司及其關係企業創立於1970年，總代理日本OLYMPUS株式会社之醫療、工業、生化、及數位產品，為OLYMPUS三十多年來最信賴及關係最密切之合作伙伴。憑藉著OLYMPUS高品質的產品及本公司完善的售後服務，30多年來銷售網遍佈全台及大中華地區，服務品質也深獲客戶信賴。
         </sprout-info>
@@ -216,7 +199,7 @@
         </sprout-contact-info>
     </sprout-more-info>
 
-    <sprout-footer>
+    <sprout-footer class="sprout-component">
         <sprout-footer-list class="desktop" title="外科" href="product.php?type=s">
 			<a href="productslist.php?department=1">耳鼻喉科</a>
     		<a href="productslist.php?department=2">胸腔外科</a>
