@@ -1,0 +1,26 @@
+
+<dom-module id="sprout-banner">
+    <template>
+        <style>
+			:host div {
+				max-height: 370px;
+				width: 100%;
+				overflow: hidden;
+			}
+			:host div img {
+				width: 100%;
+			}
+
+        </style>
+			<div><img src$="{{img}}"/></div>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-banner',
+            
+        });
+    </script>
+</dom-module>
+

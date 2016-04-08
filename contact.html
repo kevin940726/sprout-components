@@ -1,0 +1,175 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>sprout-components</title>
+
+    <!-- Don't forgot jquery, if your site already have it, it's no need to include again.-->
+    <script type="text/javascript" src="http://lab.25sprout.com/library/jquery/jquery-1.9.0.min.js"></script>
+     
+    <!-- KEY FEATURE SPROUT SLIDE -->
+    <script type="text/javascript" src="sprout-slide/sprout-slide.js"></script>
+    <script type="text/javascript" src="sprout-slide/jquery.touchSwipe.js"></script>
+
+    <link rel="import" href="https://polygit.org/components/polymer/polymer.html">
+    <link rel="import" class="sprout-components" href="./sprout-news-list.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-footer.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-form.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-header.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-contact.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-banner.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-banner-title.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-nav.html" async>
+
+    <script async>
+        // 4. Conditionally load the webcomponents polyfill if needed by the browser.
+        // This feature detect will need to change over time as browsers implement
+        // different features.
+        var webComponentsSupported = ('registerElement' in document
+            && 'import' in document.createElement('link')
+            && 'content' in document.createElement('template'));
+
+        if (!webComponentsSupported) {
+            var script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://polygit.org/components/webcomponentsjs/webcomponents-lite.js';
+            document.head.appendChild(script);
+        }
+
+        window.onload = finishLazyLoading;
+
+        function finishLazyLoading() {
+            // (Optional) Use native Shadow DOM if it's available in the browser.
+            window.Polymer = window.Polymer || {dom: 'shadow'};
+
+            var links = document.getElementsByClassName('sprout-components');
+            var loaded = 0;
+            var timeout = 0;
+
+            var timer = setInterval(function() {
+                timeout++;
+            }, 1000);
+
+            // 6. Fade splash screen, then remove.
+            var onImportLoaded = function() {
+                loaded++;
+
+                if (loaded >= links.length || true) {
+                    console.log('loaded');
+                    document.body.classList.add('loaded');
+                    clearInterval(timer);
+                }
+                // App is visible and ready to load some data!
+            };
+
+            // 5. Go if the async Import loaded quickly. Otherwise wait for it.
+            // crbug.com/504944 - readyState never goes to complete until Chrome 46.
+            // crbug.com/505279 - Resource Timing API is not available until Chrome 46.
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i];
+                if (link.import && link.import.readyState === 'complete') {
+                    onImportLoaded();
+                } else {
+                    link.addEventListener('load', onImportLoaded);
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            opacity: 0;
+        }
+        body.loaded {
+            opacity: 1;
+        }
+    </style>
+
+    <style>
+        html {
+            font-size: 87.5%;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            /*overflow: hidden;*/
+
+        }
+    </style>
+  </head>
+  <body style="background-color: #efefef;">
+    <sprout-nav logo="logo.png">
+        <sprout-nav-list>
+            <sprout-nav-item href="newslist.php" text="最新消息"></sprout-nav-item>
+            <sprout-nav-item href="product.php" text="產品情報">
+                <sprout-nav-sub-list>
+                    <sprout-nav-sub-item href="product.php" text="全部產品"></sprout-nav-sub-item>
+                    <sprout-nav-sub-item href="product.php?type=s" text="外科"></sprout-nav-sub-item>
+                    <sprout-nav-sub-item href="product.php?type=i" text="內科"></sprout-nav-sub-item>
+                    <sprout-nav-sub-item href="product.php?type=r" text="關聯產品"></sprout-nav-sub-item>
+                </sprout-nav-sub-list>
+            </sprout-nav-item>
+            <sprout-nav-item href="about.php" text="企業情報"></sprout-nav-item>
+            <sprout-nav-item href="support.php" text="技術支援"></sprout-nav-item>
+            <sprout-nav-item href="contact.php" text="聯絡我們"></sprout-nav-item>
+        </sprout-nav-list>
+        
+        <sprout-nav-other-list>
+        </sprout-nav-other-list>
+    </sprout-nav>
+    <sprout-banner-title ch="聯絡我們" en="CONTACT US"></sprout-banner-title>
+
+    <sprout-banner img="images/product-head-2.jpg"></sprout-banner>
+    
+    <!-- <sprout-header ch="聯絡我們">MESSAGE</sprout-header> -->
+    <sprout-form></sprout-form>
+    <sprout-contact></sprout-contact>
+
+    <sprout-footer>
+        <sprout-footer-list class="desktop" title="外科" href="product.php?type=s">
+			<a href="productslist.php?department=1">耳鼻喉科</a>
+    		<a href="productslist.php?department=2">胸腔外科</a>
+    		<a href="productslist.php?department=5">婦產科</a>
+    	    <a href="productslist.php?department=6">麻醉科</a>
+            <a href="productslist.php?department=8">泌尿科</a>
+            <a href="productslist.php?department=9">一般外科</a>
+        </sprout-footer-list>
+		<sprout-footer-list class="desktop" title="內科" href="product.php?type=i">
+			<a href="productslist.php?department=17">腸胃科-上消化道</a>
+            <a href="productslist.php?department=18">腸胃科-下消化道</a>
+			<a href="productslist.php?department=19">清洗消毒</a>
+            <a href="productslist.php?department=20">腸胃科-小腸鏡&amp;膠囊</a>
+            <a href="productslist.php?department=21">腸胃科-超音波</a>
+			<a href="productslist.php?department=22">胸腔科</a>
+        </sprout-footer-list>
+        <sprout-footer-list class="desktop" title="關聯產品" href="product.php?type=r">
+			<a href="productslist.php?department=13">消毒液</a>
+			<a href="productslist.php?department=14">酵素清潔液</a>
+			<a href="productslist.php?department=15">除鏽劑</a>
+			<a href="productslist.php?department=16">潤滑劑</a>
+        </sprout-footer-list>
+
+        <sprout-footer-list class="desktop">
+            <sprout-footer-split></sprout-footer-split>
+        </sprout-footer-list>
+
+        <sprout-footer-list class="desktop">
+			<a href="/index.php">首頁</a>
+			<a href="/news.php">最新消息</a>
+			<a href="/store.php">產品情報</a>
+		</sprout-footer-list>
+        <sprout-footer-list class="desktop">
+			<a href="/event.php">企業情報</a>
+			<a href="/course.php">技術支援</a>
+			<a href="/contact.php">聯絡我們</a>
+		</sprout-footer-list>
+        <sprout-footer-list>
+			<a href="https://www.facebook.com/pages/Olympus-TW/386268178057359?fref=ts" target="_blank"><i class="fa fa-facebook"></i> FACEBOOK</a>
+			<a href="#">中文</a>
+		</sprout-footer-list>
+    </sprout-footer>
+  </body>
+</html>

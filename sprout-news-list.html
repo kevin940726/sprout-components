@@ -41,7 +41,6 @@
                 line-height: 25px;
                 font-size: 12px;
                 text-align: center;
-                cursor: pointer;
                 -webkit-transition: box-shadow .2s ease-out;
                 transition: box-shadow .2s ease-out;
                 -webkit-box-ordinal-group: 4;-webkit-order: 3;-ms-flex-order: 3;order: 3;
@@ -60,7 +59,7 @@
                 background-color: #555555;
             }
             .category:hover {
-                box-shadow: 0 3px 6px rgba(0,0,0,.16),0 3px 6px rgba(0,0,0,.23);
+               /* box-shadow: 0 3px 6px rgba(0,0,0,.16),0 3px 6px rgba(0,0,0,.23);*/
             }
             :host ::content > a {
                 text-decoration: none;
@@ -74,9 +73,11 @@
                     -ms-flex-positive: 1;
                         flex-grow: 1;
                 color: inherit;
+                cursor: pointer;
             }
             :host ::content > a:hover {
-                color: #CCC;
+                color: #222;
+                font-weight: 800;
             }
 
             @media screen and (max-width: 767px) {
