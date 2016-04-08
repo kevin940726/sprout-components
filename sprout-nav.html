@@ -148,15 +148,7 @@
 
     <script>
         Polymer({
-            is: 'sprout-nav-other-list',
-            ready: function() {
-                var searchbar = this.querySelector('.searchbar');
-                this.querySelector('.searchbar a').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    searchbar.classList.toggle('opened');
-                    searchbar.querySelector('input').focus();
-                });
-            }
+            is: 'sprout-nav-other-list'
         });
     </script>
 </dom-module>
