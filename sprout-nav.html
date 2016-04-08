@@ -54,23 +54,43 @@
 
             .searchbar input {
                 position: absolute;
-                top: 100%;
-                right: 0;
-                z-index: -100;
-                opacity: 0;
-                -webkit-transition: opacity 0.2s ease-out;
-                transition: opacity 0.2s ease-out;
+                left: -2px;
+                top: 0;
+                bottom: 0;
+                margin: auto 0;
+                height: 20px;
+                width: 20px;
+                border: 1px solid #999;
+                border-radius: 20px;
+                font-size: 0;
+                transition: width 0.2s ease-out, border-radius 0.2s ease-out, padding 0.2s ease-out, border-color 0.2s ease-out;
+            }
+            .searchbar input:focus, .searchbar input:valid {
+                width: 150px;
                 font-size: 14px;
-                padding: 2px 5px;
-                margin-top: 15px;
+                outline: none;
+                border-radius: 15px;
+                border-color: #555;
+                padding: 4px 5px 4px 22px;
+                z-index: 105;
             }
-            .searchbar.opened input {
-                z-index: 103;
-                opacity: 1;
+            .searchbar label {
+                z-index: 106;
+                height: 20px;
+                width: 20px;
+                display: flex;
+                font-size: 14px;
+                justify-content: center;
+                align-items: center;
+                color: #999;
+                cursor: pointer;
+                transition: color 0.2s ease-out;
             }
-            .searchbar a {
-                padding: 0 3.5px;
-                margin: 0;
+            .searchbar label:hover {
+                color: #555;
+            }
+            .searchbar input:focus + label, .searchbar input:valid + label {
+                color: #555;
             }
 
             .side-logo {
@@ -107,8 +127,8 @@
         <a href="">中文</a>
         <a href=""><i class="fa fa-facebook"></i></a>
         <div class="searchbar">
-            <input type="text" placeholder="search" required></input>
-            <a href="#"><i class="fa fa-search"></i></a>
+            <input id="searchbar" type="text" placeholder="search" required></input>
+            <label for="searchbar"><i class="fa fa-search"></i></label>
         </div>
         <div class="side-logo">
             <img src="logo2.png" alt="" />
