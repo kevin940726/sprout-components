@@ -1,0 +1,193 @@
+<dom-module id="sprout-search-result">
+    <template>
+        <style>
+            .result {
+                width: 100%;
+                position: relative;
+                /*padding-top: 10px; */
+            }
+            .result .result-type {
+                background-color: #efefef;
+                text-align: center;
+                /*border: 1px solid #ccc;*/
+            }
+            .result .result-type div {
+                display: inline-block;
+                margin: 0px 10px;
+                cursor: pointer;
+                color: #777;
+                border-bottom: 1px solid #fff;
+            }
+            .result .result-type div.active {
+                color: #222;
+                border-bottom: 1px solid #222;
+            }
+
+            .result-row {
+                display: none;
+                min-height: 300px;
+            }
+
+            .result-row.active{
+                display: block;
+            }
+            .result-row ul {
+                padding:0px;
+                width: 50%;
+                margin: 10px auto 30px;
+            }
+            .result-row ul li:nth-child(1){
+               /* border-top: 1px solid #ccc;*/
+            }
+            
+            .result-row ul li {
+                border-bottom: 1px solid #ccc;
+                list-style: none;
+                display: flex;
+                justify-content: center;
+                padding: 10px 0px;
+                box-sizing: border-box;
+                height: 70px;
+            }
+            .result-row ul li img {
+                width: 35px;
+                height: 35px;
+                margin-right: 10px;
+            }
+            .date {
+                color: #999;
+                font-size: 12px;
+                min-width: 90px;
+            }
+            .category {
+                min-width: 130px;
+                background-color: #C2C2C2;
+                color: #FFF;
+                height: 25px;
+                line-height: 25px;
+                font-size: 12px;
+                text-align: center;
+                -webkit-transition: box-shadow .2s ease-out;
+                transition: box-shadow .2s ease-out;
+                -webkit-box-ordinal-group: 4;-webkit-order: 3;-ms-flex-order: 3;order: 3;
+                float: right;
+            }
+            .category.hot {
+                background-color: #3949AB;
+            }
+            .category.event {
+                background-color: #1A2371;
+            }
+            .category.product {
+                background-color: #aaa;
+            }
+            .category.information {
+                background-color: #555555;
+            }
+            .category:hover {
+               /* box-shadow: 0 3px 6px rgba(0,0,0,.16),0 3px 6px rgba(0,0,0,.23);*/
+            }
+            :host ::content > a {
+                text-decoration: none;
+                -webkit-transition: color .2s ease-out;
+                transition: color .2s ease-out;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                -webkit-box-flex: 1;
+                -webkit-flex-grow: 1;
+                    -ms-flex-positive: 1;
+                        flex-grow: 1;
+                color: inherit;
+                cursor: pointer;
+            }
+            :host ::content > a:hover {
+                color: #222;
+                font-weight: 800;
+            }
+            .result-news ul li {
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: -webkit-box;
+                display: flex;
+                -webkit-align-items: center;
+                -ms-flex-align: center;
+                -webkit-box-align: center;
+                        align-items: center;
+                -webkit-justify-content: space-between;
+                -ms-flex-pack: justify;
+                -webkit-box-pack: justify;
+                justify-content: space-between;
+            }
+
+
+
+        </style>
+
+        <div class="result">
+            <div class="result-type">
+                <div class="result-product-tab active" id="product">
+                    <p>產品搜尋</p>
+                </div>
+                <div class="result-news-tab" id="news">
+                    <p>最新消息搜尋</p>
+                </div>
+            </div>
+            <div class="result-row result-product active">
+                <ul>
+                    <li><img src="product-col-1.png"><p>AU680</p></li>
+                    <li><img src="product-col-1.png"><p>AU680</p></li>
+                    <li><img src="product-col-1.png"><p>AU680</p></li>
+                    <li><img src="product-col-1.png"><p>AU680</p></li>
+                </ul>
+            </div>
+            <div class="result-row result-news">
+                <ul>
+                    <li>
+                    <div class="date">2016.4.6</div>
+                    <div class$="category {{toLowerCase(tag)}}">IMFORMATION</div>
+                    <a href$="{{href}}">你好你好你好你好你好你好你好你好</a>
+                    <!-- <div class="date">{{date}}</div>
+                    <div class$="category {{toLowerCase(tag)}}">{{toUpperCase(tag)}}</div>
+                    <a href$="{{href}}"><content></content></a> -->
+                    </li>
+                    <li><div class="date">2016.4.6</div>
+                    <div class$="category {{toLowerCase(tag)}}">IMFORMATION</div>
+                    <a href$="{{href}}">你好你好你好你好你好你好你好你好</a></li>
+                    <li><div class="date">2016.4.6</div>
+                    <div class$="category {{toLowerCase(tag)}}">IMFORMATION</div>
+                    <a href$="{{href}}">你好你好你好你好你好你好你好你好</a></li>
+                    <li><div class="date">2016.4.6</div>
+                    <div class$="category {{toLowerCase(tag)}}">IMFORMATION</div>
+                    <a href$="{{href}}">你好你好你好你好你好你好你好你好</a></li>
+                </ul>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-search-result',
+            ready: function() {
+                $("#product").click(function() {
+                    $(".result-product").addClass('active');
+                    $(".result-news").removeClass('active');
+                    $(this).siblings().removeClass('active');
+                    $(this).addClass('active');
+                });
+                $("#news").click(function() {
+                    $(".result-news").addClass('active');
+                    $(".result-product").removeClass('active');
+                    $(this).siblings().removeClass('active');
+                    $(this).addClass('active');
+                });
+            }
+            
+        });
+    </script>
+</dom-module>
+
+
+
+
+

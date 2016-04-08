@@ -8,21 +8,24 @@
 
     <!-- Don't forgot jquery, if your site already have it, it's no need to include again.-->
     <script type="text/javascript" src="http://lab.25sprout.com/library/jquery/jquery-1.9.0.min.js"></script>
-     
+
     <!-- KEY FEATURE SPROUT SLIDE -->
     <script type="text/javascript" src="sprout-slide/sprout-slide.js"></script>
     <script type="text/javascript" src="sprout-slide/jquery.touchSwipe.js"></script>
-    
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+
+    <script src="https://polygit.org/components/webcomponentsjs/webcomponents-lite.js"></script>
     <link rel="import" href="https://polygit.org/components/polymer/polymer.html">
-    <link rel="import" class="sprout-components" href="./sprout-news-list.html" async>
-    <link rel="import" class="sprout-components" href="./sprout-footer.html" async>
-    <link rel="import" class="sprout-components" href="./sprout-form.html" async>
-    <link rel="import" class="sprout-components" href="./sprout-header.html" async>
-    <link rel="import" class="sprout-components" href="./sprout-contact.html" async>
+
+    <link rel="import" class="sprout-components" href="./sprout-product-list.html" async>
+<!--     <link rel="import" class="sprout-components" href="./sprout-news-list.html" async>
+ -->    <link rel="import" class="sprout-components" href="./sprout-header.html" async>
     <link rel="import" class="sprout-components" href="./sprout-banner.html" async>
     <link rel="import" class="sprout-components" href="./sprout-banner-title.html" async>
     <link rel="import" class="sprout-components" href="./sprout-nav.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-news-grid.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-footer.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-search-result.html" async>
 
     <script async>
         // 4. Conditionally load the webcomponents polyfill if needed by the browser.
@@ -46,22 +49,17 @@
             window.Polymer = window.Polymer || {dom: 'shadow'};
 
             var links = document.getElementsByClassName('sprout-components');
-            var loaded = 0;
-            var timeout = 0;
-
-            var timer = setInterval(function() {
-                timeout++;
-            }, 1000);
 
             // 6. Fade splash screen, then remove.
             var onImportLoaded = function() {
-                loaded++;
-
-                if (loaded >= links.length || true) {
-                    console.log('loaded');
-                    document.body.classList.add('loaded');
-                    clearInterval(timer);
-                }
+                document.body.classList.add('loaded');
+                // loaded++;
+                //
+                // if (loaded >= links.length || true) {
+                //     console.log('loaded');
+                //     document.body.classList.add('loaded');
+                //     clearInterval(timer);
+                // }
                 // App is visible and ready to load some data!
             };
 
@@ -81,7 +79,7 @@
 
     <style>
         body {
-            opacity: 0;
+            /*opacity: 0;*/
         }
         body.loaded {
             opacity: 1;
@@ -98,14 +96,13 @@
             padding: 0;
             width: 100vw;
             /*overflow: hidden;*/
-
         }
         a {
             text-decoration: none;
         }
     </style>
   </head>
-  <body style="background-color: #efefef;">
+  <body>
     <sprout-nav logo="logo.png">
         <sprout-nav-list>
             <sprout-nav-item href="newslist.php" text="最新消息"></sprout-nav-item>
@@ -121,18 +118,17 @@
             <sprout-nav-item href="support.php" text="技術支援"></sprout-nav-item>
             <sprout-nav-item href="contact.php" text="聯絡我們"></sprout-nav-item>
         </sprout-nav-list>
-        
+
         <sprout-nav-other-list>
         </sprout-nav-other-list>
     </sprout-nav>
-    <sprout-banner-title ch="聯絡我們" en="CONTACT US"></sprout-banner-title>
-
+    <sprout-banner-title ch="搜尋結果" en="RESULT"></sprout-banner-title>
     <sprout-banner img="images/product-head-2.jpg"></sprout-banner>
-    
-    <!-- <sprout-header ch="聯絡我們">MESSAGE</sprout-header> -->
-    <sprout-form></sprout-form>
-    <sprout-contact></sprout-contact>
 
+
+    <!-- <sprout-header ch="搜尋結果">RESULT</sprout-header> -->
+    <sprout-search-result></sprout-search-result>
+   
     <sprout-footer>
         <sprout-footer-list class="desktop" title="外科" href="product.php?type=s">
 			<a href="productslist.php?department=1">耳鼻喉科</a>
