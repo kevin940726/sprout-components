@@ -8,7 +8,7 @@
 
     <!-- Don't forgot jquery, if your site already have it, it's no need to include again.-->
     <script type="text/javascript" src="http://lab.25sprout.com/library/jquery/jquery-1.9.0.min.js"></script>
-     
+
     <!-- KEY FEATURE SPROUT SLIDE -->
     <script type="text/javascript" src="sprout-slide/sprout-slide.js"></script>
     <script type="text/javascript" src="sprout-slide/jquery.touchSwipe.js"></script>
@@ -24,6 +24,7 @@
     <link rel="import" class="sprout-components" href="./sprout-footer.html" async>
     <link rel="import" class="sprout-components" href="./sprout-slider.html" async>
     <link rel="import" class="sprout-components" href="./sprout-nav.html" async>
+    <link rel="import" class="sprout-components" href="./sprout-news-grid.html" async>
 
     <script async>
         // 4. Conditionally load the webcomponents polyfill if needed by the browser.
@@ -82,7 +83,7 @@
 
     <style>
         body {
-            opacity: 0;
+            /*opacity: 0;*/
         }
         body.loaded {
             opacity: 1;
@@ -119,7 +120,7 @@
             <sprout-nav-item href="support.php" text="技術支援"></sprout-nav-item>
             <sprout-nav-item href="contact.php" text="聯絡我們"></sprout-nav-item>
         </sprout-nav-list>
-        
+
         <sprout-nav-other-list>
         </sprout-nav-other-list>
     </sprout-nav>
@@ -166,6 +167,31 @@
             新一代TOUGH TG-3 開始預購
         </sprout-news-item>
     </sprout-news-list>
+
+    <sprout-news-grid>
+        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png"
+            title="Stylus 1 絕佳好禮1+1" date="2015-12-31" desc="外線接收器USB‑C，用於維修和支援內建電源供應器如果有其他規"
+            tags='["人像攝影", "入門"]' category="information">
+        </sprout-news-grid-item>
+        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png"
+            title="滿足高階活細胞研究的 FV1200" date="2015-12-14" desc="螢光標本太暗，用傳統光電倍增管無法觀察時，可改用選配的超高靈敏度砷化鎵光電倍增管來觀察。 砷化鎵光電倍增管的量子效率峰值高達 45%"
+            tags='["邱志偉"]' category="product">
+        </sprout-news-grid-item>
+        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png"
+            title="E-M10 Mark II公告事項" date="2015-12-14" desc="近來Olympus發現部分OM-D E-M10 Mark II相機在配合塑膠鏡頭使用時存在鎖定栓的瑕疵，進而可能導致鏡頭與相機無法卡緊的問題。"
+            tags='["入門", "邱志偉", "人像攝影"]' category="event">
+        </sprout-news-grid-item>
+        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png"
+            title="專為電生理學提供的無震動、高可靠性及穏定性的" date="2015-12-13" desc="專為電生理學提供的無震動、高可靠性及穏定性的正立電生理用顯微鏡，供細胞培養及體內腦切片電生理實驗用。"
+            tags='["入門"]' category="product">
+        </sprout-news-grid-item>
+        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png"
+            title="新一代Tough TG-3 開始預購" date="2015-12-13" desc="即日起至2014.6.13凡於期間至經銷商辦理預購，即隨貨附贈原廠專用相機包CSCH-107(市價:880元)"
+            tags='["入門", "人像攝影"]' category="information">
+        </sprout-news-grid-item>
+    </sprout-news-grid>
+
+    <sprout-form></sprout-form>
 
     <sprout-more-info>
         <sprout-info title="企業情報" style="background-image: url('images/moreinfo-about.png'); background-color: rgba(70, 70,70, 0.9);">
