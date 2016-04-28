@@ -1,4 +1,59 @@
 
+<dom-module id="sprout-banner-title">
+    <template>
+        <style>
+			:host {
+			width: 100%;
+			margin: 0;
+			letter-spacing: 2px;
+			z-index: 5;
+			}
+
+			:host .ch {
+			display: inline-block;
+			font-size: 16px;
+			padding: 10px 20px;
+			background-color: rgba(162, 162, 162, 0.7);
+			color: #fff;
+			position: absolute;
+			left: 100px;
+			top: 250px;
+			font-weight: normal;
+			}
+
+			:host .en {
+			position: absolute;
+			top: 100%;        
+			padding: 10px 20px;
+			left: 0%;
+			font-size: 14px;
+			background-color: rgba(100,100,100, 0.75);
+			width: auto;
+			height: 85%;
+			box-sizing: border-box;
+			text-align: center;
+			white-space: nowrap;
+			}
+
+        </style>
+		<div class="web-title">
+	        <h2 class="ch">{{ch}}<span class="en">{{en}}</span>
+	        </h2>
+		</div>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-banner-title',
+            
+        });
+    </script>
+</dom-module>
+
+
+
+
 <dom-module id="sprout-banner">
     <template>
         <style>
@@ -12,7 +67,10 @@
 			}
 
         </style>
-			<div><img src$="{{img}}"/></div>
+			<div>
+				<img src$="{{img}}"/>
+				<sprout-banner-title ch="{{ch}}" en="{{en}}"></sprout-banner-title>
+			</div>
 
     </template>
 
