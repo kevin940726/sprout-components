@@ -142,7 +142,7 @@
             <label for="searchbar"><i class="fa fa-search"></i></label>
         </div>
         <div class="side-logo">
-            <img src="logo2.png" alt="" />
+            <img src$="{{logo2}}" alt="" />
         </div>
     </template>
 
@@ -454,6 +454,10 @@
                 display: inline-block;
             }
 
+            nav .brand-logo img {
+                max-height: 100%;
+            }
+
             .nav {
                 float: right;
             }
@@ -548,7 +552,7 @@
         </style>
 
         <nav>
-            <a class="brand-logo" href="index.php">
+            <a class="brand-logo" href$="{{href}}">
                 <img src="{{logo}}" alt="{{alt}}" />
             </a>
 
