@@ -41,7 +41,9 @@
         <div class="info">
             <h4>－{{title}}－</h4>
             <p><content></content></p>
-            <a href$="{{href}}" class="more">瞭解更多</a>
+            <template is="dom-if" if="{{href}}">
+                <a href$="{{href}}" class="more">瞭解更多</a>
+            </template>
         </div>
     </template>
 
