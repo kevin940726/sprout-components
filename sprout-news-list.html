@@ -35,6 +35,7 @@
             }
             .category {
                 min-width: 130px;
+                max-width: 130px;
                 background-color: #C2C2C2;
                 color: #FFF;
                 height: 25px;
@@ -95,7 +96,7 @@
         </style>
 
         <div class="date">{{date}}</div>
-        <div class$="category {{toLowerCase(tag)}}">{{toUpperCase(tag)}}</div>
+        <a href="./newslist.php?type={{toLowerCase(tag)}}" class$="category {{toLowerCase(tag)}}">{{toUpperCase(tag)}}</a>
         <a href$="{{href}}"><content></content></a>
     </template>
 
