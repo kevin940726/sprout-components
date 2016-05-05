@@ -107,6 +107,7 @@
             .side-logo {
                 background-color: #102A7C;
                 height: 100%;
+                min-width: 80px;
                 display: -webkit-box;
                 display: -webkit-flex;
                 display: -ms-flexbox;
@@ -135,8 +136,8 @@
             }
         </style>
 
-        <a href="">中文</a>
-        <a href=""><i class="fa fa-facebook"></i></a>
+        <a href$="{{lang}}">中文</a>
+        <a href$="{{fb}}"><i class="fa fa-facebook"></i></a>
         <div class="searchbar">
             <input id="searchbar" type="text" placeholder="search" required></input>
             <label for="searchbar"><i class="fa fa-search"></i></label>
@@ -148,7 +149,28 @@
 
     <script>
         Polymer({
-            is: 'sprout-nav-other-list'
+            is: 'sprout-nav-other-list',
+            properties: {
+                search: String
+            },
+            ready: function() {
+                var searchbar = document.getElementById('searchbar');
+                var self = this;
+
+                searchbar.addEventListener('keydown', function(event) {
+                    if (event.code === "Enter") {
+                        location.href = self.search + searchbar.value;
+                    }
+                }, false);
+
+                var searchLabel = document.querySelector('.searchbar label');
+                searchLabel.addEventListener('click', function(event) {
+                    if (searchbar.value !== "") {
+                        event.preventDefault();
+                        location.href = self.search + searchbar.value;
+                    }
+                }, false);
+            }
         });
     </script>
 </dom-module>
@@ -456,6 +478,7 @@
 
             nav .brand-logo img {
                 max-height: 100%;
+                height: 100%;
             }
 
             .nav {
