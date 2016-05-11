@@ -112,7 +112,7 @@
         </style>
 
         <sprout-header ch="留下訊息">MESSAGE</sprout-header>
-        <form method="POST" action="./apo/contact_apply.php">
+        <form method="POST" action="{{action}}">
             <sprout-input-group label="單位名稱">
                 <input name="firm" type="text" required />
             </sprout-input-group>
@@ -145,7 +145,35 @@
 
     <script>
         Polymer({
-            is: 'sprout-form'
+            is: 'sprout-form',
+            properties: {
+                action: String
+            },
+            ready: function() {
+                this.action = 'apo/contact_apply.php';
+                this.$$('form').addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    $.ajax({
+                        type: 'POST',
+                        cache: false,
+                        url: 'apo/contact_apply.php',
+                        data: $('form').serialize(),
+                        dataType: "json",
+                        error: function() {
+                            console.log("送出失敗1");
+                        },
+                        success: function(data) {
+                            if(data.status){
+                                alert('感謝您的問題與建議，請靜待通知回應！');
+                                location.reload();
+                            }else{
+                                console.log('送出失敗2');
+                                $('input[type="submit"]').attr('disabled', false);
+                            }
+                        }
+                    });
+                }, false);
+            }
         });
     </script>
 </dom-module>
