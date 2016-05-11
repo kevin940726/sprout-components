@@ -25,7 +25,7 @@
                 border-radius: 3px;
                 margin: 0 auto;
             }
-          
+
 
             :host ::content input, :host ::content textarea {
                 flex-grow: 1;
@@ -164,44 +164,74 @@
                 background-color: rgba(255,255,255,0.2);
             }
 
-            
+
         </style>
-        
+
         <sprout-header ch="留下訊息">MESSAGE</sprout-header>
-        <form>
+        <form method="POST" action="{{action}}">
             <sprout-input-group label="單位名稱">
-                <input type="text" />
+                <input name="firm" type="text" required />
             </sprout-input-group>
             <sprout-input-group label="聯絡人姓名">
-                <input type="text" />
+                <input name="name" type="text" required />
             </sprout-input-group>
             <sprout-input-group label="聯絡人手機號碼">
-                <input type="tel" />
+                <input name="tel" type="tel" required />
             </sprout-input-group>
             <sprout-input-group label="聯絡人email">
-                <input type="email" />
+                <input name="email" type="email" required />
             </sprout-input-group>
             <sprout-input-group label="產品編號">
-                <input type="text" />
+                <input name="pid" type="text" required />
             </sprout-input-group>
             <sprout-input-group label="聯絡事由">
+
                 <label class="item"><input type="radio" name="vehicle" value="askPrice">詢價</input></label>
                 <label class="item"><input type="radio" name="vehicle" value="help">技術支援</input></label>
                 <label class="item"><input type="radio" name="vehicle" value="demo">Demo</input></label>
                 <label class="item"><input type="radio" name="vehicle" value="other">其他</label>
+
             </sprout-input-group>
             <sprout-input-group label="其他問題與建議">
-                <textarea></textarea>
+                <textarea name="problem" required></textarea>
             </sprout-input-group>
-    
+
             <input type="submit" value="送出訊息"></input>
-        </form>    
-        
+        </form>
+
     </template>
 
     <script>
         Polymer({
-            is: 'sprout-form'
+            is: 'sprout-form',
+            properties: {
+                action: String
+            },
+            ready: function() {
+                this.action = 'apo/contact_apply.php';
+                this.$$('form').addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    $.ajax({
+                        type: 'POST',
+                        cache: false,
+                        url: 'apo/contact_apply.php',
+                        data: $('form').serialize(),
+                        dataType: "json",
+                        error: function() {
+                            console.log("送出失敗1");
+                        },
+                        success: function(data) {
+                            if(data.status){
+                                alert('感謝您的問題與建議，請靜待通知回應！');
+                                location.reload();
+                            }else{
+                                console.log('送出失敗2');
+                                $('input[type="submit"]').attr('disabled', false);
+                            }
+                        }
+                    });
+                }, false);
+            }
         });
     </script>
 </dom-module>
