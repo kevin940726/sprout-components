@@ -50,6 +50,35 @@
                 padding: 0px;
                 box-sizing: border-box;
             }
+            @media screen and (max-width: 497px) {
+                label {
+                    display: block;
+                    /*border-top: 1px solid #ccc;*/
+                    /*padding-top: 20px;*/
+                }
+                :host ::content input {
+                    width: 100%;
+                    height: 32px;
+                    line-height: 32px;
+                }
+                :host ::content textarea {
+                    width: 100%;
+                }
+                label p {
+                    margin: 0px auto;
+                    text-align: left;
+                    /*background-color: #777;*/
+                    color: #777;
+                    width: 100%;
+                    height: 32px;
+                    line-height: 32px;
+                }
+                :host ::content .item {
+                    text-align: center;
+                    display: inline-block;
+                }
+            }
+            
         </style>
 
         <label>
@@ -92,6 +121,32 @@
                 box-shadow: 2px 2px 4px 0px rgba(50, 50, 50, 0.3);
                 background-color: #fff;
             }
+            @media screen and (max-width: 767px) {
+                form {
+                    min-width: auto;
+                    max-width: auto;
+                    width: 95%;
+                    margin: 0 auto;
+                    padding: 20px;
+                    box-sizing: border-box;
+                }
+            }
+
+            @media screen and (max-width: 497px) {
+                label.sprout-input-group {
+                    display: block;
+                    
+                }
+                label.sprout-input-group p.sprout-input-group {
+                    margin: 0px auto;
+                    text-align: center;
+                    display: block;
+                }
+                form input {
+                    /*flex-grow: none;
+                    width: 100%;*/
+                }
+            }
 
             form input[type="submit"] {
                 border: 1px solid #aaa;
@@ -108,6 +163,7 @@
             form input[type="submit"]:hover {
                 background-color: rgba(255,255,255,0.2);
             }
+
             
         </style>
         
@@ -132,7 +188,7 @@
                 <label class="item"><input type="radio" name="vehicle" value="askPrice">詢價</input></label>
                 <label class="item"><input type="radio" name="vehicle" value="help">技術支援</input></label>
                 <label class="item"><input type="radio" name="vehicle" value="demo">Demo</input></label>
-                <label class="item"><input type="radio" name="vehicle" value="demo">其他</label>
+                <label class="item"><input type="radio" name="vehicle" value="other">其他</label>
             </sprout-input-group>
             <sprout-input-group label="其他問題與建議">
                 <textarea></textarea>
