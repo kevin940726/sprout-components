@@ -128,12 +128,14 @@
             <sprout-input-group label="產品編號">
                 <input name="pid" type="text" required />
             </sprout-input-group>
-            <sprout-input-group label="聯絡事由">
-                <label class="item"><input type="radio" name="vehicle" value="askPrice" required>詢價</input></label>
-                <label class="item"><input type="radio" name="vehicle" value="help" required>技術支援</input></label>
-                <label class="item"><input type="radio" name="vehicle" value="demo" required>Demo</input></label>
-                <label class="item"><input type="radio" name="vehicle" value="demo" required>其他</label>
-            </sprout-input-group>
+            <template is="dom-if" if="{{!novehicle}}">
+                <sprout-input-group label="聯絡事由">
+                    <label class="item"><input type="radio" name="vehicle" value="askPrice" required>詢價</input></label>
+                    <label class="item"><input type="radio" name="vehicle" value="help" required>技術支援</input></label>
+                    <label class="item"><input type="radio" name="vehicle" value="demo" required>Demo</input></label>
+                    <label class="item"><input type="radio" name="vehicle" value="other" required>其他</label>
+                </sprout-input-group>
+            </template>
             <sprout-input-group label="其他問題與建議">
                 <textarea name="problem" required></textarea>
             </sprout-input-group>
@@ -147,7 +149,12 @@
         Polymer({
             is: 'sprout-form',
             properties: {
-                action: String
+                action: String,
+                novehicle: {
+                    type: Boolean,
+                    value: false,
+                    notify: true
+                }
             },
             ready: function() {
                 this.action = 'apo/contact_apply.php';

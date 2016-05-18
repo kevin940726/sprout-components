@@ -19,6 +19,7 @@
 			left: 100px;
             bottom: 50px;
 			font-weight: normal;
+            line-height: 16px;
 			}
 
 			:host .en {
@@ -33,6 +34,7 @@
 			box-sizing: border-box;
 			text-align: center;
 			white-space: nowrap;
+            line-height: 14px;
 			}
 
         </style>
@@ -64,11 +66,11 @@
 			}
 		    :host img {
 		        width: 100%;
-		        margin-top: -280px;
+		        /*margin-top: -280px;*/
 		    }
 		    @media screen and (min-width: 760px) and (max-width: 1345px) {
 		        :host { max-height: 350px; }
-		        :host img { margin-top: -210px; }
+		        /*:host img { margin-top: -210px; }*/
 		    }
 		    @media screen and (max-width: 759px) {
 		    	:host { max-height: 100%; }
@@ -76,7 +78,7 @@
 		    }
 		    @media screen and (min-width: 1346px) {
 		    	:host { height: 350px; }
-		        :host img { margin-top: -360px; }
+		        /*:host img { margin-top: -360px; }*/
 		    }
 			:host div {
 				max-height: 370px;
@@ -86,6 +88,7 @@
 			}
 			:host div img {
 				width: 100%;
+                display: block;
 			}
 			:host&.gradient {
 		        background: linear-gradient(to right, rgba(226,226,226,1) 0%, rgba(254,254,254,0) 100%);
