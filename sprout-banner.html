@@ -37,6 +37,11 @@
             line-height: 14px;
 			}
 
+            @media (max-width: 768px) {
+                :host .ch {
+                    left: 20px;
+                }
+            }
         </style>
 		<div class="web-title">
 	        <h2 class="ch">{{ch}}<span class="en">{{en}}</span>
@@ -69,11 +74,16 @@
 		        /*margin-top: -280px;*/
 		    }
 		    @media screen and (min-width: 760px) and (max-width: 1345px) {
-		        :host { max-height: 350px; }
+		        :host {
+                    max-height: 350px;
+                }
 		        /*:host img { margin-top: -210px; }*/
 		    }
 		    @media screen and (max-width: 759px) {
-		    	:host { max-height: 100%; }
+		    	:host {
+                    max-height: 100%;
+                    display: block;
+                }
 		        :host img { margin-top: 0px; }
 		    }
 		    @media screen and (min-width: 1346px) {
