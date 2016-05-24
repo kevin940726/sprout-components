@@ -119,7 +119,14 @@
     <script>
         Polymer({
             is: 'sprout-banner',
-
+            getCorrectSrc: function() {
+                if (this.small) {
+                    return this.small;
+                }
+                else {
+                    return this.src;
+                }
+            }
         });
     </script>
 </dom-module>
