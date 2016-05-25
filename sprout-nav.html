@@ -134,6 +134,13 @@
                 border-right: 30px solid #102A7C;
                 position: absolute;
             }
+
+            .side-logo.hide {
+                background-color: transparent;
+            }
+            .side-logo.hide:before {
+                border-right: 30px solid transparent;
+            }
         </style>
 
         <a href$="{{lang}}">中文</a>
@@ -142,7 +149,7 @@
             <input id="searchbar" type="text" placeholder="search" required></input>
             <label for="searchbar"><i class="fa fa-search"></i></label>
         </div>
-        <div class="side-logo">
+        <div class$="side-logo {{hide}}">
             <img src$="{{logo2}}" alt="" />
         </div>
     </template>
@@ -151,7 +158,8 @@
         Polymer({
             is: 'sprout-nav-other-list',
             properties: {
-                search: String
+                search: String,
+                hide: String
             },
             ready: function() {
                 var searchbar = document.getElementById('searchbar');
@@ -170,6 +178,9 @@
                         location.href = self.search + searchbar.value;
                     }
                 }, false);
+            },
+            ifLogo2: function() {
+                return this.hide ? 'hide' : '';
             }
         });
     </script>
