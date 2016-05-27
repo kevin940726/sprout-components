@@ -47,7 +47,9 @@
 
 		<ul>
 			<li>
-                <a href="../yuanyu/index.php"><img src$="{{logo}}"></a>
+                <template is="dom-if" if="{{logo}}">
+                    <a><img src$="{{logo}}"></a>  
+                </template>
 				<a href="http://www.olympus.com.tw/zh/" target="_blank">Taiwan</a> |
 				<a href="http://www.olympus.co.jp/jp/" target="_blank">Japan</a> |
 				<a href="http://www.olympus-global.com/en/" target="_blank">Goobal</a>

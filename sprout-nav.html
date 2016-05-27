@@ -146,7 +146,9 @@
             }
         </style>
 
-        <a href$="{{lang}}">中文</a>
+        <template is="dom-if" if="{{lang}}">
+            <a href$="{{lang}}">中文</a>
+        </template>
         <a href$="{{fb}}"><i class="fa fa-facebook"></i></a>
         <div class="searchbar">
             <input id="searchbar" type="text" placeholder="search" required></input>
@@ -162,7 +164,8 @@
             is: 'sprout-nav-other-list',
             properties: {
                 search: String,
-                hide: String
+                hide: String,
+                lang: String
             },
             ready: function() {
                 var searchbar = document.getElementById('searchbar');
