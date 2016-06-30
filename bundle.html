@@ -1,0 +1,2252 @@
+<html><head><meta charset="UTF-8"></head><body><div hidden="" by-vulcanize=""><dom-module id="sprout-product-item" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-flex: 1;-webkit-flex: 1;-ms-flex: 1;flex: 1;
+            }
+            .product {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                width: 100%;
+                padding: 0 20px;
+                box-sizing: border-box;
+                font-size: 1rem;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                -webkit-flex-flow: column;
+                    -ms-flex-flow: column;
+                        flex-flow: column;
+                letter-spacing: 0.1em;
+                line-height: 1.6em;
+            }
+
+            .col-img {
+                position: relative;
+                height: 180px;
+                width: 180px;
+                margin: 0 auto;
+                border: 1px solid #fff;
+                cursor: pointer;
+                -webkit-transform: scale(0.9, 0.9);
+                        transform: scale(0.9, 0.9);
+                -webkit-transition: -webkit-transform .5s;
+                transition: -webkit-transform .5s;
+                transition: transform .5s;
+                transition: transform .5s, -webkit-transform .5s;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-pack: center;
+                -webkit-justify-content: center;
+                -ms-flex-pack: center;
+                        justify-content: center;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                -ms-flex-align: center;
+                        align-items: center;
+            }
+
+            .col-img:hover {
+                -webkit-transform: scale(1.0, 1.0);
+                        transform: scale(1.0, 1.0);
+            }
+
+            .col-img img {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            a,
+            a:hover {
+                text-decoration: none;
+            }
+
+            h3 {
+                color: #444;
+            }
+
+            h3:hover {
+                color: #999;
+            }
+
+            p {
+                color: #666;
+                max-width: 100%;
+                font-size: 14px;
+                line-height: 24px;
+            }
+
+            @media screen and (max-width: 1130px) and (min-width: 765px) {
+                :host {
+                    -webkit-flex-basis: var(--percent-of-item, 33.3%);
+                        -ms-flex-preferred-size: var(--percent-of-item, 33.3%);
+                            flex-basis: var(--percent-of-item, 33.3%);
+                }
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    -webkit-flex-basis: 100%;
+                        -ms-flex-preferred-size: 100%;
+                            flex-basis: 100%;
+                }
+            }
+        </style>
+
+        <div class="product">
+            <a href$="{{href}}" class="col-img"><img src$="{{img}}"></a>
+            <a href$="{{href}}"><h3>{{title}}</h3></a>
+            <p>
+                <content></content>
+            </p>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-product-item',
+            properties: {
+                number: {
+                    type: Number,
+                    value: 3
+                }
+            },
+            resizeEvent: function() {
+                this.customStyle['--percent-of-item'] = 100 / this.number + "%";
+                this.updateStyles();
+            },
+            ready: function() {
+                this.resizeEvent();
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-product-list" assetpath="/">
+
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                position: relative;
+                -webkit-box-pack: start;
+                -webkit-justify-content: flex-start;
+                    -ms-flex-pack: start;
+                        justify-content: flex-start;
+                -webkit-box-align: start;-webkit-align-items: flex-start;-ms-flex-align: start;-ms-grid-row-align: flex-start;align-items: flex-start;
+                -webkit-flex-wrap: wrap;
+                    -ms-flex-wrap: wrap;
+                        flex-wrap: wrap;
+            }
+        </style>
+
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-product-list'
+        });
+    </script>
+
+</dom-module>
+<dom-module id="sprout-news-item" assetpath="/">
+    <template>
+        <style>
+            :host {
+                width: 100%;
+                border-bottom: 1px solid #ccc;
+                height: 50px;
+                position: relative;
+                padding: 10px 0;
+                box-sizing: border-box;
+                color: #555;
+                line-height: 24px;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: -webkit-box;
+                display: flex;
+                -webkit-align-items: center;
+                -ms-flex-align: center;
+                -webkit-box-align: center;
+                        align-items: center;
+                -webkit-justify-content: space-between;
+                -ms-flex-pack: justify;
+                -webkit-box-pack: justify;
+                        justify-content: space-between;
+                letter-spacing: 0.1em;
+            }
+            :host:first-of-type {
+                border-top: 1px solid #777;
+            }
+
+            .date {
+                color: #999;
+                font-size: 12px;
+                min-width: 110px;
+            }
+            .category {
+                min-width: 130px;
+                max-width: 130px;
+                background-color: #C2C2C2;
+                color: #FFF;
+                height: 25px;
+                line-height: 25px;
+                font-size: 12px;
+                text-align: center;
+                -webkit-transition: box-shadow .2s ease-out;
+                transition: box-shadow .2s ease-out;
+                -webkit-box-ordinal-group: 4;-webkit-order: 3;-ms-flex-order: 3;order: 3;
+                float: right;
+            }
+            .category.hot {
+                background-color: #3949AB;
+            }
+            .category.event {
+                background-color: #1A2371;
+            }
+            .category.product {
+                background-color: #aaa;
+            }
+            .category.information {
+                background-color: #555555;
+            }
+            .category:hover {
+               /* box-shadow: 0 3px 6px rgba(0,0,0,.16),0 3px 6px rgba(0,0,0,.23);*/
+            }
+            :host ::content > a {
+                text-decoration: none;
+                -webkit-transition: color .2s ease-out;
+                transition: color .2s ease-out;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                -webkit-box-flex: 1;
+                -webkit-flex-grow: 1;
+                    -ms-flex-positive: 1;
+                        flex-grow: 1;
+                color: inherit;
+                cursor: pointer;
+            }
+            :host ::content > a:hover {
+                color: #222;
+                font-weight: 800;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    display: block;
+                    height: auto;
+                }
+                :host ::content > a {
+                    display: block;
+                    width: 100%;
+                }
+                .date {
+                    display: inline-block;
+                    min-width: 90px;
+                }
+            }
+        </style>
+
+        <div class="date">{{date}}</div>
+        <a href="./newslist.php?type={{toLowerCase(tag)}}" class$="category {{toLowerCase(tag)}}">{{toUpperCase(tag)}}</a>
+        <a href$="{{href}}"><content></content></a>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-news-item',
+            properties: {
+                tag: {
+                    type: String
+                }
+            },
+            toLowerCase: function(str) {
+                return str.toLowerCase();
+            },
+            toUpperCase: function(str) {
+                return str.toUpperCase();
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-news-list" assetpath="/">
+
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-flow: column;
+                    -ms-flex-flow: column;
+                        flex-flow: column;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                width: 100%;
+                background-color: #fff;
+                padding: 20px;
+                margin: 0 auto;
+                box-sizing: border-box;
+                font-size: 14px;
+                max-width: 950px;
+                z-index: -1;
+                color: #777;
+                font-weight: 200;
+                box-shadow: 2px 2px 4px 0 rgba(50,50,50,.3);
+                line-height: 1.6em;
+            }
+            .more {
+                border: 1px solid #eee;
+                padding: 5px 10px;
+                margin-top: 13px;
+                box-sizing: border-box;
+                -webkit-align-self: flex-end;
+                    -ms-flex-item-align: end;
+                        align-self: flex-end;
+                -webkit-transition: color .3s,background-color .3s,border .7s;
+                transition: color .3s,background-color .3s,border .7s;
+                text-decoration: none;
+                color: inherit;
+            }
+            .more:hover {
+                text-decoration: none;
+                background-color: #eee;
+                border: 1px solid #999;
+                color: #222;
+            }
+        </style>
+
+        <content></content>
+        <a class="more" href$="{{more}}">more</a>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-news-list'
+        });
+    </script>
+
+</dom-module>
+<dom-module id="sprout-header" assetpath="/">
+    <template>
+        <style>
+            :host {
+                text-align: center;
+                font-size: 28px;
+                letter-spacing: 2px;
+                color: #777;
+                margin-bottom: 40px;
+                margin-top: 40px;
+                position: relative;
+                font-family: Oswald,sans-serif;
+                font-weight: 600;
+                display: block;
+            }
+
+            span {
+                font-size: 14px;
+                display: block;
+                font-weight: lighter;
+                font-family: sans-serif;
+                margin-top: 10px;
+            }
+        </style>
+
+        <content></content>
+        <span>－{{ch}}－</span>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-header'
+        });
+    </script>
+</dom-module>
+<dom-module id="sprout-input-group" assetpath="/">
+    <template>
+        <style>
+            :host {
+                width: 100%;
+            }
+            label {
+                display: flex;
+                margin: 6px 0px;
+                align-items: center;
+                width: 100%;
+            }
+            label p {
+                width: 120px;
+                text-align: right;
+                margin: 0px;
+                margin-right: 15px;
+            }
+            :host:last-of-type p {
+                align-self: flex-start;
+            }
+            a {
+                border: 1px solid #aaa;
+                padding: 10px;
+                border-radius: 3px;
+                margin: 0 auto;
+            }
+
+
+            :host ::content input, :host ::content textarea {
+                flex-grow: 1;
+                border-radius: 3px;
+                border: 1px solid #ccc;
+                font-size: 14px;
+                padding: 3px 6px;
+                box-sizing: border-box;
+            }
+            :host ::content input {
+                height: 26px;
+            }
+            :host ::content textarea {
+                height: 200px;
+            }
+            :host ::content .item {
+                width: auto;
+            }
+            :host ::content .item input {
+                margin: 0px 6px 0px 12px;
+                height: 16px;
+                padding: 0px;
+                box-sizing: border-box;
+            }
+            @media screen and (max-width: 497px) {
+                label {
+                    display: block;
+                    /*border-top: 1px solid #ccc;*/
+                    /*padding-top: 20px;*/
+                }
+                :host ::content input {
+                    width: 100%;
+                    height: 32px;
+                    line-height: 32px;
+                }
+                :host ::content textarea {
+                    width: 100%;
+                }
+                label p {
+                    margin: 0px auto;
+                    text-align: left;
+                    /*background-color: #777;*/
+                    color: #777;
+                    width: 100%;
+                    height: 32px;
+                    line-height: 32px;
+                }
+                :host ::content .item {
+                    text-align: center;
+                    display: inline-block;
+                }
+            }
+
+        </style>
+
+        <label>
+            <p class="input-type">{{label}}</p>
+            <content></content>
+        </label>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-input-group',
+            properties: {
+                type: {
+                    type: String,
+                    value: "text"
+                }
+            }
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-form" assetpath="/">
+    <template>
+        <style>
+            form {
+                color: #777;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                align-items: center;
+                margin: 0 auto;
+                padding: 50px;
+                width: 50%;
+                max-width: 580px;
+                min-width: 480px;
+                font-size: 14px;
+                line-height: 1.6em;
+                letter-spacing: 0.1em;
+                box-shadow: 2px 2px 4px 0px rgba(50, 50, 50, 0.3);
+                background-color: #fff;
+            }
+            @media screen and (max-width: 767px) {
+                form {
+                    min-width: 0;
+                    max-width: none;
+                    width: 95%;
+                    margin: 0 auto;
+                    padding: 20px;
+                    box-sizing: border-box;
+                }
+            }
+
+            @media screen and (max-width: 497px) {
+                label.sprout-input-group {
+                    display: block;
+
+                }
+                label.sprout-input-group p.sprout-input-group {
+                    margin: 0px auto;
+                    text-align: center;
+                    display: block;
+                }
+                form input {
+                    /*flex-grow: none;
+                    width: 100%;*/
+                }
+            }
+
+            form input[type="submit"] {
+                border: 1px solid #aaa;
+                padding: 10px;
+                border-radius: 3px;
+                margin: 15px auto 0px;
+                background-color: rgba(25,25,25,0.1);
+                cursor: pointer;
+                color: #777;
+                font-size: 14px;
+                transition: background-color .2s ease-out;
+            }
+
+            form input[type="submit"]:hover {
+                background-color: rgba(255,255,255,0.2);
+            }
+
+
+        </style>
+
+        <sprout-header ch="留下訊息">MESSAGE</sprout-header>
+        <form method="POST" action="{{action}}">
+            <sprout-input-group label="單位名稱">
+                <input name="firm" type="text" required="">
+            </sprout-input-group>
+            <sprout-input-group label="聯絡人姓名">
+                <input name="name" type="text" required="">
+            </sprout-input-group>
+            <sprout-input-group label="聯絡人手機號碼">
+                <input name="tel" type="tel" required="">
+            </sprout-input-group>
+            <sprout-input-group label="聯絡人email">
+                <input name="email" type="email" required="">
+            </sprout-input-group>
+            <sprout-input-group label="產品編號">
+                <input name="pid" type="text" required="" value="{{model}}">
+            </sprout-input-group>
+            <template is="dom-if" if="{{!novehicle}}">
+                <sprout-input-group label="聯絡事由">
+                    <label class="item"><input type="radio" name="vehicle" value="askPrice" required="" checked="{{checkVehicle('askPrice')}}">詢價</label>
+                    <label class="item"><input type="radio" name="vehicle" value="help" required="" checked="{{checkVehicle('help')}}">技術支援</label>
+                    <label class="item"><input type="radio" name="vehicle" value="demo" required="" checked="{{checkVehicle('demo')}}">Demo</label>
+                    <label class="item"><input type="radio" name="vehicle" value="other" required="" checked="{{checkVehicle('other')}}">其他</label>
+                </sprout-input-group>
+            </template>
+            <sprout-input-group label="其他問題與建議">
+                <textarea name="problem" required=""></textarea>
+            </sprout-input-group>
+
+            <input type="submit" value="送出訊息">
+        </form>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-form',
+            properties: {
+                action: String,
+                novehicle: {
+                    type: Boolean,
+                    value: false,
+                    notify: true
+                },
+                vehicle: String,
+                model: String
+            },
+            ready: function() {
+                this.action = 'apo/contact_apply.php';
+                this.$$('form').addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    $.ajax({
+                        type: 'POST',
+                        cache: false,
+                        url: 'apo/contact_apply.php',
+                        data: $('form').serialize(),
+                        dataType: "json",
+                        error: function() {
+                            console.log("送出失敗1");
+                        },
+                        success: function(data) {
+                            if(data.status){
+                                alert('感謝您的問題與建議，請靜待通知回應！');
+                                location.reload();
+                            }else{
+                                console.log('送出失敗2');
+                                $('input[type="submit"]').attr('disabled', false);
+                            }
+                        }
+                    });
+                }, false);
+            },
+            checkVehicle: function(value) {
+                return this.vehicle === value;
+            }
+        });
+    </script>
+</dom-module>
+<dom-module id="sprout-contact-info" assetpath="/">
+    <template>
+        <style>
+            :host ::content > div {
+                width: 100%;
+            }
+            :host ::content .service {
+                width: 100%;
+            }
+
+            :host ::content h5 {
+                font-size: 14px;
+                color: #fff;
+                text-align: left;
+                margin: 0 0 10px;
+            }
+
+            :host ::content > div p {
+                font-size: 12px;
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+        </style>
+
+        <div class="info">
+            <h4>－{{title}}－</h4>
+            <content></content>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-contact-info'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-info" assetpath="/">
+    <template>
+        <div class="info">
+            <h4>－{{title}}－</h4>
+            <p><content></content></p>
+            <template is="dom-if" if="{{href}}">
+                <a href$="{{href}}" class="more">瞭解更多</a>
+            </template>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-info'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-more-info" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                width: 100%;
+                background-color: #FFF;
+            }
+
+            :host ::content > * {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-flex: 1;
+                -webkit-flex-grow: 1;
+                    -ms-flex-positive: 1;
+                        flex-grow: 1;
+                -webkit-flex-basis: 33.33%;
+                    -ms-flex-preferred-size: 33.33%;
+                        flex-basis: 33.33%;
+                background-repeat: no-repeat;
+                background-size: contain;
+                background-position: center bottom;
+            }
+            :host ::content .info {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                width: 100%;
+                padding: 40px 60px;
+                box-sizing: border-box;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                -webkit-flex-direction: column;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+                -webkit-box-pack: start;
+                -webkit-justify-content: flex-start;
+                    -ms-flex-pack: start;
+                        justify-content: flex-start;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                position: relative;
+                letter-spacing: 0.1em;
+                line-height: 1.6em;
+            }
+            :host ::content h4 {
+                font-size: 18px;
+                color: #eee;
+                margin-bottom: 26px;
+                margin-top: 0;
+                font-weight: 200;
+            }
+            :host ::content p {
+                color: #ccc;
+                margin: 5px 0 50px;
+                font-size: 14px;
+                max-width: 100%;
+            }
+            :host ::content .more {
+                text-align: center;
+                position: absolute;
+                left: 0;
+                right: 0;
+                margin: auto;
+                bottom: 30px;
+                border: 1px solid #fff;
+                padding: 10px 20px;
+                width: 130px;
+                color: #FFF;
+                font-size: 14px;
+                opacity: .3;
+                cursor: pointer;
+                -webkit-transition: all 1s ease-out, background-color .2s ease-out;
+                transition: all 1s ease-out, background-color .2s ease-out;
+            }
+            :host ::content .more:hover {
+                background-color: #444;
+                opacity: 0.9;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    -webkit-flex-wrap: wrap;
+                        -ms-flex-wrap: wrap;
+                            flex-wrap: wrap;
+                }
+                :host ::content > * {
+                    -webkit-flex-basis: 100%;
+                        -ms-flex-preferred-size: 100%;
+                            flex-basis: 100%;
+                }
+            }
+        </style>
+
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-more-info'
+        });
+    </script>
+</dom-module>
+<dom-module id="sprout-footer-logo" assetpath="/">
+    <template>
+        <style>
+            :host {
+                position: absolute;
+                bottom: 40px;
+                right: 8%;
+                text-align: right;
+            }
+
+            ul {
+                -webkit-align-self: flex-end;
+                    -ms-flex-item-align: end;
+                        align-self: flex-end;
+                padding: 0;
+                margin: 0;
+                margin-top: 15px;
+                list-style: none;
+                color: #999;
+                font-size: 12px;
+            }
+
+            ul > li {
+                margin-top: 0px;
+            }
+
+            a {
+                text-decoration: none;
+                color: #999;
+                -webkit-transition: color 0.2s ease-out;
+                transition: color 0.2s ease-out;
+            }
+            a:hover {
+                text-decoration: none;
+                color: #FFF;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    position: relative;
+                    bottom: auto;
+                    right: auto;
+                    text-align: center;
+                }
+            }
+        </style>
+
+		<ul>
+			<li>
+                <template is="dom-if" if="{{logo}}">
+                    <a><img src$="{{logo}}"></a>  
+                </template>
+				<a href="http://www.olympus.com.tw/zh/" target="_blank">Taiwan</a> |
+				<a href="http://www.olympus.co.jp/jp/" target="_blank">Japan</a> |
+				<a href="http://www.olympus-global.com/en/" target="_blank">Goobal</a>
+			</li>
+			<li>© 2015 YUANYU Group CO., LTD. All Rights Reserved.</li>
+		</ul>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-footer-logo'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-footer-split" assetpath="/">
+    <template>
+        <style>
+            :host {
+                height: 100%;
+                width: 1px;
+                background-color: #FFF;
+                position: absolute;
+            }
+        </style>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-footer-split'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-footer-list" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-flex: 1;
+                -webkit-flex-grow: 1;
+                    -ms-flex-positive: 1;
+                        flex-grow: 1;
+            }
+            ul {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                list-style: none;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                -webkit-flex-direction: column;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+                padding: 0;
+                margin: 0;
+            }
+
+            .title {
+                color: #FFF;
+                text-decoration: none;
+                font-size: 1em;
+                font-weight: bold;
+                margin-bottom: 10px;
+            }
+            .title:hover {
+                text-decoration: none;
+            }
+
+            :host ::content ul > a, :host ::content ul > li {
+                color: #CCC;
+                text-decoration: none;
+                -webkit-transition: color 0.2s ease-out;
+                transition: color 0.2s ease-out;
+                display: inline-block;
+            }
+            :host ::content ul > a:hover, :host ::content ul > li:hover {
+                text-decoration: none;
+                color: #FFF;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host.desktop {
+                    display: none;
+                }
+
+
+                :host {
+                    -webkit-box-flex: 0;
+                    -webkit-flex-grow: 0;
+                        -ms-flex-positive: 0;
+                            flex-grow: 0;
+                }
+                ul {
+                    -webkit-box-orient: horizontal;
+                    -webkit-box-direction: normal;
+                    -webkit-flex-direction: row;
+                        -ms-flex-direction: row;
+                            flex-direction: row;
+                }
+                :host ::content ul > a, :host ::content ul > li {
+                    margin: 0 10px;
+                }
+            }
+        </style>
+
+        <ul class$="{{class}}">
+            <template is="dom-if" if="{{title}}">
+                <a href$="{{href}}" class="title">{{title}}</a>
+            </template>
+            <content></content>
+        </ul>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-footer-list'
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-footer" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: block;
+                width: 100%;
+                padding: 40px 8%;
+                box-sizing: border-box;
+                background-color: #444;
+                position: relative;
+            }
+
+            .footer-content {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                width: 100%;
+                max-width: 900px;
+                font-size: 14px;
+                letter-spacing: 0.1em;
+                line-height: 1.6em;
+                -webkit-justify-content: space-around;
+                    -ms-flex-pack: distribute;
+                        justify-content: space-around;
+                -webkit-box-align: stretch;
+                -webkit-align-items: stretch;
+                    -ms-flex-align: stretch;
+                        align-items: stretch;
+                position: relative;
+            }
+
+            @media screen and (max-width: 767px) {
+                :host {
+                    display: -webkit-box;
+                    display: -webkit-flex;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -webkit-box-orient: vertical;
+                    -webkit-box-direction: normal;
+                    -webkit-flex-direction: column;
+                        -ms-flex-direction: column;
+                            flex-direction: column;
+                    padding: 40px 20px;
+                }
+                .footer-content {
+                    -webkit-box-pack: center;
+                    -webkit-justify-content: center;
+                        -ms-flex-pack: center;
+                            justify-content: center;
+                    -webkit-box-align: center;
+                    -webkit-align-items: center;
+                        -ms-flex-align: center;
+                                -ms-grid-row-align: center;
+                            align-items: center;
+                }
+            }
+        </style>
+
+        <div class="footer-content">
+            <content></content>
+        </div>
+        <sprout-footer-logo logo="{{logo}}"></sprout-footer-logo>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-footer'
+        });
+    </script>
+</dom-module>
+<dom-module id="sprout-slider-item" assetpath="/">
+    <template>
+        <style>
+        	:host {
+				list-style-type: none;
+				float: left;
+				margin:0px !important;
+				padding:0px !important;
+				min-height: 10px;
+				text-align: center;
+				position: relative;
+			}
+
+			:host img{
+				max-width: 100%;
+			}
+
+        	/*:host {
+        		height: 300px;
+        		width: 100%;
+        		/*position: absolute;*/
+        	}
+			/*:host ::content li {
+				list-style-type: none;
+				float: left;
+				margin:0px !important;
+				padding:0px !important;
+				min-height: 10px;
+				text-align: center;
+				position: relative;
+				height: 300px;
+				width: 100%;*/
+				
+			/*}
+			:host ::content li img {
+				max-width: 100%;
+				height: 300px;
+				width: 100%;
+			}*/
+        </style>
+		<img src$="{{img}}">
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-slider-item'
+        });
+    </script>
+</dom-module>
+
+
+
+<dom-module id="sprout-slider" assetpath="/">
+    <template>
+        <style>
+			.sprout-slide-container{
+				width: 100%;
+				overflow: hidden;
+				/*display: none;*/
+				clear: both;
+				position: relative;
+				padding-bottom: 3px;
+				margin: 0px auto;
+			}
+
+			.sprout-slide-container ul{
+				margin: 0px;
+				padding: 0px;
+				overflow: hidden;
+			}
+
+			
+
+			.sprout-slide-wrapper{
+				overflow: hidden;
+				margin: 0px auto;
+			}
+
+			.sprout-arrow > div{
+				position: absolute;
+				top: 35%;
+				width: 45px;
+				height: 45px;
+				cursor: pointer;
+			}
+			.sprout-arrow .sprout-prev{ left: 0px; background-image: url("img/prev.png");}
+			.sprout-arrow .sprout-next{	right: 0px; background-image: url("img/next.png");}
+
+			.sprout-dots {
+				width: 100%;
+				margin: 15px auto;
+				overflow:hidden;
+				text-align: center;
+			}
+
+			.sprout-dots div {
+				width: 11px;
+				height: 11px;
+				margin: 0px 5px;
+				border-radius: 11px;
+				background: #cccccc;
+				box-shadow:#fff 1px 1px 0px;
+				cursor: pointer;
+				display: inline-block;
+			}
+
+			.sprout-dots div.active{
+				background: #A2C54D;
+			}
+
+
+        </style>
+
+		<div class="sprout-slide-container" id="slide1">
+			<div class="sprout-slide-wrapper">
+				<ul class="sprout-slide">
+
+					<!-- <li><img src="images/product-head-2.jpg" /></li>
+			        <li><img src="images/product-head-3.jpg" /></li>
+			        <li><img src="images/product-head-4.jpg" /></li>
+			        <li><img src="images/product-head-5.jpg" /></li> -->
+					
+					<content></content>
+				</ul>
+			</div>
+			<div class="sprout-arrow">
+				<div class="sprout-prev"></div>
+				<div class="sprout-next"></div>
+			</div>
+			<div class="sprout-dots">
+			</div>
+		</div>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-slider',
+            ready: function() {
+            	$('#slide1').sproutSlide({
+					// 'width': 1000,		// Slide Visible content width;		//Default (960)
+					'slideNum': 1,		// One Page Slide li number;		//Default (4)
+					'duration':700,		// Animation Speed;			//Default (700)
+					'autovalue':true,	// Auto play control (true/false);	//Default (true)
+					'interval':4000		// Auto play interval;			//Default (3000)
+				});
+            }
+        });
+    </script>
+</dom-module>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+<dom-module id="sprout-nav-other-list" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                height: 50px;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                font-size: 14px;
+                letter-spacing: 0.1em;
+                float: left;
+            }
+            @media (max-width: 1024px) {
+                :host {
+                    display: none;
+                }
+            }
+
+            a {
+                text-decoration: none;
+                color: #999;
+                border: 1px solid #999;
+                border-radius: 20px;
+                padding: 0 5px;
+                line-height: 20px;
+                margin: 0 5px;
+                -webkit-transition: color 0.2s ease-out, border-color 0.2s ease-out;
+                transition: color 0.2s ease-out, border-color 0.2s ease-out;
+            }
+            a:hover {
+                color: #555;
+                border-color: #555;
+            }
+
+            .searchbar {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                position: relative;
+                margin: 0 5px;
+            }
+
+            .searchbar input {
+                position: absolute;
+                left: -2px;
+                top: 0;
+                bottom: 0;
+                margin: auto 0;
+                height: 20px;
+                width: 20px;
+                border: 1px solid #999;
+                border-radius: 20px;
+                font-size: 0;
+                -webkit-transition: width 0.2s ease-out, border-radius 0.2s ease-out, padding 0.2s ease-out, border-color 0.2s ease-out;
+                transition: width 0.2s ease-out, border-radius 0.2s ease-out, padding 0.2s ease-out, border-color 0.2s ease-out;
+            }
+            .searchbar input:focus, .searchbar input:valid {
+                width: 150px;
+                font-size: 14px;
+                outline: none;
+                border-radius: 15px;
+                border-color: #555;
+                padding: 4px 5px 4px 22px;
+                z-index: 105;
+            }
+            .searchbar label {
+                z-index: 106;
+                height: 20px;
+                width: 20px;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                font-size: 14px;
+                -webkit-box-pack: center;
+                -webkit-justify-content: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                color: #999;
+                cursor: pointer;
+                -webkit-transition: color 0.2s ease-out;
+                transition: color 0.2s ease-out;
+            }
+            .searchbar label:hover {
+                color: #555;
+            }
+            .searchbar input:focus + label, .searchbar input:valid + label {
+                color: #555;
+            }
+
+            .side-logo {
+                background-color: #102A7C;
+                height: 100%;
+                min-width: 80px;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-pack: center;
+                -webkit-justify-content: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                padding: 0 25px;
+                position: relative;
+                margin-left: 30px;
+            }
+            .side-logo img {
+                width: 83px;
+            }
+            .side-logo:before {
+                content: '';
+                top: 0;
+                right: 100%;
+                height: 0;
+                width: 0;
+                border-bottom: 50px solid transparent;
+                border-right: 30px solid #102A7C;
+                position: absolute;
+            }
+
+            .side-logo.hide {
+                background-color: transparent;
+            }
+            .side-logo.hide:before {
+                border-right: 30px solid transparent;
+            }
+        </style>
+
+        <template is="dom-if" if="{{lang}}">
+            <a href$="{{lang}}">中文</a>
+        </template>
+        <a href$="{{fb}}"><i class="fa fa-facebook"></i></a>
+        <div class="searchbar">
+            <input id="searchbar" type="text" placeholder="search" required="">
+            <label for="searchbar"><i class="fa fa-search"></i></label>
+        </div>
+        <div class$="side-logo {{hide}}">
+            <img src$="{{logo2}}" alt="">
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-other-list',
+            properties: {
+                search: String,
+                hide: String,
+                lang: String
+            },
+            ready: function() {
+                var searchbar = document.getElementById('searchbar');
+                var self = this;
+
+                searchbar.addEventListener('keydown', function(event) {
+                    if (event.code === "Enter") {
+                        location.href = self.search + searchbar.value;
+                    }
+                }, false);
+
+                var searchLabel = document.querySelector('.searchbar label');
+                searchLabel.addEventListener('click', function(event) {
+                    if (searchbar.value !== "") {
+                        event.preventDefault();
+                        location.href = self.search + searchbar.value;
+                    }
+                }, false);
+            },
+            ifLogo2: function() {
+                return this.hide ? 'hide' : '';
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-nav-sub-item" assetpath="/">
+    <template>
+        <style>
+            :host {
+                height: auto;
+                font-size: 14px;
+                line-height: 30px;
+                letter-spacing: 0.1em;
+                cursor: pointer;
+                position: relative;
+                background-color: #FFF;
+                white-space: nowrap;
+                text-align: center;
+                -webkit-transition: box-shadow 0.2s ease-out;
+                transition: box-shadow 0.2s ease-out;
+                display: block;
+                overflow: auto;
+            }
+            :host ::content > a {
+                text-decoration: none;
+                color: #000;
+                z-index: 103;
+                width: 100%;
+                height: 100%;
+                display: block;
+                padding: 5px 30px;
+                box-sizing: border-box;
+            }
+            :host ::content > a:hover {
+                text-decoration: none;
+            }
+            :host:hover {
+                box-shadow: 0 1px 3px 1px rgba(0,0,0,.15);
+                z-index: 102;
+            }
+        </style>
+
+        <a href$="{{href}}">{{text}}</a>
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-sub-item',
+            ready: function() {
+                this.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                })
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-nav-sub-list" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                z-index: -100;
+                opacity: 0;
+                height: 0;
+                overflow: hidden;
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                -webkit-transform: translateX(-50%);
+                        transform: translateX(-50%);
+                margin: 0 auto;
+                -webkit-box-orient: vertical;
+                -webkit-box-direction: normal;
+                -webkit-flex-direction: column;
+                    -ms-flex-direction: column;
+                        flex-direction: column;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: stretch;
+                -webkit-align-items: stretch;
+                    -ms-flex-align: stretch;
+                        align-items: stretch;
+                background-color: #FFF;
+                border: 1px solid #EEE;
+                border-top: 1px solid #FFF;
+                box-shadow: 0 3px 3px 1px rgba(0,0,0,.15);
+                -webkit-transition: opacity 0.2s ease-out;
+                transition: opacity 0.2s ease-out;
+            }
+            :host.opened {
+                height: auto;
+                z-index: 101;
+                opacity: 1;
+            }
+
+            @media (max-width: 1024px) {
+                :host {
+                    position: relative;
+                    width: 100%;
+                    display: none;
+                }
+                :host.opened {
+                    display: block;
+                    top: 0;
+                }
+            }
+        </style>
+
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-sub-list'
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-nav-item" assetpath="/">
+    <template>
+        <style>
+            :host {
+                height: 50px;
+                font-size: 14px;
+                padding: 0;
+                line-height: 50px;
+                letter-spacing: 0.1em;
+                cursor: pointer;
+                position: relative;
+                margin-right: 1px;
+            }
+            :host ::content > a {
+                text-decoration: none;
+                color: #000;
+                padding: 0 20px;
+                display: block;
+                height: 100%;
+                line-height: 50px;
+            }
+            :host ::content > a:hover {
+                text-decoration: none;
+            }
+            :host:hover {
+                box-shadow: 0 1px 3px 1px rgba(0,0,0,.15);
+            }
+
+            @media (max-width: 1024px) {
+                :host {
+                    width: 100%;
+                    display: block;
+                    height: auto;
+                }
+            }
+        </style>
+
+        <a href$="{{href}}">{{text}}</a>
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-item',
+            ready: function() {
+                var sublist = this.querySelector('sprout-nav-sub-list');
+                var isOpened = false;
+
+                if (sublist) {
+                    this.addEventListener('mouseover', function(e) {
+                        e.preventDefault();
+                        if (window.innerWidth >= 1024) {
+                            sublist.classList.add('opened');
+                        }
+                    });
+                    this.addEventListener('mouseleave', function(e) {
+                        e.preventDefault();
+                        if (window.innerWidth >= 1024) {
+                            sublist.classList.remove('opened');
+                        }
+                    });
+                    this.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if (isOpened) {
+                            sublist.classList.remove('opened');
+                        }
+                        else {
+                            sublist.classList.add('opened');
+                        }
+                        isOpened = !isOpened;
+                    });
+                }
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-nav-list" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-align-self: flex-end;
+                    -ms-flex-item-align: end;
+                        align-self: flex-end;
+                height: 100%;
+                float: left;
+            }
+
+            .navbar {
+                list-style: none;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                padding: 0;
+                margin: 0;
+                position: relative;
+            }
+
+            @media (max-width: 1024px) {
+                :host {
+                    width: 100%;
+                }
+                .navbar {
+                    -webkit-box-orient: vertical;
+                    -webkit-box-direction: normal;
+                    -webkit-flex-direction: column;
+                        -ms-flex-direction: column;
+                            flex-direction: column;
+                    background-color: #FFF;
+                    width: 100%;
+                    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.15);
+                    display: block;
+                }
+            }
+        </style>
+
+        <ul class="navbar">
+            <content></content>
+        </ul>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav-list'
+        });
+    </script>
+</dom-module>
+
+
+<dom-module id="sprout-nav" assetpath="/">
+    <template>
+        <style>
+            nav {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 50px;
+                background-color: #FFF;
+                padding: 0px;
+                box-sizing: border-box;
+                -webkit-box-pack: justify;
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                            -ms-grid-row-align: center;
+                        align-items: center;
+                border-bottom: 1px solid #EEE;
+                box-shadow: 0 3px 3px 1px rgba(0,0,0,.15);
+                z-index: 100;
+            }
+
+            nav .brand-logo {
+                height: 30px;
+                -webkit-align-self: flex-start;
+                    -ms-flex-item-align: start;
+                        align-self: flex-start;
+                width: auto;
+                padding: 10px 20px;
+                display: inline-block;
+            }
+
+            nav .brand-logo img {
+                max-height: 100%;
+                height: 100%;
+            }
+
+            .nav {
+                float: right;
+            }
+
+            .menu-icon {
+                display: none;
+            }
+            #menu-icon {
+                position: absolute;
+                left: -9999px;
+            }
+
+            @media (max-width: 1024px) {
+                .menu-icon {
+                    display: inline-block;
+                    float: left;
+                    border: 1px solid #CCC;
+                    height: 30px;
+                    width: 30px;
+                    margin: 10px 0 10px 15px;
+                    cursor: pointer;
+                    position: relative;
+                    z-index: 101;
+                }
+                .menu-icon:before, .menu-icon:after {
+                    bottom: 0;
+                    right: 0;
+                    margin: auto;
+                    box-sizing: padding-box;
+                    background-color: #555;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    content: '';
+                }
+                .menu-icon:before {
+                    height: 60%;
+                    width: 2.5px;
+                    opacity: 0;
+                    transition: -webkit-transform .2s ease-out,opacity .2s ease-out;
+                    -webkit-transition: opacity .2s ease-out,-webkit-transform .2s ease-out;
+                    transition: opacity .2s ease-out,-webkit-transform .2s ease-out;
+                    transition: transform .2s ease-out,opacity .2s ease-out;
+                    transition: transform .2s ease-out,opacity .2s ease-out,-webkit-transform .2s ease-out;
+                }
+                .menu-icon:after {
+                    height: 2.5px;
+                    border-radius: 2.5px;
+                    width: 60%;
+                    box-shadow: 0 6px 0 0 #555,0 -6px 0 0 #555;
+                    transition: -webkit-transform .2s ease-out,box-shadow .2s ease-out;
+                    -webkit-transition: box-shadow .2s ease-out,-webkit-transform .2s ease-out;
+                    transition: box-shadow .2s ease-out,-webkit-transform .2s ease-out;
+                    transition: transform .2s ease-out,box-shadow .2s ease-out;
+                    transition: transform .2s ease-out,box-shadow .2s ease-out,-webkit-transform .2s ease-out;
+                }
+
+
+                #menu-icon:checked ~ .nav {
+                    top: 50px;
+                    -webkit-transform: translateY(0%);
+                            transform: translateY(0%);
+                    opacity: 1;
+                }
+                #menu-icon:checked + .menu-icon:before {
+                    -webkit-transform: rotate(45deg);
+                            transform: rotate(45deg);
+                    opacity: 1;
+                }
+                #menu-icon:checked + .menu-icon:after {
+                    -webkit-transform: rotate(45deg);
+                            transform: rotate(45deg);
+                    box-shadow: none;
+                }
+
+
+                .nav {
+                    position: absolute;
+                    top: -5px;
+                    left: 0;
+                    width: 100%;
+                    z-index: 99;
+                    opacity: 0;
+                    -webkit-transform: translateY(-100%);
+                            transform: translateY(-100%);
+                    -webkit-transition: top 0.2s ease-out, opacity 0.2s ease-out, -webkit-transform 0.2s ease-out;
+                    transition: top 0.2s ease-out, opacity 0.2s ease-out, -webkit-transform 0.2s ease-out;
+                    transition: transform 0.2s ease-out, top 0.2s ease-out, opacity 0.2s ease-out;
+                    transition: transform 0.2s ease-out, top 0.2s ease-out, opacity 0.2s ease-out, -webkit-transform 0.2s ease-out;
+                }
+            }
+        </style>
+
+        <nav>
+            <a class="brand-logo" href$="{{href}}">
+                <img src="{{logo}}" alt="{{alt}}">
+            </a>
+
+            <input type="checkbox" id="menu-icon">
+            <label class="menu-icon" for="menu-icon"></label>
+
+            <div class="nav">
+                <content></content>
+            </div>
+        </nav>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-nav'
+        });
+    </script>
+</dom-module>
+<dom-module id="sprout-news-grid-item" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-flex: 1;
+                -webkit-flex-grow: 1;
+                    -ms-flex-positive: 1;
+                        flex-grow: 1;
+                -webkit-flex-basis: 32%;
+                    -ms-flex-preferred-size: 32%;
+                        flex-basis: 32%;
+                max-width: 32%;
+                margin-bottom: 20px;
+                border: 1px solid #EEE;
+                -webkit-flex-wrap: wrap;
+                    -ms-flex-wrap: wrap;
+                        flex-wrap: wrap;
+                -webkit-box-pack: start;
+                -webkit-justify-content: flex-start;
+                    -ms-flex-pack: start;
+                        justify-content: flex-start;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                -webkit-align-content: space-between;
+                    -ms-flex-line-pack: justify;
+                        align-content: space-between;
+                font-size: 14px;
+                letter-spacing: 0.1em;
+                line-height: 1.6em;
+            }
+
+            .news-photo {
+                width: 100%;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                position: relative;
+                -webkit-box-pack: center;
+                -webkit-justify-content: center;
+                    -ms-flex-pack: center;
+                        justify-content: center;
+                -webkit-box-align: center;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                max-height: 200px;
+                overflow: hidden;
+            }
+            .news-photo img {
+                width: 100%;
+                height: auto;
+                -webkit-transition: -webkit-transform 0.2s ease-out;
+                transition: -webkit-transform 0.2s ease-out;
+                transition: transform 0.2s ease-out;
+                transition: transform 0.2s ease-out, -webkit-transform 0.2s ease-out;
+            }
+            .news-photo:hover img {
+                -webkit-transform: scale(1.1);
+                        transform: scale(1.1);
+            }
+
+            .content-block {
+                width: 100%;
+            }
+
+            .news-description {
+                display: block;
+                padding: 20px;
+                box-sizing: border-box;
+                width: 100%;
+            }
+
+            .news-description h4 {
+                color: #aaa;
+                font-size: 16px;
+                margin-top: 0;
+                border-bottom: 1px solid #ddd;
+                padding-bottom: .5em;
+                margin-bottom: .5em;
+                -webkit-transition: color 0.2s ease-out;
+                transition: color 0.2s ease-out;
+                white-space: nowrap;
+                overflow: hidden;
+                width: 100%;
+                text-overflow: ellipsis;
+                display: block;
+            }
+            .news-description h4:hover {
+                color: #444;
+            }
+            a {
+                text-decoration: none;
+            }
+            .news-description .date {
+                color: #425377;
+                font-size: 12px;
+            }
+
+            .tag-block {
+                -webkit-align-self: flex-end;
+                    -ms-flex-item-align: end;
+                        align-self: flex-end;
+                margin-top: 20px;
+                padding: 20px;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .tags-list {
+                display: inline-block;
+                padding: 0;
+                width: 50%;
+                margin: 0;
+            }
+            .tags-list .tag {
+                display: inline-block;
+                color: #aaa;
+                font-size: 12px;
+                margin: 3px;
+                margin-right: 0;
+                padding: .2em .5em;
+                border: 1px solid #eee;
+                border-radius: 2px;
+                box-sizing: border-box;
+            }
+            .tags-list .tag:hover {
+                border: 1px solid #aaa;
+                color: #777;
+            }
+
+            .category {
+                min-width: 130px;
+                background-color: #C2C2C2;
+                color: #FFF;
+                height: 25px;
+                line-height: 25px;
+                font-size: 12px;
+                text-align: center;
+                cursor: pointer;
+                -webkit-transition: box-shadow .2s ease-out;
+                transition: box-shadow .2s ease-out;
+                -webkit-box-ordinal-group: 4;-webkit-order: 3;-ms-flex-order: 3;order: 3;
+                float: right;
+                -webkit-align-self: flex-end;
+                    -ms-flex-item-align: end;
+                        align-self: flex-end;
+                border: 2px solid #fff;
+            }
+            .category.hot {
+                background-color: #3949AB;
+            }
+            .category.event {
+                background-color: #1A2371;
+            }
+            .category.product {
+                background-color: #aaa;
+            }
+            .category.information {
+                background-color: #555555;
+            }
+            .category:hover {
+                background-color: #fff;
+                border: 2px solid #ccc;
+                color: #1A2371;
+            }
+
+            @media screen and (max-width: 1130px) and (min-width: 765px) {
+                :host {
+                    -webkit-flex-basis: 49%;
+                        -ms-flex-preferred-size: 49%;
+                            flex-basis: 49%;
+                    max-width: 49%;
+                }
+            }
+            @media screen and (max-width: 765px) {
+                :host {
+                    -webkit-flex-basis: 100%;
+                        -ms-flex-preferred-size: 100%;
+                            flex-basis: 100%;
+                    max-width: 100%;
+                }
+            }
+        </style>
+
+        <div class="content-block">
+            <a href$="{{href}}" class="news-photo">
+                <img src$="{{img}}">
+            </a>
+            <div class="news-description">
+                <a class="title" href$="{{href}}"><h4>{{title}}</h4></a>
+                <span class="date">{{date}}</span>
+                <p>{{desc}}</p>
+            </div>
+        </div>
+        <div class="tag-block">
+            <ul class="tags-list">
+                <template is="dom-repeat" items="{{tags}}">
+                    <a class="tag" href$="{{tagPrefix}}{{item}}">{{item}}</a>
+                </template>
+            </ul>
+            <a class$="category {{category}}" href$="{{categoryPrefix}}{{category}}">{{category}}</a>
+        </div>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-news-grid-item',
+            properties: {
+                tags: Array,
+                tagPrefix: {
+                    type: String,
+                    value: "newslist.php?tag="
+                },
+                categoryPrefix: {
+                    type: String,
+                    value: "newslist.php?type="
+                }
+            }
+        });
+    </script>
+</dom-module>
+
+<dom-module id="sprout-news-grid" assetpath="/">
+    <template>
+        <style>
+            :host {
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-wrap: wrap;
+                    -ms-flex-wrap: wrap;
+                        flex-wrap: wrap;
+                -webkit-box-pack: start;
+                -webkit-justify-content: flex-start;
+                    -ms-flex-pack: start;
+                        justify-content: flex-start;
+                position: relative;
+                width: 100%;
+                max-width: 1280px;
+                padding: 20px 10%;
+                margin: 0 auto;
+                box-sizing: border-box;
+                font-size: 0;
+            }
+
+
+            :host ::content > sprout-news-grid-item {
+                margin-right: 1.5%;
+            }
+
+            @media screen and (min-width: 1130px) {
+                :host ::content > sprout-news-grid-item:nth-of-type(3n+3) {
+                    margin-right: 0;
+                }
+            }
+            @media screen and (max-width: 1130px) and (min-width: 765px) {
+                :host ::content > sprout-news-grid-item {
+                    margin-right: auto;
+                }
+                :host ::content > sprout-news-grid-item:nth-of-type(2n+2) {
+                    margin-right: 0;
+                }
+            }
+            @media screen and (max-width: 768px) {
+                :host {
+                    padding-left: 20px;
+                    padding-right: 20px;
+                }
+                :host ::content > sprout-news-grid-item {
+                    margin-right: 0;
+                }
+            }
+        </style>
+
+        <content></content>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-news-grid'
+        });
+    </script>
+
+</dom-module>
+<dom-module id="sprout-banner-title" assetpath="/">
+    <template>
+        <style>
+			:host {
+			width: 100%;
+			margin: 0;
+			letter-spacing: 2px;
+			z-index: 5;
+			}
+
+			:host .ch {
+			display: inline-block;
+			font-size: 16px;
+			padding: 10px 20px;
+			background-color: rgba(162, 162, 162, 0.7);
+			color: #fff;
+			position: absolute;
+			left: 100px;
+            bottom: 50px;
+			font-weight: normal;
+            line-height: 16px;
+			}
+
+			:host .en {
+			position: absolute;
+			top: 100%;
+			padding: 10px 20px;
+			left: 0%;
+			font-size: 14px;
+			background-color: rgba(100,100,100, 0.75);
+			width: auto;
+			height: 85%;
+			box-sizing: border-box;
+			text-align: center;
+			white-space: nowrap;
+            line-height: 14px;
+			}
+
+            @media (max-width: 768px) {
+                :host .ch {
+                    left: 20px;
+                    bottom: 20px;
+                    padding-top: 5px;
+                    padding-bottom: 5px;
+                }
+                :host .en {
+                    padding-top: 5px;
+                    padding-bottom: 5px;
+                }
+            }
+        </style>
+		<div class="web-title">
+	        <h2 class="ch">{{ch}}<span class="en">{{en}}</span>
+	        </h2>
+		</div>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-banner-title',
+
+        });
+    </script>
+</dom-module>
+
+
+
+
+<dom-module id="sprout-banner" assetpath="/">
+    <template>
+        <style>
+			:host{
+				margin-top: 48px;
+			    width: 100%;
+			    overflow: hidden;
+			}
+		    :host img {
+		        width: 100%;
+		        /*margin-top: -280px;*/
+		    }
+		    @media screen and (min-width: 760px) and (max-width: 1345px) {
+		        :host {
+                    max-height: 350px;
+                }
+		        /*:host img { margin-top: -210px; }*/
+		    }
+		    @media screen and (max-width: 759px) {
+		    	:host {
+                    max-height: 100%;
+                    display: block;
+                }
+		        :host img { margin-top: 0px; }
+		    }
+		    @media screen and (min-width: 1346px) {
+		    	:host { height: 350px; }
+		        /*:host img { margin-top: -360px; }*/
+		    }
+			:host div {
+				max-height: 370px;
+				width: 100%;
+				overflow: hidden;
+                position: relative;
+			}
+			:host div img {
+				width: 100%;
+                display: block;
+			}
+			:host&.gradient {
+		        background: linear-gradient(to right, rgba(226,226,226,1) 0%, rgba(254,254,254,0) 100%);
+		        position: absolute;
+		        z-index: -1;
+		        height: 400px;
+		        margin: 0px;
+		    }
+
+        </style>
+			<div>
+				<img src$="{{img}}">
+				<sprout-banner-title ch="{{ch}}" en="{{en}}"></sprout-banner-title>
+			</div>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sprout-banner',
+            getCorrectSrc: function() {
+                if (this.small) {
+                    return this.small;
+                }
+                else {
+                    return this.src;
+                }
+            }
+        });
+    </script>
+</dom-module>
+</div></body></html>
