@@ -88,9 +88,10 @@
             text-decoration: none;
         }
     </style>
+
   </head>
   <body>
-    <sprout-nav class="sprout-component" logo="logo.png">
+    <!-- <sprout-nav class="sprout-component" logo="logo.png">
         <sprout-nav-list>
             <sprout-nav-item href="newslist.php" text="最新消息"></sprout-nav-item>
             <sprout-nav-item href="product.php" text="產品情報">
@@ -108,7 +109,33 @@
 
         <sprout-nav-other-list search="result.php?keywords=">
         </sprout-nav-other-list>
-    </sprout-nav>
+    </sprout-nav> -->
+    <div id="react-nav"></div>
+    <script>
+      window.Nav = {
+        logo: 'logo.png',
+    		alt: "元利",
+    		nav: [
+          { text: '最新消息', href: 'newslist.php' },
+          {
+            text: '產品情報',
+            href: 'product.php',
+            subNav: [
+              { text: '工業顯微鏡', href: 'product.php?type=m' },
+              { text: '生物顯微鏡', href: 'product.php?type=b' },
+              { text: '工業內視鏡', href: 'product.php?type=e' },
+              { text: '高速攝影機', href: 'product.php?type=h' },
+            ],
+          },
+          { text: '企業情報', href: 'about.php' },
+          { text: '詢價系統', href: 'contact.php' },
+        ],
+    		lang: "lang",
+    		fb: "fb",
+    		logo2: "logo2.png",
+      };
+    </script>
+    <script src="build/bundle.js"></script>
 
     <!-- <sprout-slider class="sprout-component">
         <sprout-slider-item img="images/product-head-2.jpg"></sprout-slider-item>
@@ -125,19 +152,19 @@
 
     <sprout-header class="sprout-component" ch="產品情報">PRODUCT</sprout-header>
     <sprout-product-list class="sprout-component">
-        <sprout-product-item number="3" href="#" title="體外診斷試劑" img="product-col-1.png">
+        <sprout-product-item number="3" href="#" title="體外診斷試劑" img="">
             顯微鏡泛指將微小不可見或難見物品之影像放大，而能被肉眼或其他成像儀器觀察之工具。日常用語中之顯微鏡多指光學顯微鏡。放大倍率和清析度（聚焦）為顯微鏡重要因素。
         </sprout-product-item>
-        <sprout-product-item number="3" href="#" title="體外診斷儀器" img="product-col-1.png">
+        <sprout-product-item number="3" href="#" title="體外診斷儀器" img="">
             內視鏡泛指經各種管道進入人體，以觀察人體內部狀況的醫療儀器。部份內視鏡同時具備治療的功能，如膀胱鏡、胃鏡、大腸鏡、支氣管鏡、腹腔鏡等。
         </sprout-product-item>
-        <sprout-product-item number="3" href="#" title="實驗室自動化系統" img="product-col-1.png">
+        <sprout-product-item number="3" href="#" title="實驗室自動化系統" img="">
             攝錄影機（也稱攝影機，英語：camcorder）是一種使用光學原理來紀錄影像的裝置。攝影機的發明初時是用於電影及電視節目製作，但現時已普及化。
         </sprout-product-item>
-        <sprout-product-item number="3" href="#" title="體內診斷試劑" img="product-col-1.png">
+        <sprout-product-item number="3" href="#" title="體內診斷試劑" img="">
             顯微鏡泛指將微小不可見或難見物品之影像放大，而能被肉眼或其他成像儀器觀察之工具。日常用語中之顯微鏡多指光學顯微鏡。放大倍率和清析度（聚焦）為顯微鏡重要因素。
         </sprout-product-item>
-        <sprout-product-item number="3" href="#" title="其他產品" img="product-col-1.png">
+        <sprout-product-item number="3" href="#" title="其他產品" img="">
             顯微鏡泛指將微小不可見或難見物品之影像放大，而能被肉眼或其他成像儀器觀察之工具。日常用語中之顯微鏡多指光學顯微鏡。放大倍率和清析度（聚焦）為顯微鏡重要因素。
         </sprout-product-item>
     </sprout-product-list>
@@ -162,23 +189,23 @@
     </sprout-news-list>
 
     <sprout-news-grid class="sprout-component">
-        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png"
+        <sprout-news-grid-item href="news.php?id=7" img=""
             title="Stylus 1 絕佳好禮1+1" date="2015-12-31" desc="外線接收器USB‑C，用於維修和支援內建電源供應器如果有其他規"
             tags='["人像攝影", "入門"]' category="information">
         </sprout-news-grid-item>
-        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png"
+        <sprout-news-grid-item href="news.php?id=7" img=""
             title="滿足高階活細胞研究的 FV1200" date="2015-12-14" desc="螢光標本太暗，用傳統光電倍增管無法觀察時，可改用選配的超高靈敏度砷化鎵光電倍增管來觀察。 砷化鎵光電倍增管的量子效率峰值高達 45%"
             tags='["邱志偉"]' category="product">
         </sprout-news-grid-item>
-        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png"
+        <sprout-news-grid-item href="news.php?id=7" img=""
             title="E-M10 Mark II公告事項" date="2015-12-14" desc="近來Olympus發現部分OM-D E-M10 Mark II相機在配合塑膠鏡頭使用時存在鎖定栓的瑕疵，進而可能導致鏡頭與相機無法卡緊的問題。"
             tags='["入門", "邱志偉", "人像攝影"]' category="event">
         </sprout-news-grid-item>
-        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png"
+        <sprout-news-grid-item href="news.php?id=7" img=""
             title="專為電生理學提供的無震動、高可靠性及穏定性的" date="2015-12-13" desc="專為電生理學提供的無震動、高可靠性及穏定性的正立電生理用顯微鏡，供細胞培養及體內腦切片電生理實驗用。"
             tags='["入門"]' category="product">
         </sprout-news-grid-item>
-        <sprout-news-grid-item href="news.php?id=7" img="product-col-1.png"
+        <sprout-news-grid-item href="news.php?id=7" img=""
             title="新一代Tough TG-3 開始預購" date="2015-12-13" desc="即日起至2014.6.13凡於期間至經銷商辦理預購，即隨貨附贈原廠專用相機包CSCH-107(市價:880元)"
             tags='["入門", "人像攝影"]' category="information">
         </sprout-news-grid-item>
@@ -189,13 +216,13 @@
     </sprout-form>
 
     <sprout-more-info class="sprout-component">
-        <sprout-info title="企業情報" style="background-image: url('images/moreinfo-about.png'); background-color: rgba(70, 70,70, 0.9);">
+        <sprout-info title="企業情報" style="background-image: url(''); background-color: rgba(70, 70,70, 0.9);">
             元佑實業有限公司及其關係企業創立於1970年，總代理日本OLYMPUS株式会社之醫療、工業、生化、及數位產品，為OLYMPUS三十多年來最信賴及關係最密切之合作伙伴。憑藉著OLYMPUS高品質的產品及本公司完善的售後服務，30多年來銷售網遍佈全台及大中華地區，服務品質也深獲客戶信賴。
         </sprout-info>
-        <sprout-info title="技術支援" style="background-image: url('images/moreinfo-help.png'); background-color: rgba(55,53,107, 0.9);">
+        <sprout-info title="技術支援" style="background-image: url(''); background-color: rgba(55,53,107, 0.9);">
             修理場所佔地寬廣，由個人維修工作檯(可同時容納17人同時維修)；儀器裝備測試組裝間；氣体動力產生房；物品待修及完成暫存間；零件庫存區；無塵工作檯；氮氣充填設備；以及修理管理作業區；原廠修理文書資料區等場所構成。
         </sprout-info>
-        <sprout-contact-info title="客戶服務" style="background-image: url('images/moreinfo-service.png'); background-color: rgba(35, 35, 95, 0.9);">
+        <sprout-contact-info title="客戶服務" style="background-image: url(''); background-color: rgba(35, 35, 95, 0.9);">
             <div class="service">
                 <h5>・台北總公司</h5>
                 <p>台北市內湖區陽光街365巷37號5樓<br>
