@@ -249,6 +249,8 @@ class Nav extends Component {
 
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSearchInputChange = this.handleSearchInputChange.bind(this);
+		this.handleSearchKeyDown = this.handleSearchKeyDown.bind(this);
+		this.handleSearchClick = this.handleSearchClick.bind(this);
 	}
 
 	handleChange(e) {
@@ -257,6 +259,16 @@ class Nav extends Component {
 	handleSearchInputChange(e) {
 		this.setState({ searchExpand: e.target.value && true });
 	}
+	handleSearchKeyDown(e) {
+		if (e.key === 'Enter') {
+			location.href = `result.php?keyword=${e.target.value}`;
+		}
+	}
+	handleSearchClick(e) {
+		if (this.state.searchExpand) {
+			location.href = `result.php?keyword=${e.target.value}`;
+		}
+	}
 
 	render() {
 		const { logo, logo2, logo2White, alt, nav, lang, fb } = this.props;
@@ -264,7 +276,7 @@ class Nav extends Component {
 
 		return (
 			<nav style={styles.base}>
-				<a style={styles.brandLogo} href={logo}>
+				<a style={styles.brandLogo} href="index.php">
 					<img style={styles.brandLogoImg} src={logo} alt={alt} />
 				</a>
 
@@ -322,12 +334,14 @@ class Nav extends Component {
 									searchExpand && searchbarInputActive,
 								]}
 								onChange={this.handleSearchInputChange}
+								onKeyDown={this.handleSearchKeyDown}
 								required
 							></input>
 							<label
 								key="searchbarLabel"
 								htmlFor="searchbar"
 								style={styles.searchbarLabel}
+								onClick={this.handleSearchClick}
 							><i className="fa fa-search"></i></label>
 						</div>
 						<div

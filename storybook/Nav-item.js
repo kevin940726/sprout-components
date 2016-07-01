@@ -154,11 +154,13 @@ class NavItem extends Component {
 		}
 	}
 	handleClick(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		const { hover } = this.state;
+		if (this.props.subNav) {
+			e.preventDefault();
+			e.stopPropagation();
+			const { hover } = this.state;
 
-		this.setState({ hover: !hover });
+			this.setState({ hover: !hover });
+		}
 	}
 
 	render() {
