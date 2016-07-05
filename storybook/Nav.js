@@ -251,6 +251,7 @@ class Nav extends Component {
 		this.handleSearchInputChange = this.handleSearchInputChange.bind(this);
 		this.handleSearchKeyDown = this.handleSearchKeyDown.bind(this);
 		this.handleSearchClick = this.handleSearchClick.bind(this);
+		this.handleCloseNav = this.handleCloseNav.bind(this);
 	}
 
 	handleChange(e) {
@@ -268,6 +269,9 @@ class Nav extends Component {
 		if (this.state.searchExpand) {
 			location.href = `result.php?keyword=${e.target.value}`;
 		}
+	}
+	handleCloseNav() {
+		this.setState({ checked: false });
 	}
 
 	render() {
@@ -307,7 +311,11 @@ class Nav extends Component {
 					<div style={styles.navbarWrapper}>
 						<ul style={styles.navbar}>
 							{nav.map((item, i) => (
-								<NavItem key={i} {...item} />
+								<NavItem
+									key={i}
+									{...item}
+									handleCloseNav={this.handleCloseNav}
+								/>
 							))}
 						</ul>
 					</div>
@@ -347,7 +355,7 @@ class Nav extends Component {
 						<div
 							style={[
 								styles.sideLogo,
-								!logo2 && styles.sideLogoHide,
+								(!logo2 || logo2White) && styles.sideLogoHide,
 							]}
 						>
 							<div

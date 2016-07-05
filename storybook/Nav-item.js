@@ -110,22 +110,30 @@ const styles = {
 	},
 };
 
-const SubNavItem = Radium(({ text, href }) => (
+const SubNavItem = Radium(({ text, href, handleCloseNav }) => (
 	<div key={text + href} style={styles.subNavItem}>
 		<a
 			style={styles.subNavItemA}
 			href={href}
-			onClick={e => e.stopPropagation()}
+			onClick={e => {
+				e.stopPropagation();
+				handleCloseNav();
+			}}
 		>
 			{text}
 		</a>
 	</div>
 ));
 
-const SubNav = Radium(({ nav, opened }) => (
+const SubNav = Radium(({ nav, opened, handleCloseNav }) => (
 	<div style={[styles.subNav, opened && styles.subNavOpened]}>
 		{nav.map(item => (
-			<SubNavItem key={item.href} text={item.text} href={item.href} />
+			<SubNavItem
+				key={item.href}
+				text={item.text}
+				href={item.href}
+				handleCloseNav={handleCloseNav}
+			/>
 		))}
 	</div>
 ));
@@ -177,7 +185,11 @@ class NavItem extends Component {
 			>
 				<a style={styles.a} href={href}>{text}</a>
 				{subNav ? (
-					<SubNav opened={hover} nav={subNav} />
+					<SubNav
+						opened={hover}
+						nav={subNav}
+						handleCloseNav={this.props.handleCloseNav}
+					/>
 				) : ''}
 			</div>
 		);
