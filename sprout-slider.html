@@ -1,7 +1,7 @@
 <dom-module id="sprout-slider-item">
     <template>
         <style>
-        	:host {
+			:host li {
 				list-style-type: none;
 				float: left;
 				margin:0px !important;
@@ -10,40 +10,25 @@
 				text-align: center;
 				position: relative;
 			}
-
-			:host img{
+			:host li img {
 				max-width: 100%;
 			}
-
-        	/*:host {
-        		height: 300px;
-        		width: 100%;
-        		/*position: absolute;*/
-        	}
-			/*:host ::content li {
-				list-style-type: none;
-				float: left;
-				margin:0px !important;
-				padding:0px !important;
-				min-height: 10px;
-				text-align: center;
-				position: relative;
-				height: 300px;
-				width: 100%;*/
-				
-			/*}
-			:host ::content li img {
-				max-width: 100%;
-				height: 300px;
-				width: 100%;
-			}*/
         </style>
-		<img src$="{{img}}">
+		<li><img src$="{{img}}"></li>
     </template>
 
     <script>
         Polymer({
-            is: 'sprout-slider-item'
+            is: 'sprout-slider-item',
+    //         ready: function() {
+    //         	$('#slide1').sproutSlide({
+				// 	// 'width': 1000,		// Slide Visible content width;		//Default (960)
+				// 	'slideNum': 1,		// One Page Slide li number;		//Default (4)
+				// 	'duration':700,		// Animation Speed;			//Default (700)
+				// 	'autovalue':true,	// Auto play control (true/false);	//Default (true)
+				// 	'interval':4000		// Auto play interval;			//Default (3000)
+				// });
+    //         }
         });
     </script>
 </dom-module>
@@ -61,15 +46,28 @@
 				position: relative;
 				padding-bottom: 3px;
 				margin: 0px auto;
+				margin-top: 49px;
+				max-height: 370px;
 			}
-
 			.sprout-slide-container ul{
 				margin: 0px;
 				padding: 0px;
 				overflow: hidden;
 			}
 
-			
+			.sprout-slide-container ul li{
+				list-style-type: none;
+				float: left;
+				margin:0px !important;
+				padding:0px !important;
+				min-height: 10px;
+				text-align: center;
+				position: relative;
+			}
+
+			.sprout-slide-container ul li img{
+				max-width: 100%;
+			}
 
 			.sprout-slide-wrapper{
 				overflow: hidden;
@@ -78,13 +76,13 @@
 
 			.sprout-arrow > div{
 				position: absolute;
-				top: 35%;
+				top: 40%;
 				width: 45px;
 				height: 45px;
 				cursor: pointer;
 			}
-			.sprout-arrow .sprout-prev{ left: 0px; background-image: url(img/prev.png);}
-			.sprout-arrow .sprout-next{	right: 0px; background-image: url(img/next.png);}
+			.sprout-arrow .sprout-prev{ left: 0px; background-image: url(sprout-slide/img/prev.png);}
+			.sprout-arrow .sprout-next{	right: 0px; background-image: url(sprout-slide/img/next.png);}
 
 			.sprout-dots {
 				width: 100%;
@@ -115,10 +113,10 @@
 			<div class="sprout-slide-wrapper">
 				<ul class="sprout-slide">
 
-					<!-- <li><img src="images/product-head-2.jpg" /></li>
+					<li><img src="images/product-head-2.jpg" /></li>
 			        <li><img src="images/product-head-3.jpg" /></li>
 			        <li><img src="images/product-head-4.jpg" /></li>
-			        <li><img src="images/product-head-5.jpg" /></li> -->
+			        <li><img src="images/product-head-5.jpg" /></li>
 					
 					<content></content>
 				</ul>
